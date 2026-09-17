@@ -10,7 +10,7 @@ import type {
   StackValidation,
   Workflow,
 } from "./types";
-import { needsTieBreak } from "./types";
+import { needsTieBreak, CHEAP_MODEL_ID, STRONG_MODEL_ID } from "./types";
 import type { StageAdapters } from "./provider";
 import { recordToLedger } from "../store/ledger";
 
@@ -232,8 +232,8 @@ async function runRouting(
   // lowest_cost → flash unless pro is clearly safer; highest_accuracy → pro unless
   // flash wins decisively; balanced → leave the router's pick as-is.
   plan.policy = session.policy ?? "balanced";
-  const cheap = "gemini-2.5-flash" as const;
-  const strong = "gemini-2.5-pro" as const;
+  const cheap = CHEAP_MODEL_ID;
+  const strong = STRONG_MODEL_ID;
   for (const route of plan.routes) {
     if (plan.policy === "lowest_cost" && route.selectedModel !== cheap) {
       const proConf = route.options.find((o) => o.model === strong)?.confidence ?? route.confidence;
@@ -387,7 +387,7 @@ export async function applyGateAction(
       // Keep dependencies consistent with the surviving task ids.
       const ids = new Set(action.tasks.map((t) => t.id));
       for (const t of action.tasks) {
-        t.dependsOn = t.dependsOn.filter((d) => ids.has(d));
+        t.dependsOn = (t.dependsOn ?? []).filter((d: string) => ids.has(d));
       }
       session.workflow.tasks = action.tasks;
       session.gate = "algorithms";

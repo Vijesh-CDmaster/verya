@@ -7,13 +7,52 @@ import { z } from "zod";
 export type Severity = "critical" | "high" | "medium" | "low";
 export const SeveritySchema = z.enum(["critical", "high", "medium", "low"]);
 
+// Gemini 3.x quirks: explicit null for absent optionals, and arrays sometimes arrive as
+// comma-joined strings (or a single bare string). These preprocessors absorb all of it.
+const nullTo = <V>(fallback: V, inner: z.ZodType<V, any, any>) =>
+  z.preprocess((v) => (v == null ? fallback : v), inner);
+const coerceStringArray = (v: unknown): unknown => {
+  if (v == null) return [];
+  if (Array.isArray(v)) return v;
+  if (typeof v === "string") {
+    const s = v.trim();
+    if (s === "" || s === "null") return [];
+    return s.split(/[,;]/).map((x) => x.trim().replace(/^"|"$/g, "")).filter(Boolean);
+  }
+  return v;
+};
+const arr = (item: z.ZodType<string>, max = 50) =>
+  z.preprocess(
+    coerceStringArray,
+    z.array(item as z.ZodType<string>).max(max) as unknown as z.ZodType<string[]>
+  );
+
+// Gemini 3.x sometimes double-encodes arrays of objects as a JSON string
+// (e.g. flaws: "[{...}]"). Decode once before validating, and default null→[].
+const decodeJsonPre = (v: unknown): unknown => {
+  if (typeof v === "string") {
+    const s = v.trim();
+    if (s.startsWith("[") || s.startsWith("{")) {
+      try {
+        return JSON.parse(s);
+      } catch {
+        return v;
+      }
+    }
+    return [];
+  }
+  return v == null ? [] : v;
+};
+const objArr = <T extends z.ZodTypeAny>(item: T, min = 0, max = 50) =>
+  z.preprocess(decodeJsonPre, z.array(item).min(min).max(max));
+
 // ---------- Gate 1: Suitability ----------
 export const SuitabilitySchema = z.object({
   suitable: z.boolean(),
   confidence: z.number().min(0).max(1),
   reason: z.string().max(600),
-  suggestedWorkflow: z.string().max(3000).optional(),
-  suggestedSummary: z.string().max(400).optional(),
+  suggestedWorkflow: z.string().max(3000).nullish(),
+  suggestedSummary: z.string().max(400).nullish(),
 });
 export type Suitability = z.infer<typeof SuitabilitySchema>;
 
@@ -21,7 +60,7 @@ export type Suitability = z.infer<typeof SuitabilitySchema>;
 export const TaskSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1).max(120),
-  description: z.string().max(600).default(""),
+  description: nullTo("", z.string().max(600)),
   category: z.enum([
     "frontend",
     "backend",
@@ -32,17 +71,17 @@ export const TaskSchema = z.object({
     "ai",
     "other",
   ]),
-  dependsOn: z.array(z.string()).default([]),
-  complexity: z.enum(["low", "medium", "high"]).default("medium"),
-  risk: z.enum(["low", "medium", "high"]).default("medium"),
+  dependsOn: arr(z.string()),
+  complexity: nullTo("medium" as const, z.enum(["low", "medium", "high"])),
+  risk: nullTo("medium" as const, z.enum(["low", "medium", "high"])),
 });
 export type Task = z.infer<typeof TaskSchema>;
 
 export const WorkflowSchema = z.object({
   title: z.string().min(1).max(120),
   summary: z.string().max(800),
-  tasks: z.array(TaskSchema).min(1).max(30),
-  ambiguities: z.array(z.string()).max(10).default([]),
+  tasks: objArr(TaskSchema, 1, 30),
+  ambiguities: arr(z.string(), 20),
 });
 export type Workflow = z.infer<typeof WorkflowSchema>;
 
@@ -61,10 +100,10 @@ export const FlawSchema = z.object({
   severity: SeveritySchema,
   description: z.string().max(700),
   suggestedFix: z.string().max(700),
-  relatedTaskIds: z.array(z.string()).default([]),
+  relatedTaskIds: arr(z.string()),
 });
 export const FlawReportSchema = z.object({
-  flaws: z.array(FlawSchema).max(20).default([]),
+  flaws: objArr(FlawSchema, 0, 40),
   overallRisk: z.enum(["low", "medium", "high"]),
   summary: z.string().max(500),
 });
@@ -91,11 +130,11 @@ export const StackComponentSchema = z.object({
     "storage",
   ]),
   choice: z.string().min(1).max(80),
-  rationale: z.string().max(300).default(""),
+  rationale: nullTo("", z.string().max(300)),
 });
 export const StackProposalSchema = z.object({
   name: z.string().max(80).default("Proposed stack"),
-  components: z.array(StackComponentSchema).min(3).max(9),
+  components: objArr(StackComponentSchema, 3, 9),
   summary: z.string().max(400),
   confidence: z.number().min(0).max(1).default(0.7),
 });
@@ -103,18 +142,17 @@ export type StackProposal = z.infer<typeof StackProposalSchema>;
 
 export const StackValidationSchema = z.object({
   verdict: z.enum(["fit", "fit_with_changes", "poor_fit"]),
-  notes: z.array(z.string()).max(8).default([]),
-  changes: z
-    .array(
-      z.object({
-        layer: z.string().max(40),
-        from: z.string().max(80),
-        to: z.string().max(80),
-        why: z.string().max(300),
-      })
-    )
-    .max(8)
-    .default([]),
+  notes: arr(z.string(), 16),
+  changes: objArr(
+    z.object({
+      layer: z.string().max(40),
+      from: z.string().max(80),
+      to: z.string().max(80),
+      why: z.string().max(300),
+    }),
+    0,
+    8
+  ),
 });
 export type StackValidation = z.infer<typeof StackValidationSchema>;
 
@@ -129,38 +167,43 @@ export type StackCandidate = z.infer<typeof StackCandidateSchema>;
 export const StackGateSchema = z.object({
   provided: z.boolean(),
   validation: StackValidationSchema.nullable(),
-  candidates: z.array(StackCandidateSchema).min(1).max(3),
+  candidates: objArr(StackCandidateSchema, 1, 3),
   selected: z.string().nullable(), // proposal name of chosen candidate
   tieBreakRequired: z.boolean(),
 });
+// note: StackProposal.confidence/rationale already tolerate null via nullish/default above
 export type StackGate = z.infer<typeof StackGateSchema>;
 
 // ---------- Gate 5: Algorithms (per task) ----------
 export const AlgorithmOptionSchema = z.object({
   name: z.string().min(1).max(80),
   approach: z.string().max(400),
-  pros: z.array(z.string()).max(5).default([]),
-  cons: z.array(z.string()).max(5).default([]),
+  pros: arr(z.string(), 8),
+  cons: arr(z.string(), 8),
   confidence: z.number().min(0).max(1),
 });
 export const TaskAlgorithmSchema = z.object({
   taskId: z.string().min(1),
   taskTitle: z.string().max(120),
-  options: z.array(AlgorithmOptionSchema).min(1).max(4),
+  options: objArr(AlgorithmOptionSchema, 1, 4),
   selected: z.string().min(1).max(80),
   tieBreakRequired: z.boolean(),
-  tieBreakReason: z.string().max(300).default(""),
-  humanChoice: z.string().max(80).nullable().default(null),
+  tieBreakReason: nullTo("", z.string().max(300)),
+  humanChoice: z.string().max(80).nullish(),
 });
 export const AlgorithmPlanSchema = z.object({
-  tasks: z.array(TaskAlgorithmSchema).min(1),
+  tasks: objArr(TaskAlgorithmSchema, 1, 40),
 });
 export type AlgorithmOption = z.infer<typeof AlgorithmOptionSchema>;
 export type TaskAlgorithm = z.infer<typeof TaskAlgorithmSchema>;
 export type AlgorithmPlan = z.infer<typeof AlgorithmPlanSchema>;
 
 // ---------- Gate 6: Model routing ----------
-export const MODEL_IDS = ["gemini-2.5-pro", "gemini-2.5-flash"] as const;
+// Model IDs as of the Gemini 3.x era (2.5 models are retired for new API accounts).
+// Actual API model strings are resolved in provider.ts via GEMINI_MODEL / GEMINI_PRO_MODEL.
+export const STRONG_MODEL_ID = "gemini-3.1-pro-preview" as const;
+export const CHEAP_MODEL_ID = "gemini-3.6-flash" as const;
+export const MODEL_IDS = [STRONG_MODEL_ID, CHEAP_MODEL_ID] as const;
 export type ModelId = (typeof MODEL_IDS)[number];
 
 export const TaskModelRouteSchema = z.object({
@@ -173,7 +216,7 @@ export const TaskModelRouteSchema = z.object({
         confidence: z.number().min(0).max(1),
         estimatedCost: z.number().min(0),
         estimatedLatencyMs: z.number().min(0),
-        qualifiesBecause: z.string().max(200).default(""),
+        qualifiesBecause: nullTo("", z.string().max(200)),
       })
     )
     .min(1)
@@ -182,10 +225,10 @@ export const TaskModelRouteSchema = z.object({
   reason: z.string().max(300),
   confidence: z.number().min(0).max(1),
   tieBreakRequired: z.boolean(),
-  humanChoice: z.string().max(40).nullable().default(null),
+  humanChoice: z.string().max(40).nullish(),
 });
 export const RoutingPlanSchema = z.object({
-  routes: z.array(TaskModelRouteSchema).min(1),
+  routes: objArr(TaskModelRouteSchema, 1, 40),
   policy: z.enum(["lowest_cost", "highest_accuracy", "balanced"]).default("balanced"),
   estimatedCostUsd: z.number().min(0),
   notes: z.string().max(400).default(""),

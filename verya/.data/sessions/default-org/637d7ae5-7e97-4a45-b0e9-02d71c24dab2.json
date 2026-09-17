@@ -1,0 +1,195 @@
+{
+  "id": "637d7ae5-7e97-4a45-b0e9-02d71c24dab2",
+  "createdAt": "2026-09-17T10:01:43.474Z",
+  "updatedAt": "2026-09-17T10:18:56.459Z",
+  "input": "Build an internal expense-tracking tool for a 40-person startup. Employees upload receipt photos, pick a category, and submit monthly expense reports. Managers approve or reject with comments. Finance exports everything to CSV for accounting. Should support receipt OCR, approval workflows, monthly budget dashboards, and SSO login. About 500 reports per month.",
+  "statedStack": "Next.js + Node.js + PostgreSQL",
+  "policy": "balanced",
+  "uploads": [],
+  "gate": "tasks",
+  "gateStatus": "awaiting_user",
+  "suitability": {
+    "suitable": true,
+    "confidence": 0.95,
+    "reason": "The workflow is highly suitable. It covers all key requirements from the project description, including SSO authentication, receipt OCR integration, manager approval workflows, and the finance dashboard with CSV export. The dependencies are logically structured, ensuring backend APIs and integrations are completed before the respective frontend interfaces are built.",
+    "suggestedWorkflow": null,
+    "suggestedSummary": null
+  },
+  "suggestedWorkflow": null,
+  "workflow": {
+    "title": "Internal Expense Tracking Tool",
+    "summary": "An internal web application for a 40-person startup to manage monthly expense reports, featuring receipt OCR, manager approval workflows, budget dashboards, CSV exports for finance, and SSO authentication.",
+    "tasks": [
+      {
+        "id": "task_1",
+        "title": "Database Schema Design",
+        "description": "Design and implement the database schema to store users, roles, expense reports, line items, receipts, and approval logs.",
+        "category": "database",
+        "dependsOn": [],
+        "complexity": "low",
+        "risk": "low"
+      },
+      {
+        "id": "task_2",
+        "title": "SSO Authentication Implementation",
+        "description": "Configure and integrate Single Sign-On (SSO) authentication for secure employee login.",
+        "category": "auth",
+        "dependsOn": [
+          "task_1"
+        ],
+        "complexity": "medium",
+        "risk": "medium"
+      },
+      {
+        "id": "task_3",
+        "title": "Core Backend API for Expenses",
+        "description": "Develop backend endpoints for creating, updating, retrieving, and deleting expense reports and line items.",
+        "category": "backend",
+        "dependsOn": [
+          "task_1"
+        ],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "task_4",
+        "title": "Receipt OCR Integration",
+        "description": "Integrate an external OCR service to extract merchant, date, and total amount from uploaded receipt images.",
+        "category": "ai",
+        "dependsOn": [
+          "task_3"
+        ],
+        "complexity": "high",
+        "risk": "medium"
+      },
+      {
+        "id": "task_5",
+        "title": "Approval Workflow Logic",
+        "description": "Implement backend state machine and notification logic for manager approval, rejection, and commenting on reports.",
+        "category": "backend",
+        "dependsOn": [
+          "task_3"
+        ],
+        "complexity": "medium",
+        "risk": "medium"
+      },
+      {
+        "id": "task_6",
+        "title": "Employee Expense Submission UI",
+        "description": "Build the frontend interface for employees to upload receipts, view OCR results, fill in details, and submit monthly reports.",
+        "category": "frontend",
+        "dependsOn": [
+          "task_2",
+          "task_4"
+        ],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "task_7",
+        "title": "Manager Approval UI",
+        "description": "Create the frontend dashboard for managers to review, comment on, approve, or reject pending expense reports.",
+        "category": "frontend",
+        "dependsOn": [
+          "task_5",
+          "task_6"
+        ],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "task_8",
+        "title": "Finance Dashboard and CSV Export",
+        "description": "Develop the finance team dashboard showing monthly budgets and providing functionality to export all data to CSV format.",
+        "category": "frontend",
+        "dependsOn": [
+          "task_3"
+        ],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "task_9",
+        "title": "Production Deployment Setup",
+        "description": "Configure hosting, environment variables, and continuous integration pipelines for secure deployment.",
+        "category": "devops",
+        "dependsOn": [
+          "task_2"
+        ],
+        "complexity": "low",
+        "risk": "low"
+      }
+    ],
+    "ambiguities": [
+      "1. Which specific SSO provider (e.g.",
+      "Google Workspace",
+      "Okta) should be integrated? 2. What OCR service or API is preferred for receipt processing? 3. Are there specific budget limits or alerting thresholds required for the monthly dashboards? 4. What are the exact user roles and reporting hierarchy rules for approvals?"
+    ]
+  },
+  "flawReport": {
+    "flaws": [],
+    "overallRisk": "high",
+    "summary": "The plan contains critical security gaps (missing auth dependencies and RBAC) and architectural omissions (no file storage for receipts), along with an incorrect deployment sequence."
+  },
+  "flawResolutions": [
+    {
+      "flawId": "__gate__",
+      "decision": "accepted"
+    }
+  ],
+  "stackGate": {
+    "provided": true,
+    "validation": {
+      "verdict": "fit",
+      "notes": [
+        "The selected stack (Next.js",
+        "Node.js",
+        "PostgreSQL) is an excellent fit for this internal tool. PostgreSQL easily handles the relational schema required for users",
+        "roles",
+        "and approval logs. Next.js is ideal for building the employee and manager dashboards",
+        "and its API routes (or a separate Node.js backend) can seamlessly handle CSV generation",
+        "SSO integration",
+        "and OCR API orchestration. For SSO",
+        "using NextAuth.js (Auth.js) is highly recommended. For OCR",
+        "utilizing a managed service like AWS Textract or Google Cloud Document AI via Node.js SDKs will be much more reliable than self-hosting OCR engines."
+      ],
+      "changes": []
+    },
+    "candidates": [
+      {
+        "proposal": {
+          "name": "Your stack",
+          "components": [
+            {
+              "layer": "frontend",
+              "choice": "Next.js",
+              "rationale": ""
+            },
+            {
+              "layer": "backend",
+              "choice": "Node.js",
+              "rationale": ""
+            },
+            {
+              "layer": "database",
+              "choice": "PostgreSQL",
+              "rationale": ""
+            }
+          ],
+          "summary": "Validated as provided.",
+          "confidence": 0.9
+        },
+        "confidence": 0.9,
+        "reason": "User-provided stack."
+      }
+    ],
+    "selected": "Your stack",
+    "tieBreakRequired": false
+  },
+  "algorithms": null,
+  "routing": null,
+  "executions": [],
+  "humanFeedback": {
+    "ratings": {}
+  }
+}

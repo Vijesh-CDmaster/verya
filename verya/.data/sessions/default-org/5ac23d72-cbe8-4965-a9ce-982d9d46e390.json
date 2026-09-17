@@ -1,0 +1,23 @@
+{
+  "id": "5ac23d72-cbe8-4965-a9ce-982d9d46e390",
+  "createdAt": "2026-09-17T09:03:36.686Z",
+  "updatedAt": "2026-09-17T09:03:36.689Z",
+  "input": "Build an e-commerce platform with authentication, product search, payments and order tracking.",
+  "statedStack": "",
+  "policy": "balanced",
+  "uploads": [],
+  "gate": "intake",
+  "gateStatus": "pending",
+  "suitability": null,
+  "suggestedWorkflow": null,
+  "workflow": null,
+  "flawReport": null,
+  "flawResolutions": [],
+  "stackGate": null,
+  "algorithms": null,
+  "routing": null,
+  "executions": [],
+  "humanFeedback": {
+    "ratings": {}
+  }
+}

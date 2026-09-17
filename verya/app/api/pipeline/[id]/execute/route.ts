@@ -5,6 +5,7 @@ import { stackTextOf } from "@/lib/pipeline/gates";
 import { rateLimit, clientKey } from "@/lib/middleware";
 import { recordToLedger } from "@/lib/store/ledger";
 import type { ExecutionResult, PipelineSession } from "@/lib/pipeline/types";
+import { CHEAP_MODEL_ID } from "@/lib/pipeline/types";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
   while (ordered.length < tasks.length && guard++ < tasks.length * 2) {
     for (const t of tasks) {
       if (done.has(t.id)) continue;
-      if (t.dependsOn.every((d) => done.has(d))) {
+      if ((t.dependsOn ?? []).every((d: string) => done.has(d))) {
         ordered.push(t);
         done.add(t.id);
       }
@@ -63,7 +64,7 @@ export async function POST(req: NextRequest) {
       if (results.some((r) => r.taskId === task.id)) continue;
       const route = session.routing.routes.find((r) => r.taskId === task.id);
       const algo = session.algorithms.tasks.find((a) => a.taskId === task.id);
-      const model = route?.selectedModel ?? "gemini-2.5-flash";
+      const model = route?.selectedModel ?? CHEAP_MODEL_ID;
       const algorithm = algo?.selected ?? "direct implementation";
 
       const started = Date.now();
@@ -136,7 +137,7 @@ export async function POST(req: NextRequest) {
             method: "rules",
             passed: false,
             issues: [message],
-            checkedBy: "gemini-2.5-flash",
+            checkedBy: CHEAP_MODEL_ID,
           },
           status: "failed",
           confidence: 0,

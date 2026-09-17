@@ -1,0 +1,23 @@
+{
+  "id": "6b0e4b03-7ab5-4f4b-8ea7-111b8c16866b",
+  "createdAt": "2026-09-17T09:19:08.573Z",
+  "updatedAt": "2026-09-17T09:19:08.576Z",
+  "input": "Build an internal expense-tracking tool for a 40-person startup. Employees upload receipt photos, pick a category, and submit monthly expense reports. Managers approve or reject with comments. Finance exports everything to CSV for accounting. Should support receipt OCR, approval workflows, monthly budget dashboards, and SSO login. About 500 reports per month.",
+  "statedStack": "Next.js + Node.js + PostgreSQL",
+  "policy": "balanced",
+  "uploads": [],
+  "gate": "intake",
+  "gateStatus": "pending",
+  "suitability": null,
+  "suggestedWorkflow": null,
+  "workflow": null,
+  "flawReport": null,
+  "flawResolutions": [],
+  "stackGate": null,
+  "algorithms": null,
+  "routing": null,
+  "executions": [],
+  "humanFeedback": {
+    "ratings": {}
+  }
+}
