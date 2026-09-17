@@ -190,6 +190,7 @@ export const RoutingPlanSchema = z.object({
   estimatedCostUsd: z.number().min(0),
   notes: z.string().max(400).default(""),
 });
+export type RoutingPolicy = "lowest_cost" | "highest_accuracy" | "balanced";
 export type TaskModelRoute = z.infer<typeof TaskModelRouteSchema>;
 export type RoutingPlan = z.infer<typeof RoutingPlanSchema>;
 
@@ -210,7 +211,7 @@ export const ExecutionResultSchema = z.object({
     method: z.enum(["rules", "second_model"]),
     passed: z.boolean(),
     issues: z.array(z.string().max(300)).default([]),
-    checkedBy: z.enum(MODEL_IDS),
+    checkedBy: z.string().max(60),
   }),
   status: z.enum([
     "pending",
@@ -246,6 +247,8 @@ export type PipelineSession = {
   updatedAt: string;
   input: string;
   statedStack: string;
+  policy: RoutingPolicy;
+  uploads: { name: string; chars: number }[];
   gate: GateId; // current gate
   gateStatus: GateStatus;
   suitability: Suitability | null;
@@ -286,6 +289,7 @@ export function needsTieBreak(options: { confidence: number }[]): boolean {
 export const StartRequestSchema = z.object({
   input: z.string().min(20).max(20000),
   statedStack: z.string().max(2000).default(""),
+  policy: z.enum(["lowest_cost", "highest_accuracy", "balanced"]).default("balanced"),
 });
 export const GateActionSchema = z.discriminatedUnion("action", [
   z.object({
