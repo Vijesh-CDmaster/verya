@@ -5,7 +5,7 @@ import { stackTextOf } from "@/lib/pipeline/gates";
 import { rateLimit, clientKey } from "@/lib/middleware";
 import { recordToLedger } from "@/lib/store/ledger";
 import type { ExecutionResult, PipelineSession } from "@/lib/pipeline/types";
-import { CHEAP_MODEL_ID } from "@/lib/pipeline/types";
+
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
       if (results.some((r) => r.taskId === task.id)) continue;
       const route = session.routing.routes.find((r) => r.taskId === task.id);
       const algo = session.algorithms.tasks.find((a) => a.taskId === task.id);
-      const model = route?.selectedModel ?? CHEAP_MODEL_ID;
+      const model = route?.selectedModel ?? "openai/gpt-oss-20b";
       const algorithm = algo?.selected ?? "direct implementation";
 
       const started = Date.now();
@@ -89,6 +89,9 @@ export async function POST(req: NextRequest) {
             ? "verified"
             : "escalated"
           : "flagged";
+        // Cross-provider failover may have served the task with a different model than
+        // the router picked — record what actually ran (F46, full routing transparency).
+        const servedBy = exec.servedBy ?? model;
 
         const result: ExecutionResult = {
           taskId: task.id,
@@ -116,7 +119,8 @@ export async function POST(req: NextRequest) {
           taskId: task.id,
           model,
           detail: {
-            summary: `${task.title} executed by ${model} — ${status}`,
+            summary: `${task.title} executed by ${servedBy}${servedBy !== model ? ` (failover from ${model})` : ""} — ${status}`,
+            servedBy,
             latencyMs: exec.latencyMs,
             tokens: exec.tokens,
           },
@@ -137,7 +141,7 @@ export async function POST(req: NextRequest) {
             method: "rules",
             passed: false,
             issues: [message],
-            checkedBy: CHEAP_MODEL_ID,
+            checkedBy: "rules",
           },
           status: "failed",
           confidence: 0,

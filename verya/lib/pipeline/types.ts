@@ -9,6 +9,7 @@ export const SeveritySchema = z.enum(["critical", "high", "medium", "low"]);
 
 // Gemini 3.x quirks: explicit null for absent optionals, and arrays sometimes arrive as
 // comma-joined strings (or a single bare string). These preprocessors absorb all of it.
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 const nullTo = <V>(fallback: V, inner: z.ZodType<V, any, any>) =>
   z.preprocess((v) => (v == null ? fallback : v), inner);
 const coerceStringArray = (v: unknown): unknown => {
@@ -57,11 +58,22 @@ export const SuitabilitySchema = z.object({
 export type Suitability = z.infer<typeof SuitabilitySchema>;
 
 // ---------- Workflow (shared across gates) ----------
+export type TaskCategory =
+  | "frontend"
+  | "backend"
+  | "database"
+  | "auth"
+  | "integration"
+  | "devops"
+  | "ai"
+  | "other";
+
 export const TaskSchema = z.object({
-  id: z.string().min(1),
-  title: z.string().min(1).max(120),
+  // Tolerant: models occasionally omit fields; runSuitability repairs positionally.
+  id: nullTo("", z.string().max(80)),
+  title: nullTo("", z.string().max(120)),
   description: nullTo("", z.string().max(600)),
-  category: z.enum([
+  category: nullTo("other" as const, z.enum([
     "frontend",
     "backend",
     "database",
@@ -70,7 +82,7 @@ export const TaskSchema = z.object({
     "devops",
     "ai",
     "other",
-  ]),
+  ] as const)),
   dependsOn: arr(z.string()),
   complexity: nullTo("medium" as const, z.enum(["low", "medium", "high"])),
   risk: nullTo("medium" as const, z.enum(["low", "medium", "high"])),
@@ -183,11 +195,13 @@ export const AlgorithmOptionSchema = z.object({
   confidence: z.number().min(0).max(1),
 });
 export const TaskAlgorithmSchema = z.object({
-  taskId: z.string().min(1),
-  taskTitle: z.string().max(120),
+  // Tolerant defaults: gates.ts repairs missing ids/title positionally against the
+  // known workflow tasks, so a sloppy model response can never kill the gate.
+  taskId: nullTo("", z.string().max(80)),
+  taskTitle: nullTo("", z.string().max(120)),
   options: objArr(AlgorithmOptionSchema, 1, 4),
-  selected: z.string().min(1).max(80),
-  tieBreakRequired: z.boolean(),
+  selected: nullTo("", z.string().max(80)),
+  tieBreakRequired: nullTo(false, z.boolean()),
   tieBreakReason: nullTo("", z.string().max(300)),
   humanChoice: z.string().max(80).nullish(),
 });
@@ -199,16 +213,70 @@ export type TaskAlgorithm = z.infer<typeof TaskAlgorithmSchema>;
 export type AlgorithmPlan = z.infer<typeof AlgorithmPlanSchema>;
 
 // ---------- Gate 6: Model routing ----------
-// Model IDs as of the Gemini 3.x era (2.5 models are retired for new API accounts).
-// Actual API model strings are resolved in provider.ts via GEMINI_MODEL / GEMINI_PRO_MODEL.
-export const STRONG_MODEL_ID = "gemini-3.1-pro-preview" as const;
-export const CHEAP_MODEL_ID = "gemini-3.6-flash" as const;
-export const MODEL_IDS = [STRONG_MODEL_ID, CHEAP_MODEL_ID] as const;
+// Multi-provider pool: the four configured API keys (Gemini, Groq, OpenRouter, Mistral)
+// form ONE routing pool. The router picks per-task by specialty, cost tier, and latency;
+// provider.ts owns how each id maps to a real API call (incl. cross-provider failover).
+// All ids verified live against each provider's model list.
+export const MODEL_IDS = [
+  // Gemini (key 1) — native structured output, strong reasoning tier
+  "gemini-3.6-flash",
+  "gemini-3.1-pro-preview",
+  // Groq (key 2) — lowest latency, strong open-weights general models
+  "openai/gpt-oss-120b",
+  "openai/gpt-oss-20b",
+  "qwen/qwen3.8-27b",
+  // Mistral (key 3) — codestral is a dedicated code model
+  "codestral-latest",
+  "magistral-medium-latest",
+  "mistral-medium-latest",
+  "ministral-8b-latest",
+  // OpenRouter (key 4) — free tier, its own per-model daily quota
+  "z-ai/glm-5.2:free",
+  "google/gemma-4-31b-it:free",
+  "nvidia/nemotron-3-super-120b-a12b:free",
+] as const;
 export type ModelId = (typeof MODEL_IDS)[number];
 
+export type ProviderName = "gemini" | "groq" | "openrouter" | "mistral";
+export type PoolTier = "strong" | "standard" | "fast" | "free";
+
+export type PoolModel = {
+  id: ModelId;
+  provider: ProviderName;
+  tier: PoolTier;
+  costPerTask: number; // relative cost units (free tier = 0, flash-class ≈ 1, pro-class ≈ 4)
+  specialties: TaskCategory[]; // task categories this model is routed to preferentially
+};
+
+export const MODEL_POOL: PoolModel[] = [
+  { id: "gemini-3.6-flash", provider: "gemini", tier: "standard", costPerTask: 1, specialties: ["frontend", "backend", "database", "auth"] },
+  { id: "gemini-3.1-pro-preview", provider: "gemini", tier: "strong", costPerTask: 4, specialties: ["backend", "database", "devops"] },
+  { id: "openai/gpt-oss-120b", provider: "groq", tier: "standard", costPerTask: 1, specialties: ["backend", "ai", "integration"] },
+  { id: "openai/gpt-oss-20b", provider: "groq", tier: "fast", costPerTask: 1, specialties: ["frontend", "other"] },
+  { id: "qwen/qwen3.8-27b", provider: "groq", tier: "standard", costPerTask: 1, specialties: ["ai", "other"] },
+  { id: "codestral-latest", provider: "mistral", tier: "standard", costPerTask: 1, specialties: ["frontend", "backend"] },
+  { id: "magistral-medium-latest", provider: "mistral", tier: "strong", costPerTask: 2, specialties: ["backend", "auth", "database"] },
+  { id: "mistral-medium-latest", provider: "mistral", tier: "standard", costPerTask: 1, specialties: ["integration", "devops"] },
+  { id: "ministral-8b-latest", provider: "mistral", tier: "fast", costPerTask: 1, specialties: ["frontend", "other"] },
+  { id: "z-ai/glm-5.2:free", provider: "openrouter", tier: "free", costPerTask: 0, specialties: ["frontend", "backend", "database"] },
+  { id: "google/gemma-4-31b-it:free", provider: "openrouter", tier: "free", costPerTask: 0, specialties: ["frontend", "other"] },
+  { id: "nvidia/nemotron-3-super-120b-a12b:free", provider: "openrouter", tier: "free", costPerTask: 0, specialties: ["backend", "ai"] },
+];
+
+export function poolModelOf(id: string): PoolModel | undefined {
+  return MODEL_POOL.find((m) => m.id === id);
+}
+
+export const STRONG_MODEL_ID: ModelId = "gemini-3.1-pro-preview";
+export const CHEAP_MODEL_ID: ModelId = "openai/gpt-oss-20b"; // fastest + cheapest default workhorse
+
+export function modelCostOf(id: string): number {
+  return poolModelOf(id)?.costPerTask ?? 1;
+}
+
 export const TaskModelRouteSchema = z.object({
-  taskId: z.string().min(1),
-  taskTitle: z.string().max(120),
+  taskId: nullTo("", z.string().max(80)),
+  taskTitle: nullTo("", z.string().max(120)),
   options: z
     .array(
       z.object({
@@ -220,11 +288,11 @@ export const TaskModelRouteSchema = z.object({
       })
     )
     .min(1)
-    .max(2),
+    .max(4),
   selectedModel: z.enum(MODEL_IDS),
-  reason: z.string().max(300),
-  confidence: z.number().min(0).max(1),
-  tieBreakRequired: z.boolean(),
+  reason: nullTo("", z.string().max(300)),
+  confidence: nullTo(0.6, z.number().min(0).max(1)),
+  tieBreakRequired: nullTo(false, z.boolean()),
   humanChoice: z.string().max(40).nullish(),
 });
 export const RoutingPlanSchema = z.object({

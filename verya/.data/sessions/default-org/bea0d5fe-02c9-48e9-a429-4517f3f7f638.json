@@ -1,0 +1,323 @@
+{
+  "id": "bea0d5fe-02c9-48e9-a429-4517f3f7f638",
+  "createdAt": "2026-09-17T17:08:54.058Z",
+  "updatedAt": "2026-09-17T17:12:58.499Z",
+  "input": "Build an internal learning management system for a 200-person company. Features: employee onboarding courses with video lessons, quizzes with automatic grading, progress tracking dashboards for managers, certificate generation on completion, and an admin panel to author courses. Authentication via Google Workspace SSO. Should work on mobile. Reporting exports to Excel.",
+  "statedStack": "Next.js, Postgres, Prisma, Tailwind, Vercel",
+  "policy": "balanced",
+  "uploads": [],
+  "gate": "tasks",
+  "gateStatus": "awaiting_user",
+  "suitability": {
+    "suitable": true,
+    "confidence": 0.95,
+    "reason": "The workflow accurately covers all functional and non-functional requirements specified in the project description, including SSO authentication, video handling, course authoring, auto-graded quizzes, progress tracking, certificate generation, Excel export, and mobile responsiveness with realistic task dependencies.",
+    "suggestedWorkflow": null,
+    "suggestedSummary": null
+  },
+  "suggestedWorkflow": null,
+  "workflow": {
+    "title": "Internal Learning Management System",
+    "summary": "An internal learning management system designed for a 200-person company featuring Google Workspace SSO, course authoring, video lessons, automated quizzes, manager progress dashboards, certificate generation, mobile accessibility, and Excel reporting exports.",
+    "tasks": [
+      {
+        "id": "task-1",
+        "title": "Google Workspace SSO Integration",
+        "description": "Configure Google Workspace OAuth 2.0 authentication for secure employee sign-in.",
+        "category": "auth",
+        "dependsOn": [],
+        "complexity": "low",
+        "risk": "low"
+      },
+      {
+        "id": "task-2",
+        "title": "Data Model and Schema Design",
+        "description": "Design database schema for users, courses, modules, lessons, quizzes, progress, and certificates.",
+        "category": "database",
+        "dependsOn": [],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "task-3",
+        "title": "Course Authoring Backend API",
+        "description": "Build API endpoints for admins to create, update, publish, and structure course content and quizzes.",
+        "category": "backend",
+        "dependsOn": [
+          "task-2"
+        ],
+        "complexity": "medium",
+        "risk": "medium"
+      },
+      {
+        "id": "task-4",
+        "title": "Admin Course Authoring Interface",
+        "description": "Develop responsive admin web interface to author courses and upload lesson metadata.",
+        "category": "frontend",
+        "dependsOn": [
+          "task-3"
+        ],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "task-5",
+        "title": "Video Storage and Delivery Integration",
+        "description": "Integrate video storage and streaming services for onboarding course video playback.",
+        "category": "integration",
+        "dependsOn": [
+          "task-3"
+        ],
+        "complexity": "medium",
+        "risk": "medium"
+      },
+      {
+        "id": "task-6",
+        "title": "Quiz & Auto-Grading Engine",
+        "description": "Implement backend logic to evaluate quiz answers automatically and issue results.",
+        "category": "backend",
+        "dependsOn": [
+          "task-2"
+        ],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "task-7",
+        "title": "Employee Learning Interface",
+        "description": "Build mobile-responsive interface for employees to view courses, watch videos, and submit quizzes.",
+        "category": "frontend",
+        "dependsOn": [
+          "task-4",
+          "task-5",
+          "task-6"
+        ],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "task-8",
+        "title": "Progress Tracking & Manager Analytics Backend",
+        "description": "Create API endpoints to calculate course progress and aggregate team performance data.",
+        "category": "backend",
+        "dependsOn": [
+          "task-2"
+        ],
+        "complexity": "low",
+        "risk": "low"
+      },
+      {
+        "id": "task-9",
+        "title": "Manager Progress Dashboard UI",
+        "description": "Build responsive dashboard for managers to monitor direct report completion status and scores.",
+        "category": "frontend",
+        "dependsOn": [
+          "task-8"
+        ],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "task-10",
+        "title": "Automated Certificate Generator",
+        "description": "Create service to generate downloadable PDF certificates upon course completion.",
+        "category": "backend",
+        "dependsOn": [
+          "task-2"
+        ],
+        "complexity": "low",
+        "risk": "low"
+      },
+      {
+        "id": "task-11",
+        "title": "Excel Report Exporter",
+        "description": "Develop backend export utility to generate downloadable Excel reports on employee metrics.",
+        "category": "backend",
+        "dependsOn": [
+          "task-8"
+        ],
+        "complexity": "low",
+        "risk": "low"
+      },
+      {
+        "id": "task-12",
+        "title": "Mobile Layout Optimization",
+        "description": "Ensure all employee and manager web views function cleanly across mobile devices.",
+        "category": "frontend",
+        "dependsOn": [
+          "task-7",
+          "task-9"
+        ],
+        "complexity": "low",
+        "risk": "low"
+      }
+    ],
+    "ambiguities": [
+      "[\"Preferred video hosting and streaming infrastructure (e.g.",
+      "AWS S3/CloudFront vs. Vimeo/YouTube).",
+      "How manager-employee reporting relationships are determined (e.g.",
+      "Google Workspace Org API vs. internal setting).",
+      "Quiz retake policies",
+      "passing thresholds",
+      "and time limit rules.",
+      "Certificate template layout and branding specifications.\"]"
+    ]
+  },
+  "flawReport": {
+    "flaws": [
+      {
+        "id": "f1",
+        "title": "Missing Role-Based Access Control (RBAC)",
+        "category": "security",
+        "severity": "critical",
+        "description": "Google Workspace SSO authenticates identity, but no RBAC middleware or user role management is specified. Any authenticated user could potentially access admin course authoring APIs or manager analytics.",
+        "suggestedFix": "Implement RBAC middleware validating user roles (Admin, Manager, Employee) or Google Workspace group memberships on all backend endpoints.",
+        "relatedTaskIds": [
+          "task-1",
+          "task-3",
+          "task-8"
+        ]
+      },
+      {
+        "id": "f2",
+        "title": "Missing Manager-Employee Hierarchy Mapping",
+        "category": "logic",
+        "severity": "high",
+        "description": "Manager progress dashboards depend on direct report mapping, but there is no database structure or API integration to import/maintain managerial hierarchy.",
+        "suggestedFix": "Update schema in task-2 and build sync mechanisms with Google Workspace Directory API or internal org chart administration.",
+        "relatedTaskIds": [
+          "task-2",
+          "task-8",
+          "task-9"
+        ]
+      },
+      {
+        "id": "f3",
+        "title": "Unprotected Video Storage and Access Control",
+        "category": "security",
+        "severity": "medium",
+        "description": "Video storage integration lacks authorization controls such as signed URLs, exposing video asset URLs to hotlinking or unauthorized sharing.",
+        "suggestedFix": "Utilize presigned URLs or signed cookie streaming delivery restricted to active authenticated sessions.",
+        "relatedTaskIds": [
+          "task-5",
+          "task-7"
+        ]
+      },
+      {
+        "id": "f4",
+        "title": "Undefined Quiz Integrity Rules and Completion Triggers",
+        "category": "logic",
+        "severity": "medium",
+        "description": "The quiz engine automatically grades answers but lacks defined passing scores, retake policies, time limits, or completion validation prior to certificate generation.",
+        "suggestedFix": "Define passing thresholds and attempt rules in task-6, enforcing validation checks before triggering task-10 certificate issuing.",
+        "relatedTaskIds": [
+          "task-6",
+          "task-10"
+        ]
+      },
+      {
+        "id": "f5",
+        "title": "Missing Non-Functional Requirements (Audit Logging & Backups)",
+        "category": "nonfunctional",
+        "severity": "medium",
+        "description": "No provisions are made for compliance audit logging of course completions, system logging, or database backup and disaster recovery procedures.",
+        "suggestedFix": "Add structured audit logging for course completions and quiz attempts, along with automated database backups.",
+        "relatedTaskIds": [
+          "task-2",
+          "task-3",
+          "task-6"
+        ]
+      }
+    ],
+    "overallRisk": "high",
+    "summary": "The workflow covers core user functionality but contains critical gaps, including missing RBAC authorization, unmapped organizational hierarchy for manager views, unsecured video delivery, incomplete quiz policy enforcement, and lack of operational audit logging."
+  },
+  "flawResolutions": [
+    {
+      "flawId": "f1",
+      "decision": "accepted"
+    },
+    {
+      "flawId": "f2",
+      "decision": "accepted"
+    },
+    {
+      "flawId": "f3",
+      "decision": "accepted"
+    },
+    {
+      "flawId": "f4",
+      "decision": "accepted"
+    },
+    {
+      "flawId": "f5",
+      "decision": "accepted"
+    }
+  ],
+  "stackGate": {
+    "provided": true,
+    "validation": {
+      "verdict": "fit",
+      "notes": [
+        "The chosen stack (Next.js",
+        "Postgres",
+        "Prisma",
+        "Tailwind",
+        "Vercel) is an excellent fit for a 200-person internal LMS. Next.js API routes can easily handle the quiz engine",
+        "progress tracking",
+        "and reporting. To ensure smooth implementation",
+        "consider the following: 1) Video Hosting: Do not store or stream videos directly from Vercel or Postgres. Integrate a dedicated service like Mux",
+        "Cloudflare Stream",
+        "or AWS S3/CloudFront. 2) Authentication: Use NextAuth.js (Auth.js) for seamless Google Workspace SSO integration. 3) Certificate Generation: Use lightweight libraries like 'pdf-lib' or '@react-pdf/renderer' inside Next.js API routes to avoid serverless bundle size limits on Vercel (avoid heavy Puppeteer setups if possible). 4) Excel Export: Use 'exceljs' or 'xlsx' in serverless functions",
+        "which will easily handle reports for a 200-person scale."
+      ],
+      "changes": []
+    },
+    "candidates": [
+      {
+        "proposal": {
+          "name": "Your stack",
+          "components": [
+            {
+              "layer": "frontend",
+              "choice": "Next.js",
+              "rationale": ""
+            },
+            {
+              "layer": "backend",
+              "choice": "Postgres",
+              "rationale": ""
+            },
+            {
+              "layer": "database",
+              "choice": "Prisma",
+              "rationale": ""
+            },
+            {
+              "layer": "cache",
+              "choice": "Tailwind",
+              "rationale": ""
+            },
+            {
+              "layer": "auth",
+              "choice": "Vercel",
+              "rationale": ""
+            }
+          ],
+          "summary": "Validated as provided.",
+          "confidence": 0.9
+        },
+        "confidence": 0.9,
+        "reason": "User-provided stack."
+      }
+    ],
+    "selected": "Your stack",
+    "tieBreakRequired": false
+  },
+  "algorithms": null,
+  "routing": null,
+  "executions": [],
+  "humanFeedback": {
+    "ratings": {}
+  }
+}

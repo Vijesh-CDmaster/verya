@@ -10,7 +10,8 @@ import type {
   StackValidation,
   Workflow,
 } from "./types";
-import { needsTieBreak, CHEAP_MODEL_ID, STRONG_MODEL_ID } from "./types";
+import type { AlgorithmPlan, RoutingPlan, TaskModelRoute } from "./types";
+import { needsTieBreak, CHEAP_MODEL_ID, STRONG_MODEL_ID, MODEL_IDS, modelCostOf } from "./types";
 import type { StageAdapters } from "./provider";
 import { recordToLedger } from "../store/ledger";
 
@@ -40,6 +41,29 @@ export async function processGate(
   }
 }
 
+// Deterministic repair for the understanding stage: models sometimes omit ids/titles or
+// emit invalid enums — align positionally against N instead of failing the whole gate.
+function repairWorkflow(wf: Workflow): void {
+  wf.tasks = wf.tasks.slice(0, 20);
+  wf.tasks.forEach((t, i) => {
+    if (!t.id) t.id = `t${i + 1}`;
+    if (!t.title) t.title = `Task ${i + 1}`;
+    if (!wf.tasks.some((o) => o.id === t.id && o !== t)) return;
+  });
+  // de-duplicate ids defensively
+  const seen = new Set<string>();
+  for (const t of wf.tasks) {
+    let id = t.id;
+    while (seen.has(id)) id = `${id}-x`;
+    t.id = id;
+    seen.add(id);
+  }
+  // dependencies must reference surviving ids
+  for (const t of wf.tasks) {
+    t.dependsOn = (t.dependsOn ?? []).filter((d) => seen.has(d) && d !== t.id);
+  }
+}
+
 // ---------- Gate 1: Suitability ----------
 async function runSuitability(
   session: PipelineSession,
@@ -47,6 +71,7 @@ async function runSuitability(
 ): Promise<PipelineSession> {
   session.gateStatus = "running";
   const workflow: Workflow = await adapters.understand(session.input);
+  repairWorkflow(workflow);
   const suitability = await adapters.checkSuitability({ raw: session.input, workflow });
 
   session.suitability = suitability;
@@ -198,6 +223,7 @@ async function runAlgorithms(
     workflow: session.workflow!,
     stack: stackTextOf(session),
   });
+  repairAlgorithmPlan(plan, session.workflow!.tasks);
   session.algorithms = plan;
   session.gateStatus = "awaiting_user";
   const ties = plan.tasks.filter((t) => t.tieBreakRequired).length;
@@ -227,6 +253,7 @@ async function runRouting(
     algorithmPlan: session.algorithms!,
     stack: stackTextOf(session),
   });
+  repairRoutingPlan(plan, session.algorithms!.tasks);
 
   // F7: apply the org routing policy on top of the router's raw ranking.
   // lowest_cost → flash unless pro is clearly safer; highest_accuracy → pro unless
@@ -236,22 +263,23 @@ async function runRouting(
   const strong = STRONG_MODEL_ID;
   for (const route of plan.routes) {
     if (plan.policy === "lowest_cost" && route.selectedModel !== cheap) {
-      const proConf = route.options.find((o) => o.model === strong)?.confidence ?? route.confidence;
-      if (proConf - (route.options.find((o) => o.model === cheap)?.confidence ?? 0) < 0.25) {
+      const cheapConf = route.options.find((o) => o.model === cheap)?.confidence ?? 0.6;
+      const chosenConf = route.options.find((o) => o.model === route.selectedModel)?.confidence ?? route.confidence;
+      if (chosenConf - cheapConf < 0.25) {
         route.selectedModel = cheap;
         route.reason = `Policy lowest_cost: downgraded to ${cheap} (accuracy delta small). ${route.reason}`;
       }
     }
     if (plan.policy === "highest_accuracy" && route.selectedModel !== strong) {
-      route.selectedModel = strong;
-      route.reason = `Policy highest_accuracy: upgraded to ${strong}. ${route.reason}`;
+      const strongConf = route.options.find((o) => o.model === strong)?.confidence ?? 0.7;
+      if (strongConf >= 0.6) {
+        route.selectedModel = strong;
+        route.reason = `Policy highest_accuracy: upgraded to ${strong}. ${route.reason}`;
+      }
     }
   }
   plan.estimatedCostUsd =
-    plan.routes.reduce(
-      (s, r) => s + (r.selectedModel === strong ? 4 : 1),
-      0
-    ) / Math.max(plan.routes.length, 1);
+    plan.routes.reduce((s, r) => s + modelCostOf(r.selectedModel), 0) / Math.max(plan.routes.length, 1);
 
   session.routing = plan;
   session.gateStatus = "awaiting_user";
@@ -272,6 +300,83 @@ async function runRouting(
     },
   });
   return session;
+}
+
+// Deterministic repair: align plan rows to the real workflow tasks positionally, fix
+// invalid selected models, and force tie-breaks only where the decision rule demands.
+function repairAlgorithmPlan(
+  plan: AlgorithmPlan,
+  tasks: { id?: string; title?: string }[]
+): void {
+  const byId = new Map(tasks.map((t) => [t.id ?? "", t]));
+  plan.tasks = plan.tasks.slice(0, tasks.length);
+  for (let i = 0; i < plan.tasks.length; i++) {
+    const row = plan.tasks[i];
+    const known = byId.get(row.taskId);
+    if (!known && row.taskId) continue; // real id, just not one of ours — leave it
+    const task = known ?? tasks[i];
+    if (!task) continue;
+    row.taskId = task.id ?? `t${i + 1}`;
+    if (!row.taskTitle) row.taskTitle = (task.title ?? `Task ${i + 1}`).slice(0, 120);
+    if (!row.selected) row.selected = [...row.options].sort((a, b) => b.confidence - a.confidence)[0].name;
+  }
+  // Fill any tasks the model skipped, with a deterministic single-option row.
+  for (const t of tasks) {
+    const tid = t.id ?? "";
+    if (!plan.tasks.some((row) => row.taskId === tid)) {
+      plan.tasks.push({
+        taskId: tid,
+        taskTitle: (t.title ?? tid).slice(0, 120),
+        options: [{ name: "direct implementation", approach: "Straightforward build within the stack.", pros: ["simple"], cons: [], confidence: 0.75 }],
+        selected: "direct implementation",
+        tieBreakRequired: false,
+        tieBreakReason: "",
+      });
+    }
+  }
+}
+
+function repairRoutingPlan(
+  plan: RoutingPlan,
+  algos: { taskId?: string; taskTitle?: string }[]
+): void {
+  const validIds = new Set(MODEL_IDS);
+  plan.routes = plan.routes.slice(0, algos.length);
+  for (let i = 0; i < plan.routes.length; i++) {
+    const row = plan.routes[i];
+    const known = algos.find((a) => a.taskId === row.taskId);
+    const task = known ?? algos[i];
+    if (!task) continue;
+    row.taskId = task.taskId ?? "";
+    if (!row.taskTitle) row.taskTitle = (task.taskTitle ?? "").slice(0, 120);
+    if (!validIds.has(row.selectedModel)) {
+      row.selectedModel = (row.options.find((o) => validIds.has(o.model))?.model ?? CHEAP_MODEL_ID) as TaskModelRoute["selectedModel"];
+    }
+    for (const o of row.options) {
+      if (!validIds.has(o.model)) o.model = row.selectedModel;
+    }
+  }
+  for (const a of algos) {
+    const aid = a.taskId ?? "";
+    const atitle = a.taskTitle ?? "";
+    if (!plan.routes.some((row) => row.taskId === aid)) {
+      plan.routes.push({
+        taskId: aid,
+        taskTitle: atitle.slice(0, 120),
+        options: [{ model: CHEAP_MODEL_ID, confidence: 0.7, estimatedCost: 1, estimatedLatencyMs: 2000, qualifiesBecause: "Fast default workhorse." }],
+        selectedModel: CHEAP_MODEL_ID,
+        reason: "Default route (router omitted this task).",
+        confidence: 0.7,
+        tieBreakRequired: false,
+      });
+    }
+  }
+  // Universal decision rule (F8): a row is a tie ONLY if its own options are close.
+  for (const row of plan.routes) {
+    const top = [...row.options].sort((a, b) => b.confidence - a.confidence);
+    const gap = top.length > 1 ? top[0].confidence - top[1].confidence : 1;
+    row.tieBreakRequired = top[0].confidence < 0.72 || gap < 0.12;
+  }
 }
 
 export function stackTextOf(session: PipelineSession): string {

@@ -72,18 +72,29 @@ For each task return 2-3 candidate approaches with pros/cons and confidence in [
   the auto-select bar. When evidence clearly favors one, set it false.
 - Keep "selected" the top-confidence option when tieBreakRequired=false.`;
 
-export const ROUTING_SYSTEM = `You are Verya's Smart Task Router.
-For each task, choose the executing AI model from exactly: "gemini-3.1-pro-preview" (deep
-reasoning, complex logic, architecture-heavy) and "gemini-3.6-flash" (fast, high-volume,
-templated work: CRUD scaffolding, forms, styling).
-For each task give 1-2 options with: confidence in [0,1], estimatedCost (relative units:
-flash=1, pro=4), estimatedLatencyMs (flash≈4000, pro≈12000), qualifiesBecause (why this model
-qualifies for THIS task type: strength, cost, speed).
+export const ROUTING_SYSTEM = `You are Verya's Smart Task Router over a MULTI-PROVIDER pool
+(Gemini, Groq, Mistral, OpenRouter). Choose the executing model per task from EXACTLY these ids:
+- "gemini-3.6-flash" — balanced quality/speed; solid at frontend, backend, database, auth
+- "gemini-3.1-pro-preview" — strongest deep reasoning (strong tier); complex architecture, database design, devops
+- "openai/gpt-oss-120b" — strong general + AI/integration work (Groq, very fast)
+- "openai/gpt-oss-20b" — fastest tier; templated frontend work, simple CRUD, forms
+- "qwen/qwen3.8-27b" — AI/ML-flavored tasks, general purpose
+- "codestral-latest" — dedicated code generation (frontend + backend)
+- "magistral-medium-latest" — strong reasoning (auth flows, database design)
+- "mistral-medium-latest" — integration, devops, glue work
+- "ministral-8b-latest" — fastest small model; light frontend/other tasks
+- "z-ai/glm-5.2:free" — FREE tier; solid general code (frontend/backend/database)
+- "google/gemma-4-31b-it:free" — FREE tier; light frontend/other
+- "nvidia/nemotron-3-super-120b-a12b:free" — FREE tier; backend/AI reasoning
+Match the task category and complexity: simple/low-risk → fast or free tier; complex/high-risk →
+strong tier. For each task give 1-4 options with: confidence in [0,1], estimatedCost (relative
+units: free=0, fast/standard=1, magistral=2, pro-class=4), estimatedLatencyMs (fast≈1500,
+standard≈4000, strong≈12000; Groq models are notably faster than listed), qualifiesBecause
+(why THIS model fits THIS task: specialty, cost, speed).
 - selectedModel = your pick; reason must explain why in plain language.
-- tieBreakRequired=true ONLY when genuinely close (near-equal fit, top confidence below the
-  auto-select bar).
-- policy: "balanced" unless told otherwise. estimatedCostUsd: sum of per-task estimated costs
-  normalized so a flash-only plan ≈ 1.
+- tieBreakRequired=true ONLY when two options are genuinely close AND top confidence is below
+  the auto-select bar. When evidence clearly favors one, set it false.
+- policy: "balanced" unless told otherwise. estimatedCostUsd: average per-task cost across routes.
 - notes: 1-2 sentences on the routing strategy.`;
 
 export const EXECUTION_SYSTEM = `You are Verya's Execution engine.

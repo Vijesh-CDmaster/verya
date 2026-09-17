@@ -1,0 +1,47 @@
+
+> verya-app@0.1.0 dev
+> next dev --turbopack -p 3100
+
+   ▲ Next.js 15.5.25 (Turbopack)
+   - Local:        http://localhost:3100
+   - Network:      http://10.255.154.92:3100
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.2s
+ ○ Compiling / ...
+ ✓ Compiled / in 4.3s
+ GET / 200 in 5092ms
+ GET / 200 in 278ms
+   Reload env: .env.local
+ GET / 200 in 1461ms
+ GET / 200 in 313ms
+ GET / 200 in 350ms
+ ✓ Compiled /dashboard in 494ms
+ GET /dashboard 200 in 765ms
+ ✓ Compiled /api/dashboard in 358ms
+ GET /api/dashboard 200 in 940ms
+ GET / 200 in 370ms
+ ○ Compiling /api/pipeline ...
+ ✓ Compiled /api/pipeline in 2.4s
+ POST /api/pipeline 200 in 27189ms
+ ✓ Compiled /api/pipeline/[id]/action in 346ms
+ POST /api/pipeline/bea0d5fe-02c9-48e9-a429-4517f3f7f638/action 200 in 118929ms
+ POST /api/pipeline/bea0d5fe-02c9-48e9-a429-4517f3f7f638/action 200 in 59361ms
+ POST /api/pipeline/bea0d5fe-02c9-48e9-a429-4517f3f7f638/action 200 in 280004ms
+ GET /api/pipeline?id=bea0d5fe-02c9-48e9-a429-4517f3f7f638 400 in 460ms
+ ○ Compiling /_not-found/page ...
+ ✓ Compiled /_not-found/page in 529ms
+ GET /api/pipeline/bea0d5fe-02c9-48e9-a429-4517f3f7f638 404 in 814ms
+ POST /api/pipeline/bea0d5fe-02c9-48e9-a429-4517f3f7f638/action 500 in 159159ms
+ POST /api/pipeline/bea0d5fe-02c9-48e9-a429-4517f3f7f638/action 500 in 147388ms
+ GET / 200 in 333ms
+ GET / 200 in 242ms
+ GET / 200 in 574ms
+ ✓ Compiled /favicon.ico in 392ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 801ms
+ ✓ Compiled /api/diag in 297ms
+ ✓ Compiled /api/pipeline/upload in 315ms
+ POST /api/pipeline/upload 200 in 92642ms
+ GET /api/diag 200 in 110446ms
+ POST /api/pipeline 200 in 17656ms

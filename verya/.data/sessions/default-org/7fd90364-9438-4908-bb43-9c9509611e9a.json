@@ -1,0 +1,23 @@
+{
+  "id": "7fd90364-9438-4908-bb43-9c9509611e9a",
+  "createdAt": "2026-09-17T17:33:51.866Z",
+  "updatedAt": "2026-09-17T17:33:51.868Z",
+  "input": "Build an internal learning management system for a 200-person company. Features: employee onboarding courses with video lessons, quizzes with automatic grading, progress tracking dashboards for managers, certificate generation on completion, and an admin panel to author courses. Authentication via Google Workspace SSO. Should work on mobile. Reporting exports to Excel.",
+  "statedStack": "Next.js, Postgres, Prisma, Tailwind, Vercel",
+  "policy": "balanced",
+  "uploads": [],
+  "gate": "intake",
+  "gateStatus": "pending",
+  "suitability": null,
+  "suggestedWorkflow": null,
+  "workflow": null,
+  "flawReport": null,
+  "flawResolutions": [],
+  "stackGate": null,
+  "algorithms": null,
+  "routing": null,
+  "executions": [],
+  "humanFeedback": {
+    "ratings": {}
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "id": "9be6f2ce-ed5c-4dfe-9b7d-48c35603e9aa",
+  "createdAt": "2026-09-17T17:29:11.559Z",
+  "updatedAt": "2026-09-17T17:30:43.498Z",
+  "input": "Build an e-commerce platform with authentication, product search, payments and order tracking.",
+  "statedStack": "",
+  "policy": "balanced",
+  "uploads": [],
+  "gate": "suitability",
+  "gateStatus": "awaiting_user",
+  "suitability": {
+    "suitable": true,
+    "confidence": 0.95,
+    "reason": "The workflow follows a logical progression from infrastructure to backend logic, then integration, and finally frontend implementation. The dependencies are correctly mapped to ensure data models and authentication are available before dependent features like payments and UI components are built.",
+    "suggestedWorkflow": null,
+    "suggestedSummary": null
+  },
+  "suggestedWorkflow": null,
+  "workflow": {
+    "title": "E-Commerce Platform",
+    "summary": "An e-commerce platform with user authentication, product search, payments, and order tracking.",
+    "tasks": [
+      {
+        "id": "1",
+        "title": "Set up project infrastructure and database schema",
+        "description": "Initialize the project repository, set up the backend framework, and design the database schema for users, products, orders, and payments.",
+        "category": "devops",
+        "dependsOn": [],
+        "complexity": "medium",
+        "risk": "medium"
+      },
+      {
+        "id": "2",
+        "title": "Implement user authentication",
+        "description": "Create endpoints for user registration, login, logout, and password reset. Use JWT or session-based auth.",
+        "category": "auth",
+        "dependsOn": [
+          "1"
+        ],
+        "complexity": "medium",
+        "risk": "medium"
+      },
+      {
+        "id": "3",
+        "title": "Build product catalog and management",
+        "description": "Create models and endpoints for adding, updating, and listing products with details like name, price, description, and stock.",
+        "category": "backend",
+        "dependsOn": [
+          "1"
+        ],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "4",
+        "title": "Implement product search functionality",
+        "description": "Add search and filtering capabilities for products by name, category, price range, etc.",
+        "category": "backend",
+        "dependsOn": [
+          "3"
+        ],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "5",
+        "title": "Develop shopping cart",
+        "description": "Create endpoints and logic for adding/removing items to/from a cart and calculating totals.",
+        "category": "backend",
+        "dependsOn": [
+          "3"
+        ],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "6",
+        "title": "Integrate payment gateway",
+        "description": "Integrate a third-party payment provider (e.g., Stripe) to process checkout payments securely.",
+        "category": "integration",
+        "dependsOn": [
+          "5",
+          "2"
+        ],
+        "complexity": "high",
+        "risk": "high"
+      },
+      {
+        "id": "7",
+        "title": "Implement order creation and tracking",
+        "description": "Create orders from cart contents after successful payment, and provide endpoints to track order status.",
+        "category": "backend",
+        "dependsOn": [
+          "6"
+        ],
+        "complexity": "high",
+        "risk": "medium"
+      },
+      {
+        "id": "8",
+        "title": "Build frontend storefront UI",
+        "description": "Develop the customer-facing web interface for browsing products, viewing details, and managing the cart.",
+        "category": "frontend",
+        "dependsOn": [
+          "4"
+        ],
+        "complexity": "high",
+        "risk": "low"
+      },
+      {
+        "id": "9",
+        "title": "Build checkout and order tracking UI",
+        "description": "Create frontend pages for the checkout flow, payment form, and order status tracking.",
+        "category": "frontend",
+        "dependsOn": [
+          "8",
+          "7"
+        ],
+        "complexity": "high",
+        "risk": "medium"
+      },
+      {
+        "id": "10",
+        "title": "Build admin dashboard",
+        "description": "Create an admin interface for managing products, viewing orders, and updating order statuses.",
+        "category": "frontend",
+        "dependsOn": [
+          "3",
+          "7"
+        ],
+        "complexity": "medium",
+        "risk": "low"
+      }
+    ],
+    "ambiguities": [
+      "Which payment provider should be used (e.g., Stripe, PayPal)?",
+      "What are the specific product attributes and categories needed?",
+      "Should there be an admin dashboard, and what features should it include?",
+      "What frontend framework or technology is preferred?",
+      "Are there specific requirements for user roles (e.g., admin vs. customer)?"
+    ]
+  },
+  "flawReport": null,
+  "flawResolutions": [],
+  "stackGate": null,
+  "algorithms": null,
+  "routing": null,
+  "executions": [],
+  "humanFeedback": {
+    "ratings": {}
+  }
+}

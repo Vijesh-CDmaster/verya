@@ -1,37 +1,11 @@
 
 > verya-app@0.1.0 dev
-> next dev --turbopack -p 3100
+> next dev --turbopack
 
    ▲ Next.js 15.5.25 (Turbopack)
-   - Local:        http://localhost:3100
-   - Network:      http://10.255.154.118:3100
+   - Local:        http://localhost:60839
+   - Network:      http://192.168.31.151:60839
    - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 1945ms
- ○ Compiling / ...
- ✓ Compiled / in 4.5s
- GET / 200 in 5505ms
- ○ Compiling /api/pipeline ...
- ✓ Compiled /api/pipeline in 1229ms
- POST /api/pipeline 500 in 27579ms
- POST /api/pipeline 500 in 139473ms
- POST /api/pipeline 500 in 98221ms
- POST /api/pipeline 500 in 97923ms
- POST /api/pipeline 500 in 85305ms
- POST /api/pipeline 500 in 38197ms
- POST /api/pipeline 500 in 24940ms
- POST /api/pipeline 500 in 67766ms
- POST /api/pipeline 500 in 715ms
- POST /api/pipeline 500 in 76175ms
- POST /api/pipeline 500 in 76584ms
- POST /api/pipeline 500 in 51820ms
- POST /api/pipeline 200 in 88216ms
- ○ Compiling /api/pipeline/[id]/action ...
- ✓ Compiled /api/pipeline/[id]/action in 564ms
- POST /api/pipeline/637d7ae5-7e97-4a45-b0e9-02d71c24dab2/action 500 in 36829ms
- POST /api/pipeline/637d7ae5-7e97-4a45-b0e9-02d71c24dab2/action 200 in 46021ms
- POST /api/pipeline/637d7ae5-7e97-4a45-b0e9-02d71c24dab2/action 500 in 40420ms
- POST /api/pipeline/637d7ae5-7e97-4a45-b0e9-02d71c24dab2/action 200 in 49460ms
- POST /api/pipeline/637d7ae5-7e97-4a45-b0e9-02d71c24dab2/action 200 in 55519ms
-   Reload env: .env.local
+ ✓ Ready in 5.9s
