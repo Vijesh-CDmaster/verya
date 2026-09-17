@@ -1,0 +1,21 @@
+{
+  "id": "c1996329-0d8b-4705-904b-46b3afce25ce",
+  "createdAt": "2026-09-17T07:57:27.276Z",
+  "updatedAt": "2026-09-17T07:57:27.280Z",
+  "input": "Build a small e-commerce platform with user authentication, a product catalog, search, a cart, and checkout with payments and order tracking for about 2000 users.",
+  "statedStack": "",
+  "gate": "intake",
+  "gateStatus": "pending",
+  "suitability": null,
+  "suggestedWorkflow": null,
+  "workflow": null,
+  "flawReport": null,
+  "flawResolutions": [],
+  "stackGate": null,
+  "algorithms": null,
+  "routing": null,
+  "executions": [],
+  "humanFeedback": {
+    "ratings": {}
+  }
+}

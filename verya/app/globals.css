@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+/* Verya design tokens — ported from the base UI (index.html) */
+:root {
+  --bg: #ffffff;
+  --surface: #f9f9f9;
+  --fg: #000000;
+  --muted: #666666;
+  --line: #e0e0e0;
+  --primary: #000000;
+  --on-primary: #ffffff;
+  --success: #10b981;
+  --warn: #f59e0b;
+  --danger: #ef4444;
+}
+
+html.dark {
+  --bg: #0b1020;
+  --surface: #151d31;
+  --fg: #f5f7fb;
+  --muted: #aab6ca;
+  --line: #2b3853;
+  --primary: #f5f7fb;
+  --on-primary: #0b1020;
+  --success: #34d399;
+  --warn: #fbbf24;
+  --danger: #f87171;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-success: var(--success);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  transition: background 0.35s ease, color 0.35s ease;
+}
+
+::selection {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* Focus visibility for interactive elements (kept from base UI) */
+:where(button, a, input, textarea):focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes pulseSoft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.pulse-soft {
+  animation: pulseSoft 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up,
+  .pulse-soft {
+    animation: none;
+  }
+}
