@@ -2,7 +2,7 @@
 // Each row's chain_hash = SHA-256(prev_hash || canonical payload). Normal application
 // flow only ever INSERTs; corrections are new rows referencing the original.
 import { createHash } from "crypto";
-import { query, requireDb } from "../db/pool";
+import { query, requireDb, pool } from "../db/pool";
 
 export type LedgerInput = {
   orgId: string;
@@ -43,7 +43,7 @@ function canonical(entry: LedgerInput, prevHash: string, ts: string): string {
 
 export async function recordToLedger(input: LedgerInput): Promise<LedgerEntry> {
   requireDb();
-  const client = await (await import("../db/pool")).pool.connect();
+  const client = await pool.connect();
   try {
     // Serialize appends per org so the chain has no forks under concurrency.
     await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [input.orgId]);

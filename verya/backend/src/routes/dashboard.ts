@@ -1,0 +1,68 @@
+// Dashboard REST routes — everything the /dashboard view renders (F22), all real data.
+import type { FastifyInstance } from "fastify";
+import { listLedger, ledgerAnalytics, verifyLedger } from "../services/ledger";
+import { leaderboard, skillHeatmap } from "../services/reputation";
+import { findSimilar, exportOrgMemory, deleteOrgMemory } from "../services/memory";
+import { listPipelines } from "../services/pipeline";
+import { isDbConfigured } from "../db/pool";
+import { queueHealth } from "../jobs/queues";
+import type { VeryaRequest } from "../app";
+
+export default async function dashboardRoutes(app: FastifyInstance): Promise<void> {
+  app.get("/dashboard", async (req: VeryaRequest) => {
+    if (!isDbConfigured()) {
+      return { dbConfigured: false, queue: await queueHealth() };
+    }
+    const orgId = req.auth.orgId;
+    const [records, reputation, heatmap, analytics, sessions, chain] = await Promise.all([
+      listLedger({ orgId, limit: 60 }),
+      leaderboard(orgId),
+      skillHeatmap(orgId),
+      ledgerAnalytics(orgId),
+      listPipelines(20),
+      verifyLedger(orgId),
+    ]);
+    const reviewQueue = records.filter(
+      (r) =>
+        (r.gate === "execution" && r.detail && (r.detail as { summary?: string }).summary?.includes("flagged")) ||
+        r.eventType === "task_failed" ||
+        (r.detail as { summary?: string })?.summary?.includes("escalated")
+    );
+    return {
+      dbConfigured: true,
+      queue: await queueHealth(),
+      analytics,
+      reputation,
+      heatmap,
+      sessions,
+      chain,
+      reviewQueue: reviewQueue.slice(0, 20),
+      records,
+    };
+  });
+
+  // Semantic search over org memory (pgvector).
+  app.get("/memory/search", async (req: VeryaRequest) => {
+    const q = req.query as Record<string, string | undefined>;
+    if (!q.q) return { results: [] };
+    const results = await findSimilar({
+      orgId: req.auth.orgId,
+      taskCategory: q.category ?? "other",
+      query: q.q,
+      limit: 5,
+    });
+    return { results };
+  });
+
+  app.get("/memory/export", async (req: VeryaRequest, reply) => {
+    const rows = await exportOrgMemory(req.auth.orgId);
+    reply.header("Content-Type", "application/json");
+    reply.header("Content-Disposition", `attachment; filename="org-memory-export.json"`);
+    return rows;
+  });
+
+  app.delete("/memory", async (req: VeryaRequest) => {
+    const deleted = await deleteOrgMemory(req.auth.orgId);
+    return { deleted };
+  });
+}

@@ -46,3 +46,54 @@
  GET /api/diag 200 in 110446ms
  POST /api/pipeline 200 in 17656ms
  POST /api/pipeline/9be6f2ce-ed5c-4dfe-9b7d-48c35603e9aa/action 200 in 5291ms
+ ✓ Compiled in 84ms
+ ✓ Compiled in 71ms
+ ✓ Compiled in 70ms
+ ✓ Compiled in 67ms
+ ✓ Compiled in 63ms
+ ✓ Compiled in 57ms
+ ✓ Compiled in 61ms
+ ✓ Compiled in 138ms
+ ✓ Compiled in 1141ms
+ ✓ Compiled / in 387ms
+ GET / 200 in 1149ms
+ GET / 200 in 1200ms
+ GET / 200 in 1172ms
+ GET / 200 in 1101ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 456ms
+ ✓ Compiled in 65ms
+ ✓ Compiled in 79ms
+ ✓ Compiled in 70ms
+ ✓ Compiled in 63ms
+ ✓ Compiled in 73ms
+ ✓ Compiled in 66ms
+ ✓ Compiled in 77ms
+ ✓ Compiled in 253ms
+ ✓ Compiled in 538ms
+ ✓ Compiled / in 196ms
+ GET / 200 in 560ms
+ GET / 200 in 570ms
+ ✓ Compiled /_not-found/page in 242ms
+ GET /health 404 in 710ms
+ GET /health 404 in 619ms
+ ✓ Compiled in 125ms
+ GET /health 404 in 262ms
+ GET /health 404 in 246ms
+ ✓ Compiled in 1433ms
+ GET / 200 in 308ms
+ GET / 200 in 315ms
+   ▲ Next.js 15.5.25 (Turbopack)
+   - Local:        http://localhost:3100
+   - Network:      http://192.168.31.96:3100
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.2s
+ ○ Compiling / ...
+ ✓ Compiled / in 7.2s
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 1754ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 1558ms
+ ✓ Compiled /favicon.ico in 314ms
+[?25h

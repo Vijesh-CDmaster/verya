@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,10 +31,10 @@ export default function RootLayout({
       >
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('verya-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}`,
+            __html: `try{var t=localStorage.getItem('verya-ui');if(t){var s=JSON.parse(t);var th=(s&&s.state&&s.state.theme)||'dark';if(th==='dark'){document.documentElement.classList.add('dark')}}else if(window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark')}}catch(e){}`,
           }}
         />
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

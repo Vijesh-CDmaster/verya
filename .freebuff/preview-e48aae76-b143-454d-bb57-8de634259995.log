@@ -1,11 +1,18 @@
 
 > verya-app@0.1.0 dev
-> next dev --turbopack
+> next dev --turbopack -p 3100
 
    ▲ Next.js 15.5.25 (Turbopack)
-   - Local:        http://localhost:60839
-   - Network:      http://192.168.31.151:60839
+   - Local:        http://localhost:3100
+   - Network:      http://192.168.31.96:3100
    - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 5.9s
+ ✓ Ready in 1677ms
+ ○ Compiling / ...
+ ✓ Compiled / in 3.1s
+ GET / 200 in 3857ms
+ GET / 200 in 285ms
+ GET / 200 in 316ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 1209ms

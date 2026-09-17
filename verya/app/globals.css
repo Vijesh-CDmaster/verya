@@ -40,6 +40,14 @@ html.dark {
   --color-danger: var(--danger);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* shadcn/ui compatibility tokens mapped onto the Verya palette */
+  --color-card: var(--surface);
+  --color-elev: var(--surface);
+  --color-hover: color-mix(in srgb, var(--fg) 6%, transparent);
+  --color-accent: var(--primary);
+  --color-accent-fg: var(--on-primary);
+  --color-accent-hover: color-mix(in srgb, var(--fg) 88%, var(--bg));
 }
 
 body {

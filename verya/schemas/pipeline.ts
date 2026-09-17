@@ -1,0 +1,110 @@
+import { z } from "zod";
+
+/**
+ * Shared frontend schemas — mirror the backend's contract.
+ * The authoritative definitions live in backend/src/schemas/pipeline.ts;
+ * these power React Hook Form + client-side validation without importing server code.
+ */
+
+export const RoutingPolicySchema = z.enum(["lowest_cost", "highest_accuracy", "balanced"]);
+export type RoutingPolicy = z.infer<typeof RoutingPolicySchema>;
+
+export const StartRequestSchema = z.object({
+  input: z.string().min(20, "Describe your project in at least 20 characters").max(20000),
+  statedStack: z.string().max(2000).default(""),
+  policy: RoutingPolicySchema.default("balanced"),
+});
+export type StartRequest = z.infer<typeof StartRequestSchema>;
+
+export const IntakeFormSchema = z.object({
+  input: StartRequestSchema.shape.input,
+  hasStack: z.boolean(),
+  statedStack: z.string().max(2000),
+  policy: RoutingPolicySchema,
+});
+export type IntakeFormValues = z.infer<typeof IntakeFormSchema>;
+
+// ---- Session shape (subset the UI renders; backend remains authoritative) ----
+export const SeveritySchema = z.enum(["critical", "high", "medium", "low"]);
+export type Severity = z.infer<typeof SeveritySchema>;
+
+export const GateIdSchema = z.enum([
+  "intake",
+  "suitability",
+  "flaws",
+  "stack",
+  "tasks",
+  "algorithms",
+  "models",
+  "execution",
+  "review",
+]);
+export type GateId = z.infer<typeof GateIdSchema>;
+
+export const GateStatusSchema = z.enum(["pending", "running", "awaiting_user", "cleared", "failed"]);
+export type GateStatus = z.infer<typeof GateStatusSchema>;
+
+export const SessionSchema = z.object({
+  id: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  input: z.string(),
+  statedStack: z.string(),
+  policy: RoutingPolicySchema,
+  uploads: z.array(z.object({ name: z.string(), chars: z.number() })).default([]),
+  gate: GateIdSchema,
+  gateStatus: GateStatusSchema,
+  suitability: z
+    .object({
+      suitable: z.boolean(),
+      confidence: z.number(),
+      reason: z.string(),
+      suggestedWorkflow: z.string().nullish(),
+      suggestedSummary: z.string().nullish(),
+    })
+    .nullish(),
+  suggestedWorkflow: z.unknown().nullish(),
+  workflow: z
+    .object({
+      title: z.string(),
+      summary: z.string(),
+      tasks: z.array(
+        z.object({
+          id: z.string(),
+          title: z.string(),
+          description: z.string().default(""),
+          category: z.string(),
+          dependsOn: z.array(z.string()).default([]),
+          complexity: z.enum(["low", "medium", "high"]).default("medium"),
+          risk: z.enum(["low", "medium", "high"]).default("medium"),
+        })
+      ),
+    })
+    .nullish(),
+  flawReport: z
+    .object({
+      summary: z.string(),
+      overallRisk: SeveritySchema,
+      flaws: z.array(
+        z.object({
+          id: z.string(),
+          title: z.string(),
+          category: z.string(),
+          severity: SeveritySchema,
+          description: z.string(),
+          suggestedFix: z.string(),
+          relatedTaskIds: z.array(z.string()).default([]),
+        })
+      ),
+    })
+    .nullish(),
+  flawResolutions: z
+    .array(z.object({ flawId: z.string(), decision: z.enum(["accepted", "rejected", "edited"]), editedFix: z.string().optional() }))
+    .default([]),
+  stackGate: z.unknown().nullish(),
+  algorithms: z.unknown().nullish(),
+  routing: z.unknown().nullish(),
+  executions: z.array(z.unknown()).default([]),
+  humanFeedback: z.object({ ratings: z.record(z.string(), z.unknown()) }).default({ ratings: {} }),
+});
+export type Session = z.infer<typeof SessionSchema>;

@@ -1,0 +1,1067 @@
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/page.tsx:3:1
+Module not found: Can't resolve '@/components/intake/IntakeIsland'
+[0m [90m 1 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mIntakeIsland[39m } [36mfrom[39m [32m"@/components/intake/IntakeIsland"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mHome[39m() {
+ [90m 6 |[39m   [36mreturn[39m ([0m
+
+Import map: aliased to relative './components/intake/IntakeIsland' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/dashboard/page.tsx:4:1
+Module not found: Can't resolve '@/components/dashboard/DashboardView'
+[0m [90m 2 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mDashboardView[39m } [36mfrom[39m [32m"@/components/dashboard/DashboardView"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m
+ [90m 6 |[39m [36mexport[39m [36mconst[39m metadata[33m:[39m [33mMetadata[39m [33m=[39m {
+ [90m 7 |[39m   title[33m:[39m [32m"Verya — Dashboard"[39m[33m,[39m[0m
+
+Import map: aliased to relative './components/dashboard/DashboardView' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/dashboard/page.tsx:4:1
+Module not found: Can't resolve '@/components/dashboard/DashboardView'
+[0m [90m 2 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mDashboardView[39m } [36mfrom[39m [32m"@/components/dashboard/DashboardView"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m
+ [90m 6 |[39m [36mexport[39m [36mconst[39m metadata[33m:[39m [33mMetadata[39m [33m=[39m {
+ [90m 7 |[39m   title[33m:[39m [32m"Verya — Dashboard"[39m[33m,[39m[0m
+
+Import map: aliased to relative './components/dashboard/DashboardView' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/dashboard/page.tsx:4:1
+Module not found: Can't resolve '@/components/dashboard/DashboardView'
+[0m [90m 2 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mDashboardView[39m } [36mfrom[39m [32m"@/components/dashboard/DashboardView"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m
+ [90m 6 |[39m [36mexport[39m [36mconst[39m metadata[33m:[39m [33mMetadata[39m [33m=[39m {
+ [90m 7 |[39m   title[33m:[39m [32m"Verya — Dashboard"[39m[33m,[39m[0m
+
+Import map: aliased to relative './components/dashboard/DashboardView' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/dashboard/page.tsx:4:1
+Module not found: Can't resolve '@/components/dashboard/DashboardView'
+[0m [90m 2 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mDashboardView[39m } [36mfrom[39m [32m"@/components/dashboard/DashboardView"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m
+ [90m 6 |[39m [36mexport[39m [36mconst[39m metadata[33m:[39m [33mMetadata[39m [33m=[39m {
+ [90m 7 |[39m   title[33m:[39m [32m"Verya — Dashboard"[39m[33m,[39m[0m
+
+Import map: aliased to relative './components/dashboard/DashboardView' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/dashboard/page.tsx:4:1
+Module not found: Can't resolve '@/components/dashboard/DashboardView'
+[0m [90m 2 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mDashboardView[39m } [36mfrom[39m [32m"@/components/dashboard/DashboardView"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m
+ [90m 6 |[39m [36mexport[39m [36mconst[39m metadata[33m:[39m [33mMetadata[39m [33m=[39m {
+ [90m 7 |[39m   title[33m:[39m [32m"Verya — Dashboard"[39m[33m,[39m[0m
+
+Import map: aliased to relative './components/dashboard/DashboardView' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/dashboard/page.tsx:4:1
+Module not found: Can't resolve '@/components/dashboard/DashboardView'
+[0m [90m 2 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mDashboardView[39m } [36mfrom[39m [32m"@/components/dashboard/DashboardView"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m
+ [90m 6 |[39m [36mexport[39m [36mconst[39m metadata[33m:[39m [33mMetadata[39m [33m=[39m {
+ [90m 7 |[39m   title[33m:[39m [32m"Verya — Dashboard"[39m[33m,[39m[0m
+
+Import map: aliased to relative './components/dashboard/DashboardView' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/dashboard/page.tsx:4:1
+Module not found: Can't resolve '@/components/dashboard/DashboardView'
+[0m [90m 2 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mDashboardView[39m } [36mfrom[39m [32m"@/components/dashboard/DashboardView"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m
+ [90m 6 |[39m [36mexport[39m [36mconst[39m metadata[33m:[39m [33mMetadata[39m [33m=[39m {
+ [90m 7 |[39m   title[33m:[39m [32m"Verya — Dashboard"[39m[33m,[39m[0m
+
+Import map: aliased to relative './components/dashboard/DashboardView' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/dashboard/page.tsx:4:1
+Module not found: Can't resolve '@/components/dashboard/DashboardView'
+[0m [90m 2 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mDashboardView[39m } [36mfrom[39m [32m"@/components/dashboard/DashboardView"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m
+ [90m 6 |[39m [36mexport[39m [36mconst[39m metadata[33m:[39m [33mMetadata[39m [33m=[39m {
+ [90m 7 |[39m   title[33m:[39m [32m"Verya — Dashboard"[39m[33m,[39m[0m
+
+Import map: aliased to relative './components/dashboard/DashboardView' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/dashboard/page.tsx:4:1
+Module not found: Can't resolve '@/components/dashboard/DashboardView'
+[0m [90m 2 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mDashboardView[39m } [36mfrom[39m [32m"@/components/dashboard/DashboardView"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m
+ [90m 6 |[39m [36mexport[39m [36mconst[39m metadata[33m:[39m [33mMetadata[39m [33m=[39m {
+ [90m 7 |[39m   title[33m:[39m [32m"Verya — Dashboard"[39m[33m,[39m[0m
+
+Import map: aliased to relative './components/dashboard/DashboardView' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⨯ ./app/dashboard/page.tsx:4:1
+Module not found: Can't resolve '@/components/dashboard/DashboardView'
+[0m [90m 2 |[39m [36mimport[39m { [33mHeader[39m } [36mfrom[39m [32m"@/components/layout/Header"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { [33mFooter[39m } [36mfrom[39m [32m"@/components/layout/Footer"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mDashboardView[39m } [36mfrom[39m [32m"@/components/dashboard/DashboardView"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m
+ [90m 6 |[39m [36mexport[39m [36mconst[39m metadata[33m:[39m [33mMetadata[39m [33m=[39m {
+ [90m 7 |[39m   title[33m:[39m [32m"Verya — Dashboard"[39m[33m,[39m[0m
+
+Import map: aliased to relative './components/dashboard/DashboardView' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ ⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.6j3490w9wpk'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.6j3490w9wpk'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.osdmat3v5zs'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.osdmat3v5zs'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.6j3490w9wpk'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.6j3490w9wpk'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.8summak2zhb'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.8summak2zhb'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.urjz1hun4ob'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.urjz1hun4ob'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.h5wf95j319'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.h5wf95j319'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.cbxddnk1lln'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.cbxddnk1lln'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.h5wf95j319'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.h5wf95j319'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.dga7srbkly8'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.dga7srbkly8'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.ntqfv87svhm'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.ntqfv87svhm'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.3plyahj4n0o'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.3plyahj4n0o'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.osfqqyu0dy'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.osfqqyu0dy'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.3plyahj4n0o'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.3plyahj4n0o'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.6yvce9gs1ke'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.6yvce9gs1ke'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.uci30mrtu1'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.uci30mrtu1'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.qdmc4c8ykg'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.qdmc4c8ykg'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.kfhk77wtont'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.kfhk77wtont'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.qdmc4c8ykg'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.qdmc4c8ykg'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.vhwi1dk6n6'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.vhwi1dk6n6'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.auwajf3accp'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.auwajf3accp'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.1m1p7scxzo4'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.1m1p7scxzo4'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.durmn4fvuqi'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.durmn4fvuqi'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.1m1p7scxzo4'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.1m1p7scxzo4'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.0dmlqbdeo76m'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.0dmlqbdeo76m'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.jhdtzp3tg6f'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.jhdtzp3tg6f'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.wl10azj3wxk'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.wl10azj3wxk'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.eymtcqic2fv'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.eymtcqic2fv'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.wl10azj3wxk'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.wl10azj3wxk'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.4xwyux2jfgs'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.4xwyux2jfgs'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.ttgoo318w8i'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.ttgoo318w8i'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.i1anv9z9swh'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.i1anv9z9swh'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.an6zdwvdo6'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.an6zdwvdo6'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.i1anv9z9swh'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.i1anv9z9swh'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.wrr23nb1hfo'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.wrr23nb1hfo'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.r2f4pdmr4k'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.r2f4pdmr4k'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.bjo183keqdm'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.bjo183keqdm'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.x0z9059pmo'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.x0z9059pmo'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.bjo183keqdm'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.bjo183keqdm'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.6vahrazub53'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.6vahrazub53'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.64qbes02dgh'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.64qbes02dgh'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.p57as48qr0c'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.p57as48qr0c'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.z35q8fq3cr'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.z35q8fq3cr'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.p57as48qr0c'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.p57as48qr0c'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.8q5jsok8wyp'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.8q5jsok8wyp'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.6fr8dgk0g68'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.6fr8dgk0g68'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.aiim0sakvne'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.aiim0sakvne'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.izrp6596av'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.izrp6596av'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.aiim0sakvne'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.aiim0sakvne'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.1ghtchlyog9k'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.1ghtchlyog9k'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.soru3mlyo7'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.soru3mlyo7'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.kxp4fgs2t8m'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.kxp4fgs2t8m'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.uej649rv8l'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.uej649rv8l'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.kxp4fgs2t8m'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.kxp4fgs2t8m'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.tkk4m88kige'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.tkk4m88kige'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.84mx4qt0d77'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.84mx4qt0d77'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.iphs7hhx0ze'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.iphs7hhx0ze'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.2ei0tutfwvw'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.2ei0tutfwvw'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.iphs7hhx0ze'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.iphs7hhx0ze'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.87lfp89jm4t'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.87lfp89jm4t'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.xojhovpqej'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.xojhovpqej'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.flv2moimmwh'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.flv2moimmwh'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.zsdg4o61jjo'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.zsdg4o61jjo'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.flv2moimmwh'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.flv2moimmwh'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.s20t5vtiv78'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.s20t5vtiv78'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.zt3oa9649a'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.zt3oa9649a'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.st80qn4qpw'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.st80qn4qpw'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.45yk4tcp7ym'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.45yk4tcp7ym'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.st80qn4qpw'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.st80qn4qpw'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.jozq0dsmnek'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.jozq0dsmnek'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.bsrvbn6kgc'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.bsrvbn6kgc'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\.next\static\development\_buildManifest.js.tmp.lkums9n1ky'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\PROJECTS\\verya\\verya\\.next\\static\\development\\_buildManifest.js.tmp.lkums9n1ky'
+}

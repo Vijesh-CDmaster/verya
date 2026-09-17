@@ -1,0 +1,4 @@
+Failed to proxy http://localhost:4000/api/pipeline [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+Failed to proxy http://localhost:4000/api/pipeline [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }

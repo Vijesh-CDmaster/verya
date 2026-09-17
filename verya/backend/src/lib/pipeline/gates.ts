@@ -12,7 +12,7 @@ import type {
 } from "../../schemas/pipeline";
 import type { AlgorithmPlan, RoutingPlan, TaskModelRoute } from "../../schemas/pipeline";
 import { needsTieBreak, CHEAP_MODEL_ID, STRONG_MODEL_ID, MODEL_IDS, modelCostOf } from "../../schemas/pipeline";
-import type { StageAdapters } from "./provider";
+import type { StageAdapters } from "../ai/provider";
 import { recordToLedger } from "../../services/ledger";
 
 const ORG_ID = process.env.VERYA_ORG_ID || "default-org";
@@ -72,6 +72,7 @@ async function runSuitability(
   session.gateStatus = "running";
   const workflow: Workflow = await adapters.understand(session.input);
   repairWorkflow(workflow);
+  if (!workflow.title) workflow.title = "Untitled project";
   const suitability = await adapters.checkSuitability({ raw: session.input, workflow });
 
   session.suitability = suitability;

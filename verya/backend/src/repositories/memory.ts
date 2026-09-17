@@ -1,7 +1,7 @@
 // Organization memory repository (F9) — Postgres + pgvector.
 // Every AI interaction + outcome is stored per org with a 1536-dim embedding;
 // routing pulls similar past tasks via cosine similarity. Strict tenant isolation.
-import { query, requireDb } from "../db/pool";
+import { query, requireDb, pool } from "../db/pool";
 
 export type MemoryInput = {
   orgId: string;
@@ -129,9 +129,6 @@ export async function exportMemory(orgId: string): Promise<MemoryRow[]> {
 
 export async function deleteMemory(orgId: string): Promise<number> {
   requireDb();
-  const res = await (await import("../db/pool")).pool.query(
-    "DELETE FROM org_memory WHERE org_id = $1",
-    [orgId]
-  );
+  const res = await pool.query("DELETE FROM org_memory WHERE org_id = $1", [orgId]);
   return res.rowCount ?? 0;
 }

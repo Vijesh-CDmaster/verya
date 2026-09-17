@@ -90,8 +90,8 @@ export const TaskSchema = z.object({
 export type Task = z.infer<typeof TaskSchema>;
 
 export const WorkflowSchema = z.object({
-  title: z.string().min(1).max(120),
-  summary: z.string().max(800),
+  title: nullTo("", z.string().max(120)),
+  summary: nullTo("", z.string().max(800)),
   tasks: objArr(TaskSchema, 1, 30),
   ambiguities: arr(z.string(), 20),
 });
@@ -99,8 +99,8 @@ export type Workflow = z.infer<typeof WorkflowSchema>;
 
 // ---------- Gate 2: Flaw Detection ----------
 export const FlawSchema = z.object({
-  id: z.string().min(1),
-  title: z.string().min(1).max(140),
+  id: nullTo("", z.string().max(40)),
+  title: nullTo("", z.string().max(140)),
   category: z.enum([
     "security",
     "architecture",
@@ -188,11 +188,11 @@ export type StackGate = z.infer<typeof StackGateSchema>;
 
 // ---------- Gate 5: Algorithms (per task) ----------
 export const AlgorithmOptionSchema = z.object({
-  name: z.string().min(1).max(80),
-  approach: z.string().max(400),
+  name: nullTo("", z.string().max(80)),
+  approach: nullTo("", z.string().max(400)),
   pros: arr(z.string(), 8),
   cons: arr(z.string(), 8),
-  confidence: z.number().min(0).max(1),
+  confidence: nullTo(0.6, z.number().min(0).max(1)),
 });
 export const TaskAlgorithmSchema = z.object({
   // Tolerant defaults: gates.ts repairs missing ids/title positionally against the
