@@ -12,3 +12,19 @@
  ✓ Compiled / in 4.3s
  GET / 200 in 5116ms
  GET / 200 in 367ms
+ GET / 200 in 291ms
+ GET / 200 in 269ms
+ GET / 200 in 394ms
+ ✓ Compiled /favicon.ico in 418ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 1050ms
+ ○ Compiling /api/pipeline ...
+ ✓ Compiled /api/pipeline in 1463ms
+ POST /api/pipeline 500 in 2216ms
+ ✓ Compiled /dashboard in 462ms
+ GET /dashboard 200 in 720ms
+ ✓ Compiled /api/dashboard in 260ms
+ GET /api/dashboard 200 in 635ms
+ GET / 200 in 393ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 525ms
+ GET / 200 in 446ms
+ GET / 200 in 339ms
