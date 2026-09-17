@@ -1,0 +1,23 @@
+{
+  "id": "da1cf74e-f448-43cf-867d-c81982e8cc94",
+  "createdAt": "2026-09-17T08:57:37.691Z",
+  "updatedAt": "2026-09-17T08:57:37.696Z",
+  "input": "A team wiki with real-time collaborative editing, version history, and per-workspace permissions. Around 500 users at launch.",
+  "statedStack": "",
+  "policy": "balanced",
+  "uploads": [],
+  "gate": "intake",
+  "gateStatus": "pending",
+  "suitability": null,
+  "suggestedWorkflow": null,
+  "workflow": null,
+  "flawReport": null,
+  "flawResolutions": [],
+  "stackGate": null,
+  "algorithms": null,
+  "routing": null,
+  "executions": [],
+  "humanFeedback": {
+    "ratings": {}
+  }
+}
