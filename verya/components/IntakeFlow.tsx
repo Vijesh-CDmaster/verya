@@ -47,12 +47,42 @@ export default function IntakeFlow() {
   const [input, setInput] = useState("");
   const [bringStack, setBringStack] = useState(false);
   const [statedStack, setStatedStack] = useState("");
+  const [policy, setPolicy] = useState<"balanced" | "lowest_cost" | "highest_accuracy">("balanced");
+  const [files, setFiles] = useState<File[]>([]);
   const [session, setSession] = useState<PipelineSession | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [taskEdits, setTaskEdits] = useState<{ [id: string]: { title: string; description: string } }>({});
   const busyRef = useRef(false);
 
   const busy = phase === "busy";
+
+  const startWithUpload = useCallback(async () => {
+    if (busyRef.current) return;
+    if (input.trim().length < 20) {
+      setError("Give at least a couple of sentences describing the project.");
+      return;
+    }
+    busyRef.current = true;
+    setPhase("busy");
+    setError(null);
+    try {
+      const form = new FormData();
+      form.set("input", input);
+      form.set("statedStack", bringStack ? statedStack : "");
+      form.set("policy", policy);
+      for (const f of files) form.append("files", f);
+      const res = await fetch("/api/pipeline/upload", { method: "POST", body: form });
+      const data = (await res.json().catch(() => null)) as { session?: PipelineSession; error?: string } | null;
+      if (!res.ok || !data?.session) throw new Error(data?.error ?? `Request failed (${res.status})`);
+      setSession(data.session);
+      setPhase("gate");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setPhase("error");
+    } finally {
+      busyRef.current = false;
+    }
+  }, [input, bringStack, statedStack, policy, files]);
 
   const call = useCallback(async (url: string, body?: unknown) => {
     if (busyRef.current) return;
@@ -165,7 +195,7 @@ export default function IntakeFlow() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey && input.trim().length >= 20) {
                     e.preventDefault();
-                    call("/api/pipeline", { input, statedStack: bringStack ? statedStack : "" });
+                    void startWithUpload();
                   }
                 }}
                 rows={6}
@@ -189,6 +219,41 @@ export default function IntakeFlow() {
                   className="mt-3 w-full rounded-lg border border-line bg-bg px-4 py-2.5 font-mono text-[13px] placeholder:text-muted/70"
                 />
               )}
+
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="text-[11px] font-semibold uppercase tracking-wide text-muted">
+                    Attach a plan or spec (txt, md, csv, json, yaml · max 2MB each)
+                  </label>
+                  <input
+                    type="file"
+                    multiple
+                    accept=".txt,.md,.markdown,.csv,.json,.yaml,.yml,.log"
+                    onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
+                    className="mt-1.5 block w-full text-[12px] text-muted file:mr-3 file:rounded-md file:border file:border-line file:bg-surface file:px-3 file:py-1.5 file:text-[12px] file:font-medium"
+                  />
+                  {files.length > 0 && (
+                    <p className="mt-1 text-[11px] text-muted">
+                      {files.length} file(s): {files.map((f) => f.name).join(", ")}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label className="text-[11px] font-semibold uppercase tracking-wide text-muted">
+                    Routing policy (how the model gate decides)
+                  </label>
+                  <select
+                    value={policy}
+                    onChange={(e) => setPolicy(e.target.value as typeof policy)}
+                    className="mt-1.5 w-full rounded-lg border border-line bg-bg px-3 py-2 text-[13px]"
+                  >
+                    <option value="balanced">Balanced cost vs risk (default)</option>
+                    <option value="lowest_cost">Lowest cost</option>
+                    <option value="highest_accuracy">Highest accuracy</option>
+                  </select>
+                </div>
+              </div>
+
               <div className="mt-4 flex items-center justify-between">
                 <span className="text-[12px] text-muted">
                   Enter to start · Shift+Enter for a new line
@@ -196,7 +261,7 @@ export default function IntakeFlow() {
                 <button
                   type="button"
                   disabled={input.trim().length < 20}
-                  onClick={() => call("/api/pipeline", { input, statedStack: bringStack ? statedStack : "" })}
+                  onClick={() => void startWithUpload()}
                   className="rounded-md bg-primary px-5 py-2 text-[13px] font-semibold text-on-primary transition hover:opacity-90 disabled:opacity-40"
                 >
                   Analyze my project →

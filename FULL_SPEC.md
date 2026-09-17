@@ -87,8 +87,36 @@ Intake → Suitability Gate → Flaw Gate → Stack Gate → Task Breakdown Gate
 - **F16 Human feedback & calibration**: accept/edit/reject/rate any output; track whether edits
   improved results; reviewer consistency measured; feed only reliable feedback into routing.
 
+## Build status (updated after Wave-2 build)
+
+**Working now (MVP items 1–14):**
+- [x] Intake (chat box + file upload txt/md/csv/json/yaml/log, ≤2MB×5) — F1
+- [x] Suitability gate (whole-plan check, keep/replace choice) — F2
+- [x] Flaw gate (per-flaw accept/reject, critical = blocker) — F3
+- [x] Stack gate (validate provided / recommend 1–3, ties side-by-side) — F4
+- [x] Task breakdown (editable list + dependencies) — F5
+- [x] Algorithm gate (per-task approach, ties asked) — F6
+- [x] Model gate (routing policies: lowest_cost / highest_accuracy / balanced applied;
+  ties asked; override per task) — F7
+- [x] Universal rule F8 (auto with reason / ask on genuine tie) everywhere
+- [x] Org memory + skill map (per-org files, export/delete ready) — F9
+- [x] Trust ledger (append-only, hash-chained, queryable, compliance export) — F10
+- [x] Confidence + escalation (escalation floor; escalated items in review queue) — F11
+- [x] Reputation (living per model × category, leaderboard) — F12
+- [x] Verification (rules + independent second model; depth risk-based: rules-only for
+  low-risk tasks) — F13
+- [x] Feedback loop (accept/reject per output feeds memory + reputation) — F16
+- [x] Dashboard: analytics cards, leaderboard + trust badges, review/escalation queue,
+  workflow history, org skill-map heatmap, ledger table with filters, compliance export — F22
+
+**Not yet (next waves):** auth + RBAC (F38), tenant isolation on the API (F39 partial —
+rate limiting + sanitization done), Neon Postgres migration (file stores now),
+PDF/DOCX upload parsing, AI Battle Mode + Explain-My-Decision chat (F22 remainder),
+queues/autoscaling (F43–46), marketing site port (CONTENT.md), legal pages, monitoring.
+
 ## Deferred (after MVP has usage data)
 F14 adversarial self-audit, F15 counterfactual comparison, F17–F37 advanced governance,
-F48 payments. Security/infra/compliance requirements (F38–F53) apply as the build grows:
-auth, tenant isolation, TLS, encryption at rest, secrets vault, input sanitization, rate
-limiting, prompt-injection defense, DPDP/GDPR readiness, backups/monitoring, launch checklist.
+F48 payments (excluded by user). Security/infra/compliance requirements (F38–F53) apply as
+the build grows: auth, tenant isolation, TLS, encryption at rest, secrets vault, input
+sanitization (done), rate limiting (done), prompt-injection defense (behavioral, done),
+DPDP/GDPR readiness, backups/monitoring, launch checklist.

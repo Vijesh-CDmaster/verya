@@ -1,0 +1,23 @@
+{
+  "id": "9a796467-3a12-4dfb-801b-7cde326516b0",
+  "createdAt": "2026-09-17T08:45:19.847Z",
+  "updatedAt": "2026-09-17T08:45:19.848Z",
+  "input": "Build a simple expense tracker app with receipt uploads, monthly summaries, and CSV export for a small team.",
+  "statedStack": "",
+  "policy": "lowest_cost",
+  "uploads": [],
+  "gate": "intake",
+  "gateStatus": "pending",
+  "suitability": null,
+  "suggestedWorkflow": null,
+  "workflow": null,
+  "flawReport": null,
+  "flawResolutions": [],
+  "stackGate": null,
+  "algorithms": null,
+  "routing": null,
+  "executions": [],
+  "humanFeedback": {
+    "ratings": {}
+  }
+}

@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
         orgId: ORG_ID,
         input,
         statedStack: sanitizeInput(parsed.data.statedStack ?? ""),
+        policy: parsed.data.policy,
       });
       session.gate = "suitability";
       const processed = await processGate(session, geminiAdapters);

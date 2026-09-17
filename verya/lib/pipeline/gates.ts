@@ -227,6 +227,32 @@ async function runRouting(
     algorithmPlan: session.algorithms!,
     stack: stackTextOf(session),
   });
+
+  // F7: apply the org routing policy on top of the router's raw ranking.
+  // lowest_cost → flash unless pro is clearly safer; highest_accuracy → pro unless
+  // flash wins decisively; balanced → leave the router's pick as-is.
+  plan.policy = session.policy ?? "balanced";
+  const cheap = "gemini-2.5-flash" as const;
+  const strong = "gemini-2.5-pro" as const;
+  for (const route of plan.routes) {
+    if (plan.policy === "lowest_cost" && route.selectedModel !== cheap) {
+      const proConf = route.options.find((o) => o.model === strong)?.confidence ?? route.confidence;
+      if (proConf - (route.options.find((o) => o.model === cheap)?.confidence ?? 0) < 0.25) {
+        route.selectedModel = cheap;
+        route.reason = `Policy lowest_cost: downgraded to ${cheap} (accuracy delta small). ${route.reason}`;
+      }
+    }
+    if (plan.policy === "highest_accuracy" && route.selectedModel !== strong) {
+      route.selectedModel = strong;
+      route.reason = `Policy highest_accuracy: upgraded to ${strong}. ${route.reason}`;
+    }
+  }
+  plan.estimatedCostUsd =
+    plan.routes.reduce(
+      (s, r) => s + (r.selectedModel === strong ? 4 : 1),
+      0
+    ) / Math.max(plan.routes.length, 1);
+
   session.routing = plan;
   session.gateStatus = "awaiting_user";
   const ties = plan.routes.filter((r) => r.tieBreakRequired).length;
@@ -238,9 +264,10 @@ async function runRouting(
     detail: {
       summary:
         ties > 0
-          ? `${ties} model choice(s) need a human call`
-          : "Model auto-selected for every task (reasons shown)",
+          ? `${ties} model choice(s) need a human call (policy: ${plan.policy})`
+          : `Model auto-selected for every task (policy: ${plan.policy}, reasons shown)`,
       tieCount: ties,
+      policy: plan.policy,
       estimatedCostUsd: plan.estimatedCostUsd,
     },
   });

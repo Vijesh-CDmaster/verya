@@ -198,6 +198,10 @@ export interface StageAdapters {
     output: string;
     model: string;
   }): Promise<{ passed: boolean; issues: string[]; checkedBy: string }>;
+  verifyRulesOnly(input: {
+    task: Task;
+    output: string;
+  }): Promise<{ passed: boolean; issues: string[]; checkedBy: string }>;
 }
 
 export const geminiAdapters: StageAdapters = {
@@ -263,6 +267,19 @@ export const geminiAdapters: StageAdapters = {
       "execution"
     );
     return { output: res.output ?? res.text, latencyMs: res.latencyMs, tokens: res.tokens };
+  },  verifyRulesOnly: async ({ task, output }) => {
+    // F13: cheap deterministic pass for low-risk tasks.
+    const issues: string[] = [];
+    const lower = output.toLowerCase();
+    if (/password\s*=\s*["'][^"']+["']/.test(lower))
+      issues.push("Possible hardcoded secret/credential in output.");
+    if (/api[_-]?key\s*=\s*["'][^"']+["']/.test(lower))
+      issues.push("Possible hardcoded API key in output.");
+    if (/drop\s+table|;\s*delete\s+from/.test(lower))
+      issues.push("Potentially dangerous raw SQL pattern in output.");
+    if (task.category === "auth" && !/(hash|bcrypt|argon|scrypt)/.test(lower))
+      issues.push("Auth task output does not mention password hashing.");
+    return { passed: issues.length === 0, issues, checkedBy: "rules" };
   },
 
   verifyOutput: async ({ task, algorithm, output, model }) => {

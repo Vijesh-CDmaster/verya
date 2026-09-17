@@ -75,12 +75,12 @@ export async function POST(req: NextRequest) {
           workflow: session.workflow,
           model,
         });
-        const verification = await geminiAdapters.verifyOutput({
-          task,
-          algorithm,
-          output: exec.output,
-          model,
-        });
+        // F13: verification depth scales with task risk — rules-only for low-risk
+        // tasks (fast, cheap), rules + independent second model otherwise.
+        const needsSecondModel = task.risk !== "low";
+        const verification = needsSecondModel
+          ? await geminiAdapters.verifyOutput({ task, algorithm, output: exec.output, model })
+          : await geminiAdapters.verifyRulesOnly({ task, output: exec.output });
 
         const confidence = verification.passed ? 0.82 : 0.4;
         const status: ExecutionResult["status"] = verification.passed
@@ -94,11 +94,11 @@ export async function POST(req: NextRequest) {
           model,
           output: exec.output,
           verification: {
-            method: "second_model",
+            method: needsSecondModel ? "second_model" : "rules",
             passed: verification.passed,
             issues: verification.issues,
-            checkedBy: verification.checkedBy === "rules" ? "gemini-2.5-flash" : (verification.checkedBy as ExecutionResult["verification"]["checkedBy"]),
-            },
+            checkedBy: verification.checkedBy || "rules",
+          },
           status,
           confidence,
           latencyMs: exec.latencyMs,

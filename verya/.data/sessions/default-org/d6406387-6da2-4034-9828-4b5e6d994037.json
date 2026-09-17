@@ -1,0 +1,28 @@
+{
+  "id": "d6406387-6da2-4034-9828-4b5e6d994037",
+  "createdAt": "2026-09-17T08:44:39.872Z",
+  "updatedAt": "2026-09-17T08:44:39.874Z",
+  "input": "Build a task management app with teams, due dates, notifications, and a reporting dashboard for about 300 users.\n\n--- ATTACHED FILE: spec-test.md ---\n# Project Spec\n\nBuild a task management app with teams, due dates, and email reminders. ~300 users.\n",
+  "statedStack": "",
+  "policy": "lowest_cost",
+  "uploads": [
+    {
+      "name": "spec-test.md",
+      "chars": 100
+    }
+  ],
+  "gate": "intake",
+  "gateStatus": "pending",
+  "suitability": null,
+  "suggestedWorkflow": null,
+  "workflow": null,
+  "flawReport": null,
+  "flawResolutions": [],
+  "stackGate": null,
+  "algorithms": null,
+  "routing": null,
+  "executions": [],
+  "humanFeedback": {
+    "ratings": {}
+  }
+}
