@@ -1,0 +1,202 @@
+{
+  "id": "6799cb1a-fce2-4077-93e1-0ab041ec6661",
+  "createdAt": "2026-09-17T12:23:28.614Z",
+  "updatedAt": "2026-09-17T12:26:20.684Z",
+  "input": "A team wiki with real-time collaborative editing, version history, and per-workspace permissions. Around 500 users at launch.",
+  "statedStack": "",
+  "policy": "balanced",
+  "uploads": [],
+  "gate": "flaws",
+  "gateStatus": "awaiting_user",
+  "suitability": {
+    "suitable": true,
+    "confidence": 0.95,
+    "reason": "The workflow is highly suitable and logically structured. It covers all key requirements of the project, including database schema design, authentication/authorization, backend REST APIs, a real-time collaboration server using CRDTs, frontend UI components, rich-text editor integration, version history, and deployment infrastructure with WebSocket scaling to support the initial 500 users.",
+    "suggestedWorkflow": null,
+    "suggestedSummary": null
+  },
+  "suggestedWorkflow": null,
+  "workflow": {
+    "title": "Real-Time Collaborative Team Wiki",
+    "summary": "A collaborative team wiki platform supporting real-time document editing, version history tracking, and granular workspace-level permissions for approximately 500 initial users.",
+    "tasks": [
+      {
+        "id": "task-1",
+        "title": "Database Schema Design",
+        "description": "Design the database schema to support users, workspaces, documents, version history, and access control lists.",
+        "category": "database",
+        "dependsOn": [],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "task-2",
+        "title": "Authentication and Authorization Setup",
+        "description": "Implement user authentication and workspace-level role-based access control.",
+        "category": "auth",
+        "dependsOn": [
+          "task-1"
+        ],
+        "complexity": "medium",
+        "risk": "medium"
+      },
+      {
+        "id": "task-3",
+        "title": "Backend Document API",
+        "description": "Create REST endpoints for document CRUD operations, workspace management, and version history retrieval.",
+        "category": "backend",
+        "dependsOn": [
+          "task-2"
+        ],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "task-4",
+        "title": "Real-time Collaboration Server",
+        "description": "Set up a WebSocket server using a conflict-free replicated data type framework to handle real-time document synchronization.",
+        "category": "backend",
+        "dependsOn": [
+          "task-3"
+        ],
+        "complexity": "high",
+        "risk": "high"
+      },
+      {
+        "id": "task-5",
+        "title": "Frontend Workspace and Document UI",
+        "description": "Build the dashboard, workspace navigation, and document listing views.",
+        "category": "frontend",
+        "dependsOn": [
+          "task-2"
+        ],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "task-6",
+        "title": "Collaborative Rich Text Editor Integration",
+        "description": "Integrate a collaborative rich text editor with real-time sync bindings on the client side.",
+        "category": "frontend",
+        "dependsOn": [
+          "task-4",
+          "task-5"
+        ],
+        "complexity": "high",
+        "risk": "high"
+      },
+      {
+        "id": "task-7",
+        "title": "Version History and Reversion UI",
+        "description": "Create the user interface to view historical document versions and restore previous states.",
+        "category": "frontend",
+        "dependsOn": [
+          "task-6"
+        ],
+        "complexity": "medium",
+        "risk": "medium"
+      },
+      {
+        "id": "task-8",
+        "title": "Permissions Management UI",
+        "description": "Build views for managing workspace members and their respective access levels.",
+        "category": "frontend",
+        "dependsOn": [
+          "task-5"
+        ],
+        "complexity": "low",
+        "risk": "low"
+      },
+      {
+        "id": "task-9",
+        "title": "Deployment and Infrastructure Setup",
+        "description": "Configure hosting, database backups, and WebSocket scaling to support concurrent users.",
+        "category": "devops",
+        "dependsOn": [
+          "task-4"
+        ],
+        "complexity": "medium",
+        "risk": "medium"
+      }
+    ],
+    "ambiguities": [
+      "[\"What rich text editor format is preferred (e.g.",
+      "Markdown",
+      "WYSIWYG)?",
+      "Are there specific identity providers (like Okta",
+      "Google Workspace",
+      "or Active Directory) required for SSO?",
+      "How granular should the version history be (e.g.",
+      "save on every keystroke",
+      "periodic autosave",
+      "or manual commits)?",
+      "Do workspaces need nested hierarchies (sub-workspaces/folders)",
+      "or is it a flat structure?",
+      "Are there any file attachment requirements for wiki pages",
+      "and if so",
+      "what are the size limits?\"]"
+    ]
+  },
+  "flawReport": {
+    "flaws": [
+      {
+        "id": "f1",
+        "title": "Missing Authorization and Authentication on WebSocket Connections",
+        "category": "security",
+        "severity": "critical",
+        "description": "Task-4 introduces a WebSocket server for real-time collaboration, but there is no mention of validating user authentication tokens or verifying workspace-level permissions (from Task-2) during the WebSocket handshake or connection phase. This allows unauthorized users to potentially join document sessions and view or edit sensitive wiki pages.",
+        "suggestedFix": "Update Task-4 to explicitly require token validation (e.g., JWT) during the WebSocket handshake and implement a permission check against the workspace access control list before allowing a client to subscribe to a document's synchronization channel.",
+        "relatedTaskIds": [
+          "task-2",
+          "task-4"
+        ]
+      },
+      {
+        "id": "f2",
+        "title": "Potential State Desynchronization between REST API and CRDT Server",
+        "category": "architecture",
+        "severity": "high",
+        "description": "Task-3 defines REST endpoints for document CRUD operations, while Task-4 introduces a WebSocket server using CRDTs for real-time synchronization. If the REST API allows direct document updates (e.g., PUT/PATCH requests) while active collaborative sessions are running on the WebSocket server, it can cause state desynchronization, document corruption, or lost updates.",
+        "suggestedFix": "Define a clear boundary where document body updates are exclusively handled via the CRDT WebSocket server, or ensure the REST API updates are injected into the CRDT document state machine rather than overwriting the database directly.",
+        "relatedTaskIds": [
+          "task-3",
+          "task-4"
+        ]
+      },
+      {
+        "id": "f3",
+        "title": "Lack of Rate Limiting and Message Size Constraints on WebSocket Server",
+        "category": "scale",
+        "severity": "medium",
+        "description": "Task-4 and Task-9 do not account for rate limiting or payload size restrictions on the WebSocket server. A single malfunctioning client or a malicious user sending high-frequency updates or massive payloads could easily exhaust server memory and CPU, causing a denial of service for all 500 users.",
+        "suggestedFix": "Implement connection rate limiting, message frequency throttling, and maximum payload size limits on the WebSocket gateway in Task-4 and configure reverse-proxy level protections in Task-9.",
+        "relatedTaskIds": [
+          "task-4",
+          "task-9"
+        ]
+      },
+      {
+        "id": "f4",
+        "title": "No Testing or Validation Strategy for CRDT and Real-time Sync",
+        "category": "nonfunctional",
+        "severity": "medium",
+        "description": "Real-time collaborative editing with CRDTs is highly complex and prone to edge cases (e.g., network partitions, out-of-order messages, concurrent deletion and editing). The plan lacks any dedicated testing task to validate the correctness of the synchronization logic and performance under simulated network latency.",
+        "suggestedFix": "Add a dedicated testing task after Task-6 to perform integration testing, network simulation (latency/packet loss), and concurrency testing on the collaborative editor and CRDT synchronization.",
+        "relatedTaskIds": [
+          "task-4",
+          "task-6"
+        ]
+      }
+    ],
+    "overallRisk": "high",
+    "summary": "The plan has critical security and architectural gaps. It fails to secure the WebSocket connection with the workspace permissions established in Task-2, creating a major security vulnerability. Additionally, it risks state desynchronization between the REST API and the CRDT server, lacks rate limiting on real-time connections, and misses a dedicated testing strategy for complex collaborative editing."
+  },
+  "flawResolutions": [],
+  "stackGate": null,
+  "algorithms": null,
+  "routing": null,
+  "executions": [],
+  "humanFeedback": {
+    "ratings": {}
+  }
+}

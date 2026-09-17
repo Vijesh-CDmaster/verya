@@ -349,7 +349,7 @@ export const GateActionSchema = z.discriminatedUnion("action", [
           editedFix: z.string().max(700).optional(),
         })
       )
-      .min(1),
+      .min(0),
   }),
   z.object({
     action: z.literal("stack_choose"),

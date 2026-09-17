@@ -1,0 +1,202 @@
+{
+  "id": "0501a81e-1535-4faf-be8e-3dbf78c264dd",
+  "createdAt": "2026-09-17T12:31:42.603Z",
+  "updatedAt": "2026-09-17T12:34:44.035Z",
+  "input": "A team wiki with real-time collaborative editing, version history, and per-workspace permissions. Around 500 users at launch.",
+  "statedStack": "",
+  "policy": "balanced",
+  "uploads": [],
+  "gate": "flaws",
+  "gateStatus": "awaiting_user",
+  "suitability": {
+    "suitable": true,
+    "confidence": 0.95,
+    "reason": "The workflow is highly suitable and logically structured. It correctly identifies the core components of a collaborative wiki: database design, workspace permissions, document CRUD, real-time collaboration backend, frontend editor integration, version history, and deployment scaling for WebSockets.",
+    "suggestedWorkflow": null,
+    "suggestedSummary": null
+  },
+  "suggestedWorkflow": null,
+  "workflow": {
+    "title": "Real-Time Collaborative Team Wiki",
+    "summary": "A collaborative wiki platform supporting real-time document editing, granular workspace-level permissions, and comprehensive version history for an initial user base of 500 users.",
+    "tasks": [
+      {
+        "id": "T1",
+        "title": "Database Schema Design",
+        "description": "",
+        "category": "database",
+        "dependsOn": [],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "T2",
+        "title": "Authentication & User Management",
+        "description": "",
+        "category": "auth",
+        "dependsOn": [],
+        "complexity": "low",
+        "risk": "low"
+      },
+      {
+        "id": "T3",
+        "title": "Workspace & Permission Engine",
+        "description": "",
+        "category": "backend",
+        "dependsOn": [
+          "T1",
+          "T2"
+        ],
+        "complexity": "medium",
+        "risk": "medium"
+      },
+      {
+        "id": "T4",
+        "title": "Document CRUD & Versioning Backend",
+        "description": "",
+        "category": "backend",
+        "dependsOn": [
+          "T3"
+        ],
+        "complexity": "medium",
+        "risk": "medium"
+      },
+      {
+        "id": "T5",
+        "title": "Real-time Collaboration Server Setup",
+        "description": "",
+        "category": "backend",
+        "dependsOn": [
+          "T4"
+        ],
+        "complexity": "high",
+        "risk": "high"
+      },
+      {
+        "id": "T6",
+        "title": "Frontend Workspace & Navigation UI",
+        "description": "",
+        "category": "frontend",
+        "dependsOn": [
+          "T3"
+        ],
+        "complexity": "medium",
+        "risk": "low"
+      },
+      {
+        "id": "T7",
+        "title": "Frontend Collaborative Editor Integration",
+        "description": "",
+        "category": "frontend",
+        "dependsOn": [
+          "T5",
+          "T6"
+        ],
+        "complexity": "high",
+        "risk": "high"
+      },
+      {
+        "id": "T8",
+        "title": "Version History UI & Diff Viewer",
+        "description": "",
+        "category": "frontend",
+        "dependsOn": [
+          "T4",
+          "T7"
+        ],
+        "complexity": "medium",
+        "risk": "medium"
+      },
+      {
+        "id": "T9",
+        "title": "Deployment & WebSocket Scaling Setup",
+        "description": "",
+        "category": "devops",
+        "dependsOn": [
+          "T5"
+        ],
+        "complexity": "medium",
+        "risk": "medium"
+      }
+    ],
+    "ambiguities": [
+      "[\"Which rich text editor framework or format (e.g.",
+      "Markdown",
+      "Block-based",
+      "HTML) is preferred?",
+      "Should authentication integrate with existing enterprise identity providers (SAML",
+      "OIDC",
+      "Google Workspace)?",
+      "What is the retention policy and granularity for document version history (e.g.",
+      "snapshot per edit session",
+      "or manual saves)?",
+      "Are there requirements for file attachments",
+      "images",
+      "or media embedding within wiki pages?\"]"
+    ]
+  },
+  "flawReport": {
+    "flaws": [
+      {
+        "id": "f1",
+        "title": "Missing WebSocket Authorization and Permission Sync",
+        "category": "security",
+        "severity": "critical",
+        "description": "While T3 establishes a permission engine and T5 sets up the real-time collaboration server, there is no mention of validating workspace permissions during the initial WebSocket handshake or dynamically revoking access if a user's permissions change mid-session.",
+        "suggestedFix": "Implement token-based authentication (e.g., JWT) during the WebSocket connection upgrade. Ensure the collaboration server queries the permission engine (T3) on connection and subscribes to permission change events to terminate active connections if access is revoked.",
+        "relatedTaskIds": [
+          "T3",
+          "T5",
+          "T7"
+        ]
+      },
+      {
+        "id": "f2",
+        "title": "Lack of Shared Pub/Sub for Multi-Node WebSocket Scaling",
+        "category": "architecture",
+        "severity": "high",
+        "description": "T9 mentions WebSocket scaling but does not specify how real-time document states will be synchronized across multiple server instances. Without a shared pub/sub layer, users connected to different server nodes will not see each other's edits.",
+        "suggestedFix": "Integrate a Redis Pub/Sub or Socket.io Redis Adapter in T5 and T9 to broadcast document updates across all active collaboration server instances.",
+        "relatedTaskIds": [
+          "T5",
+          "T9"
+        ]
+      },
+      {
+        "id": "f3",
+        "title": "Undefined Conflict Resolution Strategy for Collaborative Editing",
+        "category": "logic",
+        "severity": "high",
+        "description": "T5 and T7 introduce real-time collaboration but do not specify a conflict resolution framework (like Yjs, Automerge, or Operational Transformation). Without this, concurrent edits will overwrite each other, causing document corruption.",
+        "suggestedFix": "Explicitly adopt a CRDT-based framework (e.g., Yjs or Automerge) or an OT-based framework (e.g., ShareDB) in T5 and T7, and define how document states are persisted to the database in T4.",
+        "relatedTaskIds": [
+          "T4",
+          "T5",
+          "T7"
+        ]
+      },
+      {
+        "id": "f4",
+        "title": "Unbounded Version History Storage and Performance Degradation",
+        "category": "scale",
+        "severity": "medium",
+        "description": "T4 and T8 implement version history but do not define a compaction, snapshotting, or rate-limiting strategy for edits. Saving every keystroke or minor edit directly to the database will lead to rapid storage exhaustion and slow query performance.",
+        "suggestedFix": "Implement a debounced auto-save mechanism on the frontend (T7) and a periodic snapshotting strategy on the backend (T4) to merge minor edits into logical revisions, combined with a retention policy (e.g., max 100 versions per document).",
+        "relatedTaskIds": [
+          "T4",
+          "T8"
+        ]
+      }
+    ],
+    "overallRisk": "high",
+    "summary": "The plan lacks critical details on WebSocket authorization, multi-node scaling synchronization, conflict resolution mechanisms for collaborative editing, and database optimization for version history."
+  },
+  "flawResolutions": [],
+  "stackGate": null,
+  "algorithms": null,
+  "routing": null,
+  "executions": [],
+  "humanFeedback": {
+    "ratings": {}
+  }
+}

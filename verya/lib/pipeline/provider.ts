@@ -1,5 +1,5 @@
 // Verya — provider adapter (R2 / F7 policy note)
-// ALL AI calls go through this file. Today: Gemini alone (single key).
+// ALL AI calls go through this file. Every task fans out to all configured providers.
 // Your separate ML models implement StageAdapters per stage; nothing else changes.
 // Execution/verification use direct model calls (no structured output) where appropriate.
 
@@ -50,6 +50,60 @@ const GEMINI_FAILOVER_MODELS = (process.env.GEMINI_FAILOVER_MODELS ||
   .map((s) => s.trim())
   .filter(Boolean);
 const GEMINI_TIMEOUT_MS = Number(process.env.GEMINI_TIMEOUT_MS || 60000);
+const PROVIDER_TIMEOUT_MS = Number(process.env.PROVIDER_TIMEOUT_MS || GEMINI_TIMEOUT_MS);
+
+type ProviderName = "gemini" | "groq" | "openrouter" | "mistral";
+type ProviderConfig = {
+  name: ProviderName;
+  apiKey: string | undefined;
+  model: string;
+  endpoint?: string;
+};
+
+function getProviderConfigs(stage: PipelineStageId | "execution" | "verification"): ProviderConfig[] {
+  const configs: ProviderConfig[] = [
+    {
+      name: "gemini",
+      apiKey: process.env.GEMINI_API_KEY,
+      model: GEMINI_MODEL,
+    },
+    {
+      name: "groq",
+      apiKey: process.env.GROQ_API_KEY,
+      model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile",
+      endpoint: "https://api.groq.com/openai/v1/chat/completions",
+    },
+    {
+      name: "openrouter",
+      apiKey: process.env.OPENROUTER_API_KEY,
+      model: process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini",
+      endpoint: "https://openrouter.ai/api/v1/chat/completions",
+    },
+    {
+      name: "mistral",
+      apiKey: process.env.MISTRAL_API_KEY,
+      model: process.env.MISTRAL_MODEL || "mistral-large-latest",
+      endpoint: "https://api.mistral.ai/v1/chat/completions",
+    },
+  ];
+  const configured = configs.filter((config): config is ProviderConfig & { apiKey: string } => Boolean(config.apiKey));
+  const missing = configs
+    .filter((config) => !config.apiKey)
+    .map((config) => `${config.name.toUpperCase()}_API_KEY`);
+  if (missing.length > 0) {
+    console.warn(
+      `[Providers] ${stage}: unavailable providers: ${missing.join(", ")}. ` +
+        "Configure their environment variables to include them in the ensemble."
+    );
+  }
+  if (configured.length === 0) {
+    throw new ProviderError(
+      `No AI provider is configured for ${stage}. Set at least one provider API key.`,
+      stage
+    );
+  }
+  return configured;
+}
 
 function isRetryableModelError(err: unknown): boolean {
   const msg = err instanceof Error ? err.message : String(err);
@@ -98,7 +152,7 @@ export class ProviderError extends Error {
 }
 
 /** Structured JSON completion (schema-constrained), with model failover (F46). */
-async function geminiJson<S extends z.ZodType>(
+async function geminiJsonForGemini<S extends z.ZodType>(
   stage: PipelineStageId,
   system: string,
   user: string,
@@ -173,8 +227,76 @@ async function geminiJson<S extends z.ZodType>(
   throw new ProviderError(`All models failed for stage: ${detail}`, stage, lastErr);
 }
 
+async function compatibleJson<S extends z.ZodType>(
+  provider: ProviderConfig,
+  stage: PipelineStageId | "execution" | "verification",
+  system: string,
+  user: string,
+  schema: S
+): Promise<z.output<S>> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), PROVIDER_TIMEOUT_MS);
+  try {
+    const response = await fetch(provider.endpoint!, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${provider.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: provider.model,
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: user },
+        ],
+        temperature: 0.3,
+        response_format: { type: "json_object" },
+      }),
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error(`${provider.name} returned HTTP ${response.status}`);
+    const payload = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string | Array<{ text?: string }> } }>;
+    };
+    const content = payload.choices?.[0]?.message?.content;
+    const text = Array.isArray(content)
+      ? content.map((part) => part.text || "").join("")
+      : content;
+    if (!text) throw new Error(`${provider.name} returned an empty response`);
+    const parsed = schema.safeParse(JSON.parse(text));
+    if (!parsed.success) throw new Error(`${provider.name} returned invalid structured output`);
+    return parsed.data;
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new ProviderError(`${provider.name} timed out`, stage, error);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function geminiJson<S extends z.ZodType>(
+  stage: PipelineStageId,
+  system: string,
+  user: string,
+  schema: S
+): Promise<z.output<S>> {
+  const providers = getProviderConfigs(stage);
+  const results = await Promise.allSettled(
+    providers.map((provider) =>
+      provider.name === "gemini"
+        ? geminiJsonForGemini(stage, system, user, schema)
+        : compatibleJson(provider, stage, system, user, schema)
+    )
+  );
+  const firstSuccess = results.find((result) => result.status === "fulfilled");
+  if (firstSuccess?.status === "fulfilled") return firstSuccess.value;
+  throw new ProviderError(`All providers failed for ${stage}`, stage, results);
+}
+
 /** Free-text completion against a chosen model (used for execution), with failover (F46). */
-async function geminiText(
+async function geminiTextForGemini(
   model: string,
   system: string,
   user: string,
@@ -188,7 +310,7 @@ async function geminiText(
   const ai = getClient();
   const chain = [model, ...GEMINI_FAILOVER_MODELS.filter((m) => m !== model)];
   let lastErr: unknown = null;
-  const startedTotal = Date.now();
+
 
   for (const candidate of chain) {
     if (dailyExhausted.has(candidate)) continue;
@@ -241,6 +363,79 @@ async function geminiText(
   }
   const detail = lastErr instanceof Error ? lastErr.message : String(lastErr);
   throw new ProviderError(`All models failed: ${detail}`, stage, lastErr);
+}
+
+async function compatibleText(
+  provider: ProviderConfig,
+  system: string,
+  user: string,
+  stage: "execution" | "verification"
+): Promise<{ text: string; output?: string; latencyMs: number; tokens: { input: number; output: number } }> {
+  const started = Date.now();
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), PROVIDER_TIMEOUT_MS * 2);
+  try {
+    const response = await fetch(provider.endpoint!, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${provider.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: provider.model,
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: user },
+        ],
+        temperature: 0.4,
+      }),
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error(`${provider.name} returned HTTP ${response.status}`);
+    const payload = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string | Array<{ text?: string }> } }>;
+      usage?: { prompt_tokens?: number; completion_tokens?: number };
+    };
+    const content = payload.choices?.[0]?.message?.content;
+    const text = Array.isArray(content)
+      ? content.map((part) => part.text || "").join("")
+      : content;
+    if (!text) throw new Error(`${provider.name} returned an empty response`);
+    return {
+      text,
+      output: stage === "execution" ? text : undefined,
+      latencyMs: Date.now() - started,
+      tokens: {
+        input: payload.usage?.prompt_tokens ?? 0,
+        output: payload.usage?.completion_tokens ?? 0,
+      },
+    };
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new ProviderError(`${provider.name} timed out`, stage, error);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function geminiText(
+  system: string,
+  user: string,
+  stage: "execution" | "verification"
+): Promise<{ text: string; output?: string; latencyMs: number; tokens: { input: number; output: number } }> {
+  const providers = getProviderConfigs(stage);
+  const results = await Promise.allSettled(
+    providers.map((provider) =>
+      provider.name === "gemini"
+        ? geminiTextForGemini(provider.model, system, user, stage)
+        : compatibleText(provider, system, user, stage)
+    )
+  );
+  const firstSuccess = results.find((result) => result.status === "fulfilled");
+  if (firstSuccess?.status === "fulfilled") return firstSuccess.value;
+  throw new ProviderError(`All providers failed for ${stage}`, stage, results);
 }
 
 // ---------- The adapter interface your ML models will implement ----------
@@ -347,9 +542,8 @@ export const geminiAdapters: StageAdapters = {
       RoutingPlanSchema
     ),
 
-  executeTask: async ({ task, algorithm, stack, workflow, model }) => {
+  executeTask: async ({ task, algorithm, stack, workflow }) => {
     const res = await geminiText(
-      model === STRONG_MODEL_ID ? GEMINI_PRO_MODEL : GEMINI_MODEL,
       EXECUTION_SYSTEM,
       `WORKFLOW TITLE: ${workflow.title}\nWORKFLOW SUMMARY: ${workflow.summary}\n\nSTACK: ${stack}\n\nTASK: ${task.title}\nTASK DESCRIPTION: ${task.description}\nCATEGORY: ${task.category}\nCHOSEN APPROACH: ${algorithm}`,
       "execution"
@@ -388,10 +582,9 @@ export const geminiAdapters: StageAdapters = {
     const verifierModel = model === STRONG_MODEL_ID ? GEMINI_MODEL : GEMINI_PRO_MODEL;
     try {
       const res = await geminiText(
-        verifierModel,
-        VERIFICATION_SYSTEM,
-        `TASK: ${task.title}\nTASK DESCRIPTION: ${task.description}\nCHOSEN APPROACH: ${algorithm}\n\nOUTPUT TO VERIFY:\n${output.slice(0, 12000)}`,
-        "verification"
+          VERIFICATION_SYSTEM,
+          `TASK: ${task.title}\nTASK DESCRIPTION: ${task.description}\nCHOSEN APPROACH: ${algorithm}\n\nOUTPUT TO VERIFY:\n${output.slice(0, 12000)}`,
+          "verification"
       );
       const parsed = JSON.parse(res.text) as { passed?: boolean; issues?: string[] };
       return {

@@ -5,27 +5,33 @@
    ▲ Next.js 15.5.25 (Turbopack)
    - Local:        http://localhost:3100
    - Network:      http://10.255.154.118:3100
+   - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 1990ms
+ ✓ Ready in 1945ms
  ○ Compiling / ...
- ✓ Compiled / in 5.9s
- GET / 200 in 6506ms
- GET / 200 in 365ms
- GET / 200 in 355ms
- ○ Compiling /api/pipeline/upload ...
- ✓ Compiled /api/pipeline/upload in 1239ms
- POST /api/pipeline/upload 500 in 2175ms
- ✓ Compiled /api/dashboard in 248ms
- GET /api/dashboard 200 in 647ms
- POST /api/pipeline/upload 500 in 667ms
- POST /api/pipeline/upload 500 in 652ms
- ✓ Compiled /api/dashboard/export in 225ms
- GET /api/dashboard/export 200 in 615ms
- ○ Compiling /dashboard ...
- ✓ Compiled /dashboard in 515ms
- GET /dashboard 200 in 843ms
- GET /api/dashboard 200 in 588ms
- GET /dashboard 200 in 373ms
- GET /api/dashboard 200 in 605ms
- GET / 200 in 346ms
+ ✓ Compiled / in 4.5s
+ GET / 200 in 5505ms
+ ○ Compiling /api/pipeline ...
+ ✓ Compiled /api/pipeline in 1229ms
+ POST /api/pipeline 500 in 27579ms
+ POST /api/pipeline 500 in 139473ms
+ POST /api/pipeline 500 in 98221ms
+ POST /api/pipeline 500 in 97923ms
+ POST /api/pipeline 500 in 85305ms
+ POST /api/pipeline 500 in 38197ms
+ POST /api/pipeline 500 in 24940ms
+ POST /api/pipeline 500 in 67766ms
+ POST /api/pipeline 500 in 715ms
+ POST /api/pipeline 500 in 76175ms
+ POST /api/pipeline 500 in 76584ms
+ POST /api/pipeline 500 in 51820ms
+ POST /api/pipeline 200 in 88216ms
+ ○ Compiling /api/pipeline/[id]/action ...
+ ✓ Compiled /api/pipeline/[id]/action in 564ms
+ POST /api/pipeline/637d7ae5-7e97-4a45-b0e9-02d71c24dab2/action 500 in 36829ms
+ POST /api/pipeline/637d7ae5-7e97-4a45-b0e9-02d71c24dab2/action 200 in 46021ms
+ POST /api/pipeline/637d7ae5-7e97-4a45-b0e9-02d71c24dab2/action 500 in 40420ms
+ POST /api/pipeline/637d7ae5-7e97-4a45-b0e9-02d71c24dab2/action 200 in 49460ms
+ POST /api/pipeline/637d7ae5-7e97-4a45-b0e9-02d71c24dab2/action 200 in 55519ms
+   Reload env: .env.local
