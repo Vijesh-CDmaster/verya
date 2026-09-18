@@ -11,6 +11,51 @@ import type { ExecutionResult, PipelineSession } from "../schemas/pipeline";
 
 const ORG_ID = process.env.VERYA_ORG_ID || "default-org";
 
+/** Sessions whose execution loop is currently running in this process. */
+const executing = new Set<string>();
+
+/**
+ * Kick off execution WITHOUT blocking the HTTP response — the route returns the
+ * session with gateStatus="running" and the UI polls until review is ready.
+ * Prevents double-starts from repeated clicks (the loop itself also skips
+ * already-executed tasks).
+ */
+export async function startExecution(sessionId: string): Promise<{ session: PipelineSession }> {
+  const session = await getSession(ORG_ID, sessionId);
+  if (!session) throw Object.assign(new Error("Session not found"), { statusCode: 404 });
+  if (!session.routing || !session.workflow || !session.algorithms) {
+    throw Object.assign(new Error("Pipeline not ready for execution"), { statusCode: 409 });
+  }
+  session.gate = "execution";
+  session.gateStatus = "running";
+  await saveSession(ORG_ID, session);
+
+  // With Redis configured, actOnPipeline already enqueued this session to BullMQ —
+  // the worker owns the run; running inline here too would execute tasks twice.
+  if (process.env.REDIS_URL) {
+    return { session };
+  }
+
+  if (!executing.has(sessionId)) {
+    executing.add(sessionId);
+    void runExecution(sessionId)
+      .catch(async (err) => {
+        console.error(`[execution] failed for ${sessionId}:`, err);
+        try {
+          const s = await getSession(ORG_ID, sessionId);
+          if (s) {
+            s.gateStatus = "failed";
+            await saveSession(ORG_ID, s);
+          }
+        } catch {
+          /* best-effort failure marker */
+        }
+      })
+      .finally(() => executing.delete(sessionId));
+  }
+  return { session };
+}
+
 export async function runExecution(sessionId: string): Promise<{ session: PipelineSession }> {
   const session = await getSession(ORG_ID, sessionId);
   if (!session) throw Object.assign(new Error("Session not found"), { statusCode: 404 });

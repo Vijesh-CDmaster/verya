@@ -1,0 +1,84 @@
+[
+ {
+  "orgId": "default-org",
+  "sessionId": "1b7f5346-58ae-495b-9187-f8ea191d29e7",
+  "gate": "suitability",
+  "eventType": "suitability_flagged",
+  "detail": {
+   "summary": "The workflow lacks a critical integration step. It treats the knowledge base as an abstract task without defining how the data is ingested, cleaned, or kept in sync with the source of truth, which is essential for an AI-driven support tool. Furthermore, it assumes the AI drafting logic can be built in isolation from the UI, but the user experience (streaming responses, editing drafts) is highly dependent on the API design.",
+   "suggested": true
+  },
+  "seq": 1,
+  "prevHash": "GENESIS",
+  "chainHash": "383e379db1fc4690052c4fdec76c875082aaa43857768b895b1ad508b72d078f",
+  "createdAt": "2026-09-18T16:49:57.839Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "2dace54c-1006-477c-895d-6d5ee8ec510b",
+  "gate": "suitability",
+  "eventType": "suitability_passed",
+  "detail": {
+   "summary": "Workflow suitable (confidence 90%)",
+   "confidence": 0.9
+  },
+  "seq": 2,
+  "prevHash": "383e379db1fc4690052c4fdec76c875082aaa43857768b895b1ad508b72d078f",
+  "chainHash": "9d9a3d599e62261ebd33c8c9b00b13974d8c5c18b511d70d2d185f89efc89e86",
+  "createdAt": "2026-09-18T17:03:40.707Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "2dace54c-1006-477c-895d-6d5ee8ec510b",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "Flaw scan queued for approval"
+  },
+  "seq": 3,
+  "prevHash": "9d9a3d599e62261ebd33c8c9b00b13974d8c5c18b511d70d2d185f89efc89e86",
+  "chainHash": "24d7ecafb4a0fb5302fbbf0fb8339536fb35f0654c6f75f7b7e10f0f1672bf9b",
+  "createdAt": "2026-09-18T17:03:40.757Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "19ee9ebe-db40-47cf-9df0-b2327580f542",
+  "gate": "suitability",
+  "eventType": "suitability_passed",
+  "detail": {
+   "summary": "Workflow suitable (confidence 95%)",
+   "confidence": 0.95
+  },
+  "seq": 4,
+  "prevHash": "24d7ecafb4a0fb5302fbbf0fb8339536fb35f0654c6f75f7b7e10f0f1672bf9b",
+  "chainHash": "d0d429ede5b974ea0edc122d7accdc2a8e274dd1605dbd3aba8cdb93b6762bd8",
+  "createdAt": "2026-09-18T17:22:57.520Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "19ee9ebe-db40-47cf-9df0-b2327580f542",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "Flaw scan queued for approval"
+  },
+  "seq": 5,
+  "prevHash": "d0d429ede5b974ea0edc122d7accdc2a8e274dd1605dbd3aba8cdb93b6762bd8",
+  "chainHash": "04304525e286f25263291a57a09245fdf4f4b1bb8977272298c0ba463cb84216",
+  "createdAt": "2026-09-18T17:22:57.574Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "19ee9ebe-db40-47cf-9df0-b2327580f542",
+  "gate": "suitability",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User kept the original workflow"
+  },
+  "seq": 6,
+  "prevHash": "04304525e286f25263291a57a09245fdf4f4b1bb8977272298c0ba463cb84216",
+  "chainHash": "398d0347d77dfa3dddb392f6a33b0cb29099fba21548af7b119921b5e5b2d78c",
+  "createdAt": "2026-09-18T17:22:57.695Z"
+ }
+]

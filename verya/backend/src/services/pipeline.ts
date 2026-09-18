@@ -31,7 +31,7 @@ export async function startPipeline(input: {
     policy: input.policy,
     uploads: [],
     gate: "suitability",
-    gateStatus: "pending",
+    gateStatus: "running", // route responds immediately; the gate runs in background
     suitability: null,
     suggestedWorkflow: null,
     workflow: null,
@@ -43,10 +43,47 @@ export async function startPipeline(input: {
     executions: [],
     humanFeedback: { ratings: {} },
   };
-  const processed = await processGate(session, geminiAdapters as StageAdapters);
-  await repoCreate(ORG_ID, processed);
-  await repoSave(ORG_ID, processed);
-  return processed;
+  await repoCreate(ORG_ID, session);
+  await repoSave(ORG_ID, session);
+  kickGateProcessing(session.id);
+  return session;
+}
+
+/** Sessions whose gate AI is currently processing in this process. */
+const inFlight = new Set<string>();
+
+/**
+ * Kick off AI processing for the current gate WITHOUT blocking the HTTP response.
+ * The UI polls GET /pipeline/:id every 2.5s while gateStatus === "running". On
+ * failure the session is marked "failed" so the UI shows an error instead of
+ * spinning forever. In-process guard prevents duplicate concurrent processing.
+ */
+function kickGateProcessing(sessionId: string): void {
+  if (inFlight.has(sessionId)) return;
+  inFlight.add(sessionId);
+  void (async () => {
+    try {
+      const fresh = await repoGet(ORG_ID, sessionId);
+      if (!fresh) return;
+      const processed = await processGate(fresh, geminiAdapters as StageAdapters);
+      processed.updatedAt = new Date().toISOString();
+      await repoSave(ORG_ID, processed);
+    } catch (err) {
+      console.error(`[pipeline] gate processing failed for ${sessionId}:`, err);
+      try {
+        const fresh = await repoGet(ORG_ID, sessionId);
+        if (fresh) {
+          fresh.gateStatus = "failed";
+          fresh.updatedAt = new Date().toISOString();
+          await repoSave(ORG_ID, fresh);
+        }
+      } catch {
+        /* best-effort failure marker */
+      }
+    } finally {
+      inFlight.delete(sessionId);
+    }
+  })();
 }
 
 export async function getPipeline(id: string): Promise<PipelineSession | null> {
@@ -64,6 +101,10 @@ export async function actOnPipeline(id: string, action: GateAction): Promise<Pip
   const updated = await applyGateAction(session, action, geminiAdapters as StageAdapters);
   updated.updatedAt = new Date().toISOString();
   await repoSave(ORG_ID, updated);
+
+  // AI gates set gateStatus="running" and expect background processing (the UI
+  // polls until the gate flips to awaiting_user/failed).
+  if (updated.gateStatus === "running") kickGateProcessing(updated.id);
 
   // Feedback (F16): every accept/reject/rate/edit feeds memory + reputation + ledger.
   if (action.action === "feedback") {

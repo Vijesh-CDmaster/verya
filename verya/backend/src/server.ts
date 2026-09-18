@@ -1,7 +1,8 @@
-// Verya backend entrypoint.
+  // Verya backend entrypoint.
 import "dotenv/config";
 import { buildApp } from "./app";
 import { isDbConfigured } from "./db/pool";
+import { clerkConfigured } from "./middleware/auth";
 
 const PORT = Number(process.env.PORT) > 0 ? Number(process.env.PORT) : 4000;
 const HOST = process.env.HOST || "0.0.0.0";
@@ -12,7 +13,7 @@ async function main(): Promise<void> {
     await app.listen({ port: PORT, host: HOST });
     app.log.info(`Verya backend listening on http://localhost:${PORT}`);
     app.log.info(`Database: ${isDbConfigured() ? "Neon Postgres configured" : "NOT configured — set DATABASE_URL in backend/.env"}`);
-    app.log.info(`Auth: ${process.env.CLERK_JWKS_URL ? "Clerk" : "development mode (set CLERK_* env vars for production)"}`);
+    app.log.info(`Auth: ${clerkConfigured() ? "Clerk (derived from publishable key)" : "development mode (set CLERK keys for production)"}`);
   } catch (err) {
     app.log.error(err);
     process.exit(1);

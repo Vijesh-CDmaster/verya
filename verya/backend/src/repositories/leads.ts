@@ -1,5 +1,9 @@
 // Leads repository — append-only marketing lead capture.
-import { query, requireDb } from "../db/pool";
+// Follows the same devstore fallback pattern as every other repository: when
+// DATABASE_URL is unset, leads persist to backend/.devstore/leads.json so the
+// marketing form works locally without a database.
+import { query, requireDb, isDbConfigured } from "../db/pool";
+import * as dev from "../db/devstore";
 
 export type LeadRecord = {
   id: number;
@@ -18,6 +22,7 @@ export async function insertLead(input: {
   phone?: string;
   source?: string;
 }): Promise<LeadRecord> {
+  if (!isDbConfigured()) return dev.devInsertLead(input);
   requireDb();
   const rows = await query<Record<string, unknown>>(
     `INSERT INTO leads (org_id, name, email, phone, source, accepted_terms_at)
@@ -29,6 +34,7 @@ export async function insertLead(input: {
 }
 
 export async function listLeads(orgId: string, limit = 100): Promise<LeadRecord[]> {
+  if (!isDbConfigured()) return dev.devListLeads(orgId, limit);
   requireDb();
   const rows = await query<Record<string, unknown>>(
     `SELECT id, org_id, name, email, phone, source, created_at

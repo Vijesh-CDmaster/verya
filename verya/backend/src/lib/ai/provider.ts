@@ -127,16 +127,30 @@ function isRetryableModelError(err: unknown): boolean {
 // Free tiers quota requests PER MODEL PER DAY. When a model is exhausted (429 with a
 // PerDay quota id), retrying it is pointless — record it and fail straight through to
 // the next model, which has fresh quota (F46).
-const dailyExhausted = new Set<string>(); // key: `${provider}:${model}`
+// Benches are TTL-based: a plain rate limit clears quickly, a real daily cap
+// benches for a long window so the chain stops hammering a dry provider.
+const dailyExhausted = new Map<string, number>(); // key: `${provider}:${model}` -> bench-until epoch ms
+const RATE_LIMIT_BENCH_MS = Number(process.env.RATE_LIMIT_BENCH_MS || 90_000);
+const DAILY_BENCH_MS = Number(process.env.DAILY_BENCH_MS || 6 * 60 * 60 * 1000);
 function isDailyQuotaExhaustion(err: unknown): boolean {
   const msg = err instanceof Error ? err.message : String(err);
   return /RESOURCE_EXHAUSTED|quota/i.test(msg) && /PerDay|per_day|daily|PerProjectPerModel/i.test(msg);
 }
-function markExhausted(provider: ProviderName, model: string) {
-  dailyExhausted.add(`${provider}:${model}`);
+function isRateLimit(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err);
+  return /HTTP 429|rate.?limit|temporarily rate-limited/i.test(msg);
+}
+function markExhausted(provider: ProviderName, model: string, ttlMs = DAILY_BENCH_MS) {
+  dailyExhausted.set(`${provider}:${model}`, Date.now() + ttlMs);
 }
 function isExhausted(provider: ProviderName, model: string): boolean {
-  return dailyExhausted.has(`${provider}:${model}`);
+  const until = dailyExhausted.get(`${provider}:${model}`);
+  if (until === undefined) return false;
+  if (Date.now() > until) {
+    dailyExhausted.delete(`${provider}:${model}`); // TTL elapsed — give it another chance
+    return false;
+  }
+  return true;
 }
 
 // ---------- Gemini native caller (structured output via SDK) ----------
@@ -175,16 +189,7 @@ async function geminiStructured<S extends z.ZodType>(
     const text = response.text ?? "";
     if (!text) throw new Error("Empty response from Gemini");
     const parsed: unknown = JSON.parse(text);
-    const result = zodSchema.safeParse(parsed);
-    if (!result.success) {
-      throw new Error(
-        `Schema validation failed: ${result.error.issues
-          .slice(0, 3)
-          .map((i) => `${i.path.join(".")}: ${i.message}`)
-          .join("; ")}`
-      );
-    }
-    return result.data;
+    return validateCoerced(zodSchema, parsed);
   } finally {
     clearTimeout(timer);
   }
@@ -272,6 +277,100 @@ function extractJson(text: string): unknown {
   }
 }
 
+// ---------- Tolerant schema validation ----------
+
+function validationError(error: z.ZodError): Error {
+  return new Error(
+    `Schema validation failed: ${error.issues
+      .slice(0, 3)
+      .map((i) => `${i.path.join(".")}: ${i.message}`)
+      .join("; ")}`
+  );
+}
+
+/**
+ * Models occasionally return sloppy shapes despite schema hints: scalars as
+ * strings ("true", "0.9"), wrong-case enum values ("Medium"), over-long strings
+ * (>max chars), out-of-range numbers. Coerce exactly the paths the schema flags,
+ * then re-validate once. Anything still failing is a real model error and keeps
+ * the /Schema validation failed/ contract so the caller's re-ask logic fires.
+ */
+export function validateCoerced<S extends z.ZodType>(schema: S, data: unknown): z.output<S> {
+  const first = schema.safeParse(data);
+  if (first.success) return first.data;
+
+  const fixed: unknown = structuredClone(data);
+  let coerced = 0;
+  for (const issue of first.error.issues) {
+    const path = issue.path as Array<string | number | symbol>;
+    if (path.length === 0) continue;
+    let parent: Record<string | symbol, unknown> | undefined = fixed as Record<string | symbol, unknown>;
+    let ok = true;
+    for (let i = 0; i < path.length - 1; i++) {
+      const next = parent?.[path[i]] as Record<string | symbol, unknown> | undefined;
+      if (next == null || typeof next !== "object") {
+        ok = false;
+        break;
+      }
+      parent = next;
+    }
+    if (!ok) continue;
+    const leaf = path[path.length - 1];
+    const cur = parent[leaf];
+    const extra = issue as unknown as {
+      expected?: string;
+      values?: string[];
+      maximum?: number;
+      minimum?: number;
+      origin?: string;
+    };
+    let value: unknown;
+    if (issue.code === "invalid_type") {
+      if (extra.expected === "boolean" && (cur === "true" || cur === "false")) {
+        value = cur === "true";
+      } else if (
+        extra.expected === "number" &&
+        typeof cur === "string" &&
+        cur.trim() !== "" &&
+        Number.isFinite(Number(cur))
+      ) {
+        value = Number(cur);
+      } else if (extra.expected === "string" && typeof cur === "number" && Number.isFinite(cur)) {
+        value = String(cur);
+      }
+    } else if (issue.code === "invalid_value" && typeof cur === "string") {
+      // Enum mismatch: try case-insensitive, then substring containment either way.
+      const allowed = extra.values ?? [];
+      const lower = cur.toLowerCase();
+      value = allowed.find((v) => v.toLowerCase() === lower);
+      if (value === undefined) {
+        value = allowed.find((v) => {
+          const lv = v.toLowerCase();
+          return lower.includes(lv) || lv.includes(lower);
+        });
+      }
+    } else if (issue.code === "too_big" && extra.origin === "string" && typeof cur === "string" && typeof extra.maximum === "number") {
+      value = cur.slice(0, extra.maximum);
+    } else if (issue.code === "too_big" && extra.origin === "number" && typeof cur === "number" && typeof extra.maximum === "number") {
+      value = extra.maximum;
+    } else if (issue.code === "too_small" && extra.origin === "number" && typeof cur === "number" && typeof extra.minimum === "number") {
+      value = extra.minimum;
+    }
+    if (value === undefined) continue;
+    parent[leaf] = value;
+    coerced++;
+  }
+  if (coerced === 0) throw validationError(first.error);
+
+  const second = schema.safeParse(fixed);
+  if (second.success) {
+    console.warn(`[ai] schema coercion repaired ${coerced} model field(s) — validation passed`);
+    return second.data;
+  }
+  console.warn(`[ai] schema coercion repaired ${coerced} field(s) but ${second.error.issues.length} issue(s) remain`);
+  throw validationError(second.error);
+}
+
 // ---------- Structured stage calls: primary model first, then the whole pool ----------
 type StageModel = { provider: ProviderName; model: string; structured: boolean };
 
@@ -317,35 +416,37 @@ async function runStructuredStage<S extends z.ZodType>(
           json: true,
           jsonHint: hint,
         });
-        const parsed = zodSchema.safeParse(extractJson(res.text));
-        if (!parsed.success) {
-          throw new Error(
-            `Schema validation failed: ${parsed.error.issues
-              .slice(0, 3)
-              .map((i) => `${i.path.join(".")}: ${i.message}`)
-              .join("; ")}`
-          );
-        }
-        return parsed.data;
+        return validateCoerced(zodSchema, extractJson(res.text));
       } catch (err) {
         lastErr = err;
+        console.warn(
+          `[ai] ${stage}: ${attemptModel.provider}/${attemptModel.model} attempt ${attempt} failed: ${err instanceof Error ? err.message : String(err)}`
+        );
         if (isDailyQuotaExhaustion(err)) {
           markExhausted(attemptModel.provider, attemptModel.model);
           break;
         }
-        // Schema-validation failures are worth one same-model re-ask (models often
-        // self-correct when the error is shown) before moving to the next provider.
+        if (isRateLimit(err)) {
+          // Transient upstream 429: bench briefly and move on immediately —
+          // retrying the same model right away just burns the caller's time.
+          markExhausted(attemptModel.provider, attemptModel.model, RATE_LIMIT_BENCH_MS);
+          break;
+        }
+        // Schema-validation failures are worth one same-model re-ask with the
+        // validation errors SHOWN — models frequently self-correct when told
+        // exactly what was wrong — before moving to the next provider.
         if (/Schema validation failed/i.test(String(lastErr))) {
           if (attempt === 0) {
             try {
-              const res2 = await chatCompatible(provider, attemptModel.model, system, user, {
+              const reaskUser = `${user}\n\nYour previous JSON response failed schema validation:\n${String(lastErr).slice(0, 500)}\nReturn the complete corrected JSON object that satisfies the schema: ids/tokens as strings, enum values exactly lowercase as listed, arrays non-empty where required.`;
+              const res2 = await chatCompatible(provider, attemptModel.model, system, reaskUser, {
                 json: true,
                 jsonHint: hint,
                 timeoutMs: PROVIDER_TIMEOUT_MS,
               });
-              const parsed2 = zodSchema.safeParse(extractJson(res2.text));
-              if (parsed2.success) return parsed2.data;
-            } catch {
+              return validateCoerced(zodSchema, extractJson(res2.text));
+            } catch (err2) {
+              console.warn(`[ai] ${stage}: ${attemptModel.provider}/${attemptModel.model} re-ask failed: ${err2 instanceof Error ? err2.message : String(err2)}`);
               /* fall through to next model */
             }
           }

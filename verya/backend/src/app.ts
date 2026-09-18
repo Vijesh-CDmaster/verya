@@ -3,7 +3,7 @@ import Fastify, { type FastifyInstance, type FastifyRequest } from "fastify";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
-import { authenticate, clerkConfigured, type AuthContext } from "./middleware/auth";
+import { authenticate, clerkConfigured, PUBLIC_API_PREFIXES, type AuthContext } from "./middleware/auth";
 import pipelineRoutes from "./routes/pipeline";
 import ledgerRoutes from "./routes/ledger";
 import dashboardRoutes from "./routes/dashboard";
@@ -41,10 +41,13 @@ export async function buildApp(): Promise<FastifyInstance> {
     timeWindow: "1 minute",
   });
 
-  // Auth context on every request (F38).
+  // Auth context on every request (F38). Public prefixes (health, lead capture)
+  // accept anonymous callers under Clerk; everything else requires a session.
   app.decorateRequest("auth");
   app.addHook("onRequest", async (req) => {
-    (req as VeryaRequest).auth = await authenticate(req);
+    const url = (req.url || "").split("?")[0];
+    const isPublic = PUBLIC_API_PREFIXES.some((p) => url === p || url.startsWith(`${p}/`));
+    (req as VeryaRequest).auth = await authenticate(req, { public: isPublic });
   });
 
   app.get("/health", async () => ({

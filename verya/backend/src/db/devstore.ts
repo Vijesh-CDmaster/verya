@@ -18,6 +18,7 @@ const FILES = {
   ledger: "ledger.json",
   memory: "memory.json",
   reputation: "reputation.json",
+  leads: "leads.json",
 } as const;
 
 let warned = false;
@@ -318,4 +319,48 @@ export async function devUpdateReputation(input: {
 export async function devGetReputation(orgId: string): Promise<ReputationEntry[]> {
   const rows = await readJson<ReputationEntry[]>(FILES.reputation, []);
   return rows.filter((r) => r.orgId === orgId).sort((a, b) => b.trustScore - a.trustScore);
+}
+
+// ---------- leads (marketing capture; same shape as the Postgres repo) ----------
+type StoredLead = {
+  id: number;
+  orgId: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  source: string;
+  createdAt: string;
+};
+
+export async function devInsertLead(input: {
+  orgId: string;
+  name: string;
+  email: string;
+  phone?: string;
+  source?: string;
+}): Promise<StoredLead> {
+  warnOnce();
+  return withLock(FILES.leads, async () => {
+    const rows = await readJson<StoredLead[]>(FILES.leads, []);
+    const lead: StoredLead = {
+      id: rows.reduce((m, r) => Math.max(m, r.id), 0) + 1,
+      orgId: input.orgId,
+      name: input.name,
+      email: input.email,
+      phone: input.phone ?? null,
+      source: input.source || "website",
+      createdAt: new Date().toISOString(),
+    };
+    rows.push(lead);
+    await writeJson(FILES.leads, rows);
+    return lead;
+  });
+}
+
+export async function devListLeads(orgId: string, limit = 100): Promise<StoredLead[]> {
+  const rows = await readJson<StoredLead[]>(FILES.leads, []);
+  return rows
+    .filter((r) => r.orgId === orgId)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .slice(0, Math.min(limit, 500));
 }

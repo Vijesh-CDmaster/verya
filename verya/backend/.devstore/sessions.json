@@ -1,0 +1,638 @@
+[
+ {
+  "id": "1b7f5346-58ae-495b-9187-f8ea191d29e7",
+  "orgId": "default-org",
+  "title": "Build an internal tool for our support team. Staff paste a c",
+  "gate": "suitability",
+  "gateStatus": "awaiting_user",
+  "createdAt": "2026-09-18T16:49:57.888Z",
+  "updatedAt": "2026-09-18T16:49:57.898Z",
+  "state": {
+   "id": "1b7f5346-58ae-495b-9187-f8ea191d29e7",
+   "createdAt": "2026-09-18T16:46:12.447Z",
+   "updatedAt": "2026-09-18T16:46:12.448Z",
+   "input": "Build an internal tool for our support team. Staff paste a customer's issue and the tool drafts a reply using our knowledge base, with an audit trail of what was sent. Around 50 support agents will use it daily. We need role-based access (agents vs admins), full history of every reply, and a dashboard showing response times. Our stack is Next.js and Postgres.",
+   "statedStack": "",
+   "policy": "balanced",
+   "uploads": [],
+   "gate": "suitability",
+   "gateStatus": "awaiting_user",
+   "suitability": {
+    "suitable": false,
+    "confidence": 0.95,
+    "reason": "The workflow lacks a critical integration step. It treats the knowledge base as an abstract task without defining how the data is ingested, cleaned, or kept in sync with the source of truth, which is essential for an AI-driven support tool. Furthermore, it assumes the AI drafting logic can be built in isolation from the UI, but the user experience (streaming responses, editing drafts) is highly dependent on the API design.",
+    "suggestedWorkflow": "1. Define Knowledge Base Source: Identify the source of truth (e.g., Notion, Zendesk, or Markdown files) and establish an ingestion pipeline to sync data into a vector database. 2. Database & Auth Setup: Design the Postgres schema and implement NextAuth with RBAC to secure the application. 3. AI Pipeline Development: Build the RAG (Retrieval-Augmented Generation) backend, including document chunking, vector search, and LLM integration. 4. Core API Development: Create endpoints for draft generation, ensuring the logic handles the context window and prompt engineering effectively. 5. Frontend Development: Build the agent interface, focusing on the input form, draft display, and the 'send/edit' workflow. 6. Audit & Logging: Implement the logging service to capture every interaction, including timestamps for response time calculation. 7. Admin Dashboard: Build the visualization layer for metrics. 8. Testing & Deployment: Perform user acceptance testing with a small group of agents and deploy to production.",
+    "suggestedSummary": "The workflow is updated to prioritize data ingestion from the knowledge base and integrate the AI pipeline more tightly with the frontend interaction requirements."
+   },
+   "suggestedWorkflow": {
+    "title": "Support AI Draft & Audit Tool",
+    "summary": "An internal Next.js and Postgres web application for a 50-agent support team to paste customer issues, generate drafted replies using an integrated knowledge base, track sent replies via an audit trail, and monitor response metrics on an admin dashboard.",
+    "tasks": [
+     {
+      "id": "task_db_schema",
+      "title": "Database Schema Design",
+      "description": "Design Postgres schema for users, roles, drafts, audit logs, and response metrics.",
+      "category": "database",
+      "dependsOn": [],
+      "complexity": "low",
+      "risk": "low"
+     },
+     {
+      "id": "task_auth_rbac",
+      "title": "Authentication and RBAC Setup",
+      "description": "Implement Next.js authentication and role-based access control for agents and admins.",
+      "category": "auth",
+      "dependsOn": [
+       "task_db_schema"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "task_kb_integration",
+      "title": "Knowledge Base & AI Integration",
+      "description": "Set up vector search or retrieval mechanism on the knowledge base and integrate LLM API for drafting replies.",
+      "category": "ai",
+      "dependsOn": [],
+      "complexity": "high",
+      "risk": "high"
+     },
+     {
+      "id": "task_issue_input_ui",
+      "title": "Issue Input & Draft UI",
+      "description": "Create frontend interface for pasting customer issues and displaying AI-generated drafts.",
+      "category": "frontend",
+      "dependsOn": [
+       "task_auth_rbac"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "task_draft_api",
+      "title": "Draft Generation API",
+      "description": "Develop backend endpoints to receive issues, query the knowledge base, call the LLM, and return drafts.",
+      "category": "backend",
+      "dependsOn": [
+       "task_kb_integration",
+       "task_db_schema"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "task_audit_trail",
+      "title": "Audit Trail Logging",
+      "description": "Implement backend logic to log sent replies, agent IDs, timestamps, and calculate response times.",
+      "category": "backend",
+      "dependsOn": [
+       "task_db_schema"
+      ],
+      "complexity": "low",
+      "risk": "low"
+     },
+     {
+      "id": "task_history_ui",
+      "title": "Reply History UI",
+      "description": "Build a searchable history view of all drafted and sent replies for audit purposes.",
+      "category": "frontend",
+      "dependsOn": [
+       "task_audit_trail"
+      ],
+      "complexity": "low",
+      "risk": "low"
+     },
+     {
+      "id": "task_dashboard_ui",
+      "title": "Admin Dashboard UI",
+      "description": "Develop the admin dashboard visualizing response times and agent performance metrics.",
+      "category": "frontend",
+      "dependsOn": [
+       "task_audit_trail"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "task_deployment",
+      "title": "Deployment & DevOps",
+      "description": "Configure production hosting, database migrations, and environment variables for Next.js and Postgres.",
+      "category": "devops",
+      "dependsOn": [
+       "task_db_schema"
+      ],
+      "complexity": "low",
+      "risk": "low"
+     }
+    ],
+    "ambiguities": [
+     "[\"What specific knowledge base platform or format (e.g.",
+     "Confluence",
+     "Notion",
+     "markdown files) needs to be integrated?",
+     "Which LLM provider (e.g.",
+     "OpenAI",
+     "Anthropic) or hosting setup should be used for drafting replies?",
+     "How are response times defined and measured (e.g.",
+     "time from paste to draft generation",
+     "or paste to final send)?",
+     "Does the tool need to integrate with an external ticketing system (e.g.",
+     "Zendesk) to send the replies",
+     "or is it copy-paste only?",
+     "Which authentication provider or protocol (e.g.",
+     "Google OAuth",
+     "Okta",
+     "NextAuth credentials) is preferred for agent login?\"]"
+    ]
+   },
+   "workflow": null,
+   "flawReport": null,
+   "flawResolutions": [],
+   "stackGate": null,
+   "algorithms": null,
+   "routing": null,
+   "executions": [],
+   "humanFeedback": {
+    "ratings": {}
+   }
+  }
+ },
+ {
+  "id": "2dace54c-1006-477c-895d-6d5ee8ec510b",
+  "orgId": "default-org",
+  "title": "Support Reply Drafter",
+  "gate": "suitability",
+  "gateStatus": "awaiting_user",
+  "createdAt": "2026-09-18T17:03:40.769Z",
+  "updatedAt": "2026-09-18T17:03:40.778Z",
+  "state": {
+   "id": "2dace54c-1006-477c-895d-6d5ee8ec510b",
+   "createdAt": "2026-09-18T16:56:55.098Z",
+   "updatedAt": "2026-09-18T16:56:55.098Z",
+   "input": "Build an internal tool for our support team. Staff paste a customer's issue and the tool drafts a reply using our knowledge base, with an audit trail of what was sent. Around 50 support agents will use it daily. We need role-based access (agents vs admins), full history of every reply, and a dashboard showing response times. Our stack is Next.js and Postgres.",
+   "statedStack": "",
+   "policy": "balanced",
+   "uploads": [],
+   "gate": "suitability",
+   "gateStatus": "awaiting_user",
+   "suitability": {
+    "suitable": true,
+    "confidence": 0.9,
+    "reason": "The workflow is logical, covers all functional requirements including the audit trail and dashboard, and follows a standard development lifecycle for a Next.js/Postgres application.",
+    "suggestedWorkflow": null,
+    "suggestedSummary": null
+   },
+   "suggestedWorkflow": null,
+   "workflow": {
+    "title": "Support Reply Drafter",
+    "summary": "An internal tool for support agents to paste customer issues and generate draft replies using the company knowledge base. It includes role-based access for agents and admins, a full audit trail of sent replies, and a dashboard for response times. Built with Next.js and Postgres.",
+    "tasks": [
+     {
+      "id": "T1",
+      "title": "Set up Next.js project and Postgres schema",
+      "description": "Initialize the Next.js app, configure Postgres connection, and create base schema for users, roles, replies, and audit logs.",
+      "category": "devops",
+      "dependsOn": [],
+      "complexity": "low",
+      "risk": "low"
+     },
+     {
+      "id": "T2",
+      "title": "Implement role-based auth (agents vs admins)",
+      "description": "Add authentication and authorization with two roles: agent and admin. Restrict routes and actions accordingly.",
+      "category": "auth",
+      "dependsOn": [
+       "T1"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "T3",
+      "title": "Build issue input and draft reply UI",
+      "description": "Create a form where agents paste a customer issue and view the generated draft reply, with edit and send actions.",
+      "category": "frontend",
+      "dependsOn": [
+       "T1"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "T4",
+      "title": "Integrate knowledge base for draft generation",
+      "description": "Connect the tool to the existing knowledge base and implement logic to generate draft replies based on the pasted issue.",
+      "category": "ai",
+      "dependsOn": [
+       "T3"
+      ],
+      "complexity": "high",
+      "risk": "high"
+     },
+     {
+      "id": "T5",
+      "title": "Store replies and audit trail in Postgres",
+      "description": "Persist every draft and sent reply with timestamps, agent ID, issue text, and final reply text for full history.",
+      "category": "database",
+      "dependsOn": [
+       "T3"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "T6",
+      "title": "Build admin dashboard for response times",
+      "description": "Create an admin-only dashboard showing response times and reply history metrics, using data from the audit trail.",
+      "category": "frontend",
+      "dependsOn": [
+       "T5",
+       "T2"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "T7",
+      "title": "Add reply history view for agents and admins",
+      "description": "Implement a searchable history page where agents and admins can view past replies and their audit details.",
+      "category": "frontend",
+      "dependsOn": [
+       "T5"
+      ],
+      "complexity": "low",
+      "risk": "low"
+     }
+    ],
+    "ambiguities": [
+     "What is the knowledge base format and how should drafts be generated (rules, search, or LLM)?",
+     "What specific response time metrics should the dashboard display?",
+     "Should agents be able to edit drafts before sending, and is sending done from the tool or copied elsewhere?",
+     "Are there SSO or specific auth provider requirements for the 50 agents?",
+     "What are the exact admin-only capabilities beyond viewing the dashboard?"
+    ]
+   },
+   "flawReport": null,
+   "flawResolutions": [],
+   "stackGate": null,
+   "algorithms": null,
+   "routing": null,
+   "executions": [],
+   "humanFeedback": {
+    "ratings": {}
+   }
+  }
+ },
+ {
+  "id": "e90c2170-94fc-4d14-a539-38c54e938c60",
+  "orgId": "default-org",
+  "title": "Build an internal tool for our support team. Staff paste a c",
+  "gate": "suitability",
+  "gateStatus": "failed",
+  "createdAt": "2026-09-18T17:08:26.621Z",
+  "updatedAt": "2026-09-18T17:12:33.331Z",
+  "state": {
+   "id": "e90c2170-94fc-4d14-a539-38c54e938c60",
+   "createdAt": "2026-09-18T17:08:26.616Z",
+   "updatedAt": "2026-09-18T17:12:33.330Z",
+   "input": "Build an internal tool for our support team. Staff paste a customer's issue and the tool drafts a reply using our knowledge base, with an audit trail of what was sent. Around 50 support agents will use it daily. We need role-based access (agents vs admins), full history of every reply, and a dashboard showing response times. Our stack is Next.js and Postgres.",
+   "statedStack": "",
+   "policy": "balanced",
+   "uploads": [],
+   "gate": "suitability",
+   "gateStatus": "failed",
+   "suitability": null,
+   "suggestedWorkflow": null,
+   "workflow": null,
+   "flawReport": null,
+   "flawResolutions": [],
+   "stackGate": null,
+   "algorithms": null,
+   "routing": null,
+   "executions": [],
+   "humanFeedback": {
+    "ratings": {}
+   }
+  }
+ },
+ {
+  "id": "817e850d-b13d-4d31-a990-00ced469a15d",
+  "orgId": "default-org",
+  "title": "Build an internal tool for our support team. Staff paste a c",
+  "gate": "suitability",
+  "gateStatus": "failed",
+  "createdAt": "2026-09-18T17:13:57.553Z",
+  "updatedAt": "2026-09-18T17:17:28.890Z",
+  "state": {
+   "id": "817e850d-b13d-4d31-a990-00ced469a15d",
+   "createdAt": "2026-09-18T17:13:57.549Z",
+   "updatedAt": "2026-09-18T17:17:28.889Z",
+   "input": "Build an internal tool for our support team. Staff paste a customer's issue and the tool drafts a reply using our knowledge base, with an audit trail of what was sent. Around 50 support agents will use it daily. We need role-based access (agents vs admins), full history of every reply, and a dashboard showing response times. Our stack is Next.js and Postgres.",
+   "statedStack": "",
+   "policy": "balanced",
+   "uploads": [],
+   "gate": "suitability",
+   "gateStatus": "failed",
+   "suitability": null,
+   "suggestedWorkflow": null,
+   "workflow": null,
+   "flawReport": null,
+   "flawResolutions": [],
+   "stackGate": null,
+   "algorithms": null,
+   "routing": null,
+   "executions": [],
+   "humanFeedback": {
+    "ratings": {}
+   }
+  }
+ },
+ {
+  "id": "19ee9ebe-db40-47cf-9df0-b2327580f542",
+  "orgId": "default-org",
+  "title": "Support Reply Drafting Tool",
+  "gate": "flaws",
+  "gateStatus": "failed",
+  "createdAt": "2026-09-18T17:20:01.637Z",
+  "updatedAt": "2026-09-18T17:25:25.941Z",
+  "state": {
+   "id": "19ee9ebe-db40-47cf-9df0-b2327580f542",
+   "createdAt": "2026-09-18T17:20:01.635Z",
+   "updatedAt": "2026-09-18T17:25:25.939Z",
+   "input": "Build an internal tool for our support team. Staff paste a customer's issue and the tool drafts a reply using our knowledge base, with an audit trail of what was sent. Around 50 support agents will use it daily. We need role-based access (agents vs admins), full history of every reply, and a dashboard showing response times. Our stack is Next.js and Postgres.",
+   "statedStack": "",
+   "policy": "balanced",
+   "uploads": [],
+   "gate": "flaws",
+   "gateStatus": "failed",
+   "suitability": {
+    "suitable": true,
+    "confidence": 0.95,
+    "reason": "The workflow is logically structured, covering the necessary technical stack, security requirements (RBAC), and functional components (AI integration, audit trails, and reporting) in a sequence that allows for iterative development and testing.",
+    "suggestedWorkflow": null,
+    "suggestedSummary": null
+   },
+   "suggestedWorkflow": null,
+   "workflow": {
+    "title": "Support Reply Drafting Tool",
+    "summary": "An internal web application for support agents to paste customer issues and generate draft replies using the company knowledge base. It includes role-based access for agents and admins, a full audit trail of all sent replies, and a dashboard reporting response times. Built on Next.js and Postgres.",
+    "tasks": [
+     {
+      "id": "T1",
+      "title": "Set up Next.js project and Postgres schema",
+      "description": "",
+      "category": "devops",
+      "dependsOn": [],
+      "complexity": "low",
+      "risk": "low"
+     },
+     {
+      "id": "T2",
+      "title": "Implement authentication and role-based access control (agents vs admins)",
+      "description": "",
+      "category": "auth",
+      "dependsOn": [
+       "T1"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "T3",
+      "title": "Build knowledge base storage and search interface",
+      "description": "",
+      "category": "backend",
+      "dependsOn": [
+       "T1"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "T4",
+      "title": "Create issue input form for agents to paste customer issues",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "T2"
+      ],
+      "complexity": "low",
+      "risk": "low"
+     },
+     {
+      "id": "T5",
+      "title": "Integrate AI/LLM to draft replies using knowledge base context",
+      "description": "",
+      "category": "ai",
+      "dependsOn": [
+       "T3",
+       "T4"
+      ],
+      "complexity": "high",
+      "risk": "high"
+     },
+     {
+      "id": "T6",
+      "title": "Implement reply editing and approval workflow",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "T5"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "T7",
+      "title": "Store full audit trail of every drafted and sent reply",
+      "description": "",
+      "category": "database",
+      "dependsOn": [
+       "T5"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "T8",
+      "title": "Build admin dashboard showing response times and usage metrics",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "T7"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "T9",
+      "title": "Add knowledge base management UI for admins",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "T3",
+       "T2"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "T10",
+      "title": "Configure deployment and environment for ~50 concurrent users",
+      "description": "",
+      "category": "devops",
+      "dependsOn": [
+       "T8"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     }
+    ],
+    "ambiguities": [
+     "What is the source and format of the knowledge base (existing docs, URLs, database)?",
+     "Which AI/LLM provider should be used for drafting replies?",
+     "Should replies be sent directly from the tool or copied into an external email/ticketing system?",
+     "What specific response time metrics should the dashboard display?",
+     "Are there SSO or specific auth provider requirements for the 50 agents?"
+    ]
+   },
+   "flawReport": null,
+   "flawResolutions": [],
+   "stackGate": null,
+   "algorithms": null,
+   "routing": null,
+   "executions": [],
+   "humanFeedback": {
+    "ratings": {}
+   }
+  }
+ },
+ {
+  "id": "d525e5d6-ada4-4b6c-8185-74cf3b56a517",
+  "orgId": "default-org",
+  "title": "Build an internal tool for our support team. Staff paste a c",
+  "gate": "suitability",
+  "gateStatus": "failed",
+  "createdAt": "2026-09-18T17:27:39.408Z",
+  "updatedAt": "2026-09-18T17:28:52.750Z",
+  "state": {
+   "id": "d525e5d6-ada4-4b6c-8185-74cf3b56a517",
+   "createdAt": "2026-09-18T17:27:39.403Z",
+   "updatedAt": "2026-09-18T17:28:52.750Z",
+   "input": "Build an internal tool for our support team. Staff paste a customer's issue and the tool drafts a reply using our knowledge base, with an audit trail of what was sent. Around 50 support agents will use it daily. We need role-based access (agents vs admins), full history of every reply, and a dashboard showing response times. Our stack is Next.js and Postgres.",
+   "statedStack": "",
+   "policy": "balanced",
+   "uploads": [],
+   "gate": "suitability",
+   "gateStatus": "failed",
+   "suitability": null,
+   "suggestedWorkflow": null,
+   "workflow": null,
+   "flawReport": null,
+   "flawResolutions": [],
+   "stackGate": null,
+   "algorithms": null,
+   "routing": null,
+   "executions": [],
+   "humanFeedback": {
+    "ratings": {}
+   }
+  }
+ },
+ {
+  "id": "73feb008-de91-4b65-8dd0-3a00df67175a",
+  "orgId": "default-org",
+  "title": "Build an internal tool for our support team. Staff paste a c",
+  "gate": "suitability",
+  "gateStatus": "failed",
+  "createdAt": "2026-09-18T17:29:36.775Z",
+  "updatedAt": "2026-09-18T17:29:52.512Z",
+  "state": {
+   "id": "73feb008-de91-4b65-8dd0-3a00df67175a",
+   "createdAt": "2026-09-18T17:29:36.770Z",
+   "updatedAt": "2026-09-18T17:29:52.510Z",
+   "input": "Build an internal tool for our support team. Staff paste a customer's issue and the tool drafts a reply using our knowledge base, with an audit trail of what was sent. Around 50 support agents will use it daily. We need role-based access (agents vs admins), full history of every reply, and a dashboard showing response times. Our stack is Next.js and Postgres.",
+   "statedStack": "",
+   "policy": "balanced",
+   "uploads": [],
+   "gate": "suitability",
+   "gateStatus": "failed",
+   "suitability": null,
+   "suggestedWorkflow": null,
+   "workflow": null,
+   "flawReport": null,
+   "flawResolutions": [],
+   "stackGate": null,
+   "algorithms": null,
+   "routing": null,
+   "executions": [],
+   "humanFeedback": {
+    "ratings": {}
+   }
+  }
+ },
+ {
+  "id": "c1ff131d-b9f1-4ae3-829e-5e6be893afd7",
+  "orgId": "default-org",
+  "title": "Build an internal tool for our support team. Staff paste a c",
+  "gate": "suitability",
+  "gateStatus": "failed",
+  "createdAt": "2026-09-18T17:34:24.308Z",
+  "updatedAt": "2026-09-18T17:34:48.733Z",
+  "state": {
+   "id": "c1ff131d-b9f1-4ae3-829e-5e6be893afd7",
+   "createdAt": "2026-09-18T17:34:24.307Z",
+   "updatedAt": "2026-09-18T17:34:48.732Z",
+   "input": "Build an internal tool for our support team. Staff paste a customer's issue and the tool drafts a reply using our knowledge base, with an audit trail of what was sent. Around 50 support agents will use it daily. We need role-based access (agents vs admins), full history of every reply, and a dashboard showing response times. Our stack is Next.js and Postgres.",
+   "statedStack": "",
+   "policy": "balanced",
+   "uploads": [],
+   "gate": "suitability",
+   "gateStatus": "failed",
+   "suitability": null,
+   "suggestedWorkflow": null,
+   "workflow": null,
+   "flawReport": null,
+   "flawResolutions": [],
+   "stackGate": null,
+   "algorithms": null,
+   "routing": null,
+   "executions": [],
+   "humanFeedback": {
+    "ratings": {}
+   }
+  }
+ },
+ {
+  "id": "af7c8edb-0c79-4f13-971d-bdb9d4a8d540",
+  "orgId": "default-org",
+  "title": "Build an internal tool for our support team. Staff paste a c",
+  "gate": "suitability",
+  "gateStatus": "failed",
+  "createdAt": "2026-09-18T17:38:44.387Z",
+  "updatedAt": "2026-09-18T17:39:02.365Z",
+  "state": {
+   "id": "af7c8edb-0c79-4f13-971d-bdb9d4a8d540",
+   "createdAt": "2026-09-18T17:38:44.385Z",
+   "updatedAt": "2026-09-18T17:39:02.364Z",
+   "input": "Build an internal tool for our support team. Staff paste a customer's issue and the tool drafts a reply using our knowledge base, with an audit trail of what was sent. Around 50 support agents will use it daily. We need role-based access (agents vs admins), full history of every reply, and a dashboard showing response times. Our stack is Next.js and Postgres.",
+   "statedStack": "",
+   "policy": "balanced",
+   "uploads": [],
+   "gate": "suitability",
+   "gateStatus": "failed",
+   "suitability": null,
+   "suggestedWorkflow": null,
+   "workflow": null,
+   "flawReport": null,
+   "flawResolutions": [],
+   "stackGate": null,
+   "algorithms": null,
+   "routing": null,
+   "executions": [],
+   "humanFeedback": {
+    "ratings": {}
+   }
+  }
+ }
+]

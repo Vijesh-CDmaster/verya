@@ -46,6 +46,8 @@ export default async function leadRoutes(app: FastifyInstance): Promise<void> {
   app.get("/leads", async (req: VeryaRequest) => {
     requireAdmin(req);
     const q = req.query as Record<string, string | undefined>;
-    return { leads: await listLeads(req.auth.orgId, q.limit ? Number(q.limit) : 100) };
+    // Captured leads are org-agnostic marketing records (stored under "marketing"),
+    // so the admin list reads that org rather than the caller's own.
+    return { leads: await listLeads("marketing", q.limit ? Number(q.limit) : 100) };
   });
 }

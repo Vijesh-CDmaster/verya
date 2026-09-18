@@ -1,74 +1,212 @@
-[10:29:06] [32mINFO[39m: [36mServer listening at http://127.0.0.1:4000[39m
-[10:29:06] [32mINFO[39m: [36mServer listening at http://10.255.154.3:4000[39m
-[10:29:06] [32mINFO[39m: [36mVerya backend listening on http://localhost:4000[39m
-[10:29:06] [32mINFO[39m: [36mDatabase: NOT configured — set DATABASE_URL in backend/.env[39m
-[10:29:06] [32mINFO[39m: [36mAuth: development mode (set CLERK_* env vars for production)[39m
-[10:29:23] [32mINFO[39m: [36mincoming request[39m
+[db] DATABASE_URL is not set. The API will start but every database-backed route will fail with a clear error until Neon Postgres is configured.
+[17:38:21] [32mINFO[39m: [36mServer listening at http://127.0.0.1:4000[39m
+[17:38:21] [32mINFO[39m: [36mServer listening at http://192.168.31.120:4000[39m
+[17:38:21] [32mINFO[39m: [36mVerya backend listening on http://localhost:4000[39m
+[17:38:21] [32mINFO[39m: [36mDatabase: NOT configured — set DATABASE_URL in backend/.env[39m
+[17:38:21] [32mINFO[39m: [36mAuth: Clerk (derived from publishable key)[39m
+[17:38:27] [32mINFO[39m: [36mincoming request[39m
     [35mreqId[39m: "req-1"
     [35mreq[39m: {
       "method": "GET",
       "url": "/health",
-      "host": "localhost:4000",
+      "host": "127.0.0.1:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 62030
+      "remotePort": 53821
     }
-[10:29:23] [32mINFO[39m: [36mrequest completed[39m
+[17:38:27] [32mINFO[39m: [36mrequest completed[39m
     [35mreqId[39m: "req-1"
     [35mres[39m: {
       "statusCode": 200
     }
-    [35mresponseTime[39m: 6.5129999999990105
-[10:29:29] [32mINFO[39m: [36mincoming request[39m
+    [35mresponseTime[39m: 5.791999999999462
+[devstore] DATABASE_URL not set — persisting to backend/.devstore (dev mode).
+[17:38:44] [32mINFO[39m: [36mincoming request[39m
     [35mreqId[39m: "req-2"
-    [35mreq[39m: {
-      "method": "GET",
-      "url": "/health",
-      "host": "localhost:4000",
-      "remoteAddress": "127.0.0.1",
-      "remotePort": 62036
-    }
-[10:29:29] [32mINFO[39m: [36mrequest completed[39m
-    [35mreqId[39m: "req-2"
-    [35mres[39m: {
-      "statusCode": 200
-    }
-    [35mresponseTime[39m: 0.8311000000030617
-[10:29:53] [32mINFO[39m: [36mincoming request[39m
-    [35mreqId[39m: "req-3"
-    [35mreq[39m: {
-      "method": "GET",
-      "url": "/health",
-      "host": "localhost:4000",
-      "remoteAddress": "127.0.0.1",
-      "remotePort": 58819
-    }
-[10:29:53] [32mINFO[39m: [36mrequest completed[39m
-    [35mreqId[39m: "req-3"
-    [35mres[39m: {
-      "statusCode": 200
-    }
-    [35mresponseTime[39m: 0.45209999999497086
-[10:30:23] [32mINFO[39m: [36mincoming request[39m
-    [35mreqId[39m: "req-4"
-    [35mreq[39m: {
-      "method": "GET",
-      "url": "/health",
-      "host": "localhost:4000",
-      "remoteAddress": "127.0.0.1",
-      "remotePort": 51711
-    }
-[10:30:23] [32mINFO[39m: [36mrequest completed[39m
-    [35mreqId[39m: "req-4"
-    [35mres[39m: {
-      "statusCode": 200
-    }
-    [35mresponseTime[39m: 0.6546999999991385
-[10:32:04] [32mINFO[39m: [36mincoming request[39m
-    [35mreqId[39m: "req-5"
     [35mreq[39m: {
       "method": "POST",
       "url": "/api/pipeline",
-      "host": "localhost:4000",
+      "host": "127.0.0.1:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 56717
+      "remotePort": 54595
+    }
+[17:38:44] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-2"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 20.90899999999965
+[17:38:44] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-3"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/api/pipeline/af7c8edb-0c79-4f13-971d-bdb9d4a8d540",
+      "host": "127.0.0.1:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 54596
+    }
+[17:38:44] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-3"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3.6160000000018044
+[ai] understanding: gemini/gemini-3.6-flash attempt 0 failed: {"error":{"code":429,"message":"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\nPlease retry in 14.805534738s.","status":"RESOURCE_EXHAUSTED","details":[{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-3.6-flash"},"quotaValue":"20"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"14s"}]}}
+[ai] understanding: gemini/gemini-3.5-flash attempt 0 failed: {"error":{"code":429,"message":"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\nPlease retry in 14.277617976s.","status":"RESOURCE_EXHAUSTED","details":[{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-3.5-flash"},"quotaValue":"20"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"14s"}]}}
+[17:38:46] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-4"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/api/pipeline/af7c8edb-0c79-4f13-971d-bdb9d4a8d540",
+      "host": "127.0.0.1:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 54595
+    }
+[17:38:46] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-4"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2.0706000000027416
+[ai] understanding: gemini/gemini-3.1-flash-lite attempt 0 failed: {"error":{"code":503,"message":"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.","status":"UNAVAILABLE"}}
+[17:38:49] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-5"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/api/pipeline/af7c8edb-0c79-4f13-971d-bdb9d4a8d540",
+      "host": "127.0.0.1:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 54595
+    }
+[17:38:49] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-5"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2.149600000000646
+[17:38:51] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-6"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/api/pipeline/af7c8edb-0c79-4f13-971d-bdb9d4a8d540",
+      "host": "127.0.0.1:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 54595
+    }
+[17:38:51] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-6"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1.8968999999997322
+[ai] understanding: gemini/gemini-3.1-flash-lite attempt 1 failed: Schema validation failed: tasks.0.id: Invalid input: expected string, received number; tasks.1.id: Invalid input: expected string, received number; tasks.1.dependsOn.0: Invalid input: expected string, received number
+[17:38:54] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-7"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/api/pipeline/af7c8edb-0c79-4f13-971d-bdb9d4a8d540",
+      "host": "127.0.0.1:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 54595
+    }
+[17:38:54] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-7"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2.022000000004482
+[ai] understanding: gemini/gemini-flash-latest attempt 0 failed: {"error":{"code":429,"message":"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.8-flash\nPlease retry in 6.372779143s.","status":"RESOURCE_EXHAUSTED","details":[{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-3.8-flash","location":"global"},"quotaValue":"20"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"6s"}]}}
+[17:38:57] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-8"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/api/pipeline/af7c8edb-0c79-4f13-971d-bdb9d4a8d540",
+      "host": "127.0.0.1:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 54595
+    }
+[17:38:57] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-8"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2.568600000005972
+[ai] understanding: groq/openai/gpt-oss-120b attempt 0 failed: Schema validation failed: tasks: Too small: expected array to have >=1 items
+[17:38:59] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-9"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/api/pipeline/af7c8edb-0c79-4f13-971d-bdb9d4a8d540",
+      "host": "127.0.0.1:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 54595
+    }
+[17:38:59] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-9"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2.6915999999982887
+[ai] understanding: groq/openai/gpt-oss-120b re-ask failed: Schema validation failed: tasks: Too small: expected array to have >=1 items
+[ai] understanding: mistral/mistral-medium-latest attempt 0 failed: mistral returned HTTP 429: {"object":"error","message":"Rate limit exceeded","type":"rate_limited","param":null,"code":"1300","raw_status_code":429}
+[17:39:02] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-a"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/api/pipeline/af7c8edb-0c79-4f13-971d-bdb9d4a8d540",
+      "host": "127.0.0.1:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 54595
+    }
+[17:39:02] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-a"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2.1784999999945285
+[ai] understanding: openrouter/z-ai/glm-5.2:free attempt 0 failed: openrouter returned HTTP 429: {"error":{"message":"Provider returned error","code":429,"metadata":{"raw":"z-ai/glm-5.2:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations","provider_name":"Decart","is_byok":false,"provide
+[pipeline] gate processing failed for af7c8edb-0c79-4f13-971d-bdb9d4a8d540: ProviderError: All providers failed for understanding: openrouter returned HTTP 429: {"error":{"message":"Provider returned error","code":429,"metadata":{"raw":"z-ai/glm-5.2:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations","provider_name":"Decart","is_byok":false,"provide
+    at runStructuredStage (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\src\lib\ai\provider.ts:465:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async runSuitability (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\src\lib\pipeline\gates.ts:160:30)
+    at async <anonymous> (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\src\services\pipeline.ts:68:25) {
+  stage: 'understanding',
+  cause: Error: openrouter returned HTTP 429: {"error":{"message":"Provider returned error","code":429,"metadata":{"raw":"z-ai/glm-5.2:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations","provider_name":"Decart","is_byok":false,"provide
+      at chatCompatible (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\src\lib\ai\provider.ts:232:13)
+      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at async runStructuredStage (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\src\lib\ai\provider.ts:415:21)
+      at async runSuitability (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\src\lib\pipeline\gates.ts:160:30)
+      at async <anonymous> (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\src\services\pipeline.ts:68:25)
+}
+[17:39:04] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-b"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/api/pipeline/af7c8edb-0c79-4f13-971d-bdb9d4a8d540",
+      "host": "127.0.0.1:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 54595
+    }
+[17:39:04] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-b"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3.0490999999965425
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  11:10:17 pm [tsx] change in ./src\lib\ai\provider.ts Rerunning...
+[db] DATABASE_URL is not set. The API will start but every database-backed route will fail with a clear error until Neon Postgres is configured.
+[17:40:19] [31mERROR[39m: [36mlisten EADDRINUSE: address already in use 0.0.0.0:4000[39m
+    err: {
+      "type": "Error",
+      "message": "listen EADDRINUSE: address already in use 0.0.0.0:4000",
+      "stack":
+          Error: listen EADDRINUSE: address already in use 0.0.0.0:4000
+              at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+              at listenInCluster (node:net:1997:12)
+              at node:net:2206:7
+              at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+      "code": "EADDRINUSE",
+      "errno": -4091,
+      "syscall": "listen",
+      "address": "0.0.0.0",
+      "port": 4000
     }

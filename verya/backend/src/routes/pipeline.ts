@@ -3,7 +3,7 @@ import type { FastifyInstance } from "fastify";
 import { StartRequestSchema, GateActionSchema } from "../schemas/pipeline";
 import { startPipeline, getPipeline, listPipelines, actOnPipeline } from "../services/pipeline";
 import { recordToLedger } from "../services/ledger";
-import { runExecution } from "../services/execution";
+import { startExecution } from "../services/execution";
 import { sanitizeInput, rateLimitKey } from "../lib/middleware";
 
 export default async function pipelineRoutes(app: FastifyInstance): Promise<void> {
@@ -51,11 +51,12 @@ export default async function pipelineRoutes(app: FastifyInstance): Promise<void
     return { session };
   });
 
-  // Run execution inline (used when Redis/BullMQ is not configured; the worker
-  // consumes the same queue path when it is).
+  // Start execution without blocking: responds immediately with
+  // gateStatus="running"; the loop runs in background (or via BullMQ worker when
+  // Redis is configured) and the UI polls until review is ready.
   app.post("/pipeline/:id/execute", async (req) => {
     const { id } = req.params as { id: string };
-    return runExecution(id);
+    return startExecution(id);
   });
 
   // File upload intake (F1.3): text-like files appended into the project input.
