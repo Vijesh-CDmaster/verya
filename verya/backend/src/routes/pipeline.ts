@@ -1,19 +1,10 @@
 // Pipeline REST routes — the gated pipeline over the Fastify API.
 import type { FastifyInstance } from "fastify";
-import { z } from "zod";
 import { StartRequestSchema, GateActionSchema } from "../schemas/pipeline";
 import { startPipeline, getPipeline, listPipelines, actOnPipeline } from "../services/pipeline";
 import { recordToLedger } from "../services/ledger";
 import { runExecution } from "../services/execution";
 import { sanitizeInput, rateLimitKey } from "../lib/middleware";
-import type { VeryaRequest } from "../app";
-
-export const runtime = "nodejs";
-
-const uuidOf = (req: VeryaRequest): string | null => {
-  const m = req.url.match(/pipeline\/([^/]+)/);
-  return m ? m[1] : null;
-};
 
 export default async function pipelineRoutes(app: FastifyInstance): Promise<void> {
   // Start a new pipeline session (runs the suitability gate).

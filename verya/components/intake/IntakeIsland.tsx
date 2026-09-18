@@ -1,6 +1,6 @@
 "use client";
 
-import { useIntakeStore } from "@/stores/intake-store";
+import { useUiStore } from "@/stores/ui-store";
 import { useSession } from "@/hooks/use-session";
 import { IntakeForm } from "./IntakeForm";
 import { SessionView } from "@/components/pipeline/SessionView";
@@ -8,9 +8,9 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import type { Session } from "@/schemas/pipeline";
 
 export function IntakeIsland() {
-  const sessionId = useIntakeStore((s) => s.sessionId);
-  const setSessionId = useIntakeStore((s) => s.setSessionId);
-  const reset = useIntakeStore((s) => s.reset);
+  const sessionId = useUiStore((s) => s.sessionId);
+  const setSessionId = useUiStore((s) => s.setSessionId);
+  const reset = useUiStore((s) => s.reset);
   const { data, isLoading, isError, error } = useSession(sessionId);
 
   const session = (data?.session ?? null) as Session | null;

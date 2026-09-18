@@ -3,7 +3,7 @@
 // TanStack Query hooks — all server state flows through these.
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, ApiError } from "@/services/api";
-import { useIntakeStore } from "@/stores/intake-store";
+import { useUiStore } from "@/stores/ui-store";
 
 export function useSession(sessionId: string | null) {
   return useQuery({
@@ -20,7 +20,7 @@ export function useSession(sessionId: string | null) {
 
 export function useStartPipeline() {
   const qc = useQueryClient();
-  const setSessionId = useIntakeStore((s) => s.setSessionId);
+  const setSessionId = useUiStore((s) => s.setSessionId);
   return useMutation({
     mutationFn: (payload: { input: string; statedStack: string; policy: string }) =>
       api.startPipeline(payload),

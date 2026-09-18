@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IntakeFormSchema, type IntakeFormValues } from "@/schemas/pipeline";
 import { useStartPipeline } from "@/hooks/use-session";
-import { useIntakeStore } from "@/stores/intake-store";
+import { useUiStore } from "@/stores/ui-store";
 import { Button } from "@/components/ui/button";
 import { Textarea, Input, Label, Select } from "@/components/ui/input";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
@@ -18,7 +18,7 @@ const EXAMPLES = [
 ];
 
 export function IntakeForm({ onStarted }: { onStarted?: (session: Session) => void }) {
-  const store = useIntakeStore();
+  const store = useUiStore();
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);

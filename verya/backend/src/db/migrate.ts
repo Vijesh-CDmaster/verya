@@ -1,7 +1,7 @@
 // Verya — minimal migration runner: applies versioned SQL files in order.
 // Usage: npm run migrate   (idempotent; applied versions are recorded)
 import { readFileSync, readdirSync } from "fs";
-import { join, dirname } from "path";
+import { join } from "path";
 import { pool, requireDb } from "./pool";
 
 const migrationsDir = __dirname;

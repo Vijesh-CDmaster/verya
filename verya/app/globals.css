@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
-/* Verya design tokens — ported from the base UI (index.html) */
+/* Verya design tokens — ported from the base UI (index.html).
+   Light is the default palette; `html.dark` flips to the deep-navy dark theme. */
 :root {
   --bg: #ffffff;
   --surface: #f9f9f9;
@@ -12,6 +13,9 @@
   --success: #10b981;
   --warn: #f59e0b;
   --danger: #ef4444;
+  --header-bg: rgba(255, 255, 255, 0.95);
+  --cta-bg: #000000;
+  --cta-fg: #ffffff;
 }
 
 html.dark {
@@ -25,6 +29,9 @@ html.dark {
   --success: #34d399;
   --warn: #fbbf24;
   --danger: #f87171;
+  --header-bg: rgba(11, 16, 32, 0.92);
+  --cta-bg: #050816;
+  --cta-fg: #f5f7fb;
 }
 
 @theme inline {
@@ -48,6 +55,9 @@ html.dark {
   --color-accent: var(--primary);
   --color-accent-fg: var(--on-primary);
   --color-accent-hover: color-mix(in srgb, var(--fg) 88%, var(--bg));
+  --color-header-bg: var(--header-bg);
+  --color-cta-bg: var(--cta-bg);
+  --color-cta-fg: var(--cta-fg);
 }
 
 body {
@@ -62,11 +72,22 @@ body {
 }
 
 /* Focus visibility for interactive elements (kept from base UI) */
-:where(button, a, input, textarea):focus-visible {
+:where(button, a, input, textarea, select):focus-visible {
   outline: 2px solid var(--fg);
   outline-offset: 3px;
 }
 
+/* ---------- Shared section rhythm (index.html sections) ---------- */
+.section-pad {
+  padding: 80px 24px;
+}
+@media (max-width: 768px) {
+  .section-pad {
+    padding: 48px 24px;
+  }
+}
+
+/* ---------- Animations (hero entrance, page transitions) ---------- */
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -77,9 +98,48 @@ body {
     transform: translateY(0);
   }
 }
-
 .fade-up {
   animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes pageExit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+}
+@keyframes contentReveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.page-enter {
+  animation: pageEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.page-exit {
+  animation: pageExit 0.22s ease both;
+}
+.content-reveal {
+  animation: contentReveal 0.7s 0.08s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes pulseSoft {
@@ -91,14 +151,16 @@ body {
     opacity: 0.35;
   }
 }
-
 .pulse-soft {
   animation: pulseSoft 1.4s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .fade-up,
-  .pulse-soft {
+  .pulse-soft,
+  .page-enter,
+  .page-exit,
+  .content-reveal {
     animation: none;
   }
 }
