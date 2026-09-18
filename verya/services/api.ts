@@ -22,7 +22,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     ...init,
     headers: {
-      "Content-Type": "application/json",
+      // Only declare a JSON content-type when there IS a body — Fastify rejects
+      // application/json with an empty body (FST_ERR_CTP_EMPTY_JSON_BODY).
+      ...(init?.body ? { "Content-Type": "application/json" } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(init?.headers ?? {}),
     },

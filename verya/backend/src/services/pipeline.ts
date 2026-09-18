@@ -63,11 +63,16 @@ function kickGateProcessing(sessionId: string): void {
   inFlight.add(sessionId);
   void (async () => {
     try {
-      const fresh = await repoGet(ORG_ID, sessionId);
-      if (!fresh) return;
-      const processed = await processGate(fresh, geminiAdapters as StageAdapters);
-      processed.updatedAt = new Date().toISOString();
-      await repoSave(ORG_ID, processed);
+      // Gates can auto-advance (e.g. algorithms with no ties → models): keep
+      // processing while the session lands on an AI gate marked "running".
+      for (let hop = 0; hop < 5; hop++) {
+        const fresh = await repoGet(ORG_ID, sessionId);
+        if (!fresh) return;
+        const processed = await processGate(fresh, geminiAdapters as StageAdapters);
+        processed.updatedAt = new Date().toISOString();
+        await repoSave(ORG_ID, processed);
+        if (!(processed.gateStatus === "running" && processed.gate !== "execution")) break;
+      }
     } catch (err) {
       console.error(`[pipeline] gate processing failed for ${sessionId}:`, err);
       try {

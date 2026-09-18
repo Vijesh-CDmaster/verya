@@ -27,7 +27,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      {/* suppressHydrationWarning: browser extensions (e.g. text-selection
+          enablers) inject style="user-select: text" into <body> before React
+          hydrates; that mismatch is harmless — silence the attribute diff. */}
       <body
+        suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans min-h-screen bg-bg text-fg`}
       >
         <ClerkProvider>

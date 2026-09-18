@@ -80,5 +80,1637 @@
   "prevHash": "04304525e286f25263291a57a09245fdf4f4b1bb8977272298c0ba463cb84216",
   "chainHash": "398d0347d77dfa3dddb392f6a33b0cb29099fba21548af7b119921b5e5b2d78c",
   "createdAt": "2026-09-18T17:22:57.695Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fffab3bd-ac74-48fc-b4bb-acb5b38552ba",
+  "gate": "suitability",
+  "eventType": "suitability_passed",
+  "detail": {
+   "summary": "Workflow suitable (confidence 95%)",
+   "confidence": 0.95
+  },
+  "seq": 7,
+  "prevHash": "398d0347d77dfa3dddb392f6a33b0cb29099fba21548af7b119921b5e5b2d78c",
+  "chainHash": "05216b4571503ccf5902191cd087c7d020b000756a47687a89b171b3c38f6911",
+  "createdAt": "2026-09-18T18:11:41.017Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fffab3bd-ac74-48fc-b4bb-acb5b38552ba",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "Flaw scan queued for approval"
+  },
+  "seq": 8,
+  "prevHash": "05216b4571503ccf5902191cd087c7d020b000756a47687a89b171b3c38f6911",
+  "chainHash": "9d569e4eefe95aefb601999bc74a028d99b5b82587627684234c6034bfb62412",
+  "createdAt": "2026-09-18T18:11:41.027Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fffab3bd-ac74-48fc-b4bb-acb5b38552ba",
+  "gate": "suitability",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User kept the original workflow"
+  },
+  "seq": 9,
+  "prevHash": "9d569e4eefe95aefb601999bc74a028d99b5b82587627684234c6034bfb62412",
+  "chainHash": "363b90763d4bbbb7475293ea4e30e23e6aa35ab4a6aecbe7fb1d882685de9241",
+  "createdAt": "2026-09-18T18:11:42.427Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fffab3bd-ac74-48fc-b4bb-acb5b38552ba",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "5 flaws found (medium risk)"
+  },
+  "seq": 10,
+  "prevHash": "363b90763d4bbbb7475293ea4e30e23e6aa35ab4a6aecbe7fb1d882685de9241",
+  "chainHash": "56036a358dcf5b6c0afc2edc4c4fcd80f21418d519a19c51ec442ad59a7114c3",
+  "createdAt": "2026-09-18T18:11:50.571Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fffab3bd-ac74-48fc-b4bb-acb5b38552ba",
+  "gate": "flaws",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "Flaw gate: 5 fixes applied, 0 rejected",
+   "resolutions": [
+    {
+     "flawId": "f1",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f2",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f3",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f4",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f5",
+     "decision": "accepted"
+    }
+   ]
+  },
+  "humanEdit": {
+   "resolutions": [
+    {
+     "flawId": "f1",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f2",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f3",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f4",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f5",
+     "decision": "accepted"
+    }
+   ]
+  },
+  "seq": 11,
+  "prevHash": "56036a358dcf5b6c0afc2edc4c4fcd80f21418d519a19c51ec442ad59a7114c3",
+  "chainHash": "590f0f8188bfe491c3199f55e765a384c87b6539c85da9778b2ccda1a31abf9f",
+  "createdAt": "2026-09-18T18:11:52.525Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "c80f1f72-1274-4f42-b4e3-af8ac91afe82",
+  "gate": "suitability",
+  "eventType": "suitability_flagged",
+  "detail": {
+   "summary": "The workflow lacks a critical integration step for the existing ticketing system. Since the project requires tracking response times and audit trails for customer issues, the tool cannot function as a standalone text generator; it must interface with the platform where tickets originate to capture timestamps and sync data. Additionally, the workflow fails to include a testing or validation phase for the AI-generated content, which is essential for a support tool to ensure accuracy before deployment.",
+   "suggested": true
+  },
+  "seq": 12,
+  "prevHash": "590f0f8188bfe491c3199f55e765a384c87b6539c85da9778b2ccda1a31abf9f",
+  "chainHash": "7f74d3557445752c682d1c813ec07afefb53c865d2cb8ea45a46ae18e51ace91",
+  "createdAt": "2026-09-18T18:14:10.629Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "c80f1f72-1274-4f42-b4e3-af8ac91afe82",
+  "gate": "suitability",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User kept the original workflow"
+  },
+  "seq": 13,
+  "prevHash": "7f74d3557445752c682d1c813ec07afefb53c865d2cb8ea45a46ae18e51ace91",
+  "chainHash": "365d6805410c014352c67b40e5802539248d12d10dc5c3f28017662333d60046",
+  "createdAt": "2026-09-18T18:14:11.073Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "c80f1f72-1274-4f42-b4e3-af8ac91afe82",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "4 flaws found (high risk)"
+  },
+  "seq": 14,
+  "prevHash": "365d6805410c014352c67b40e5802539248d12d10dc5c3f28017662333d60046",
+  "chainHash": "fd68e81b880ee6baefad64409aedc0b36e87dca96d0d1879a6d8aff60ff4f543",
+  "createdAt": "2026-09-18T18:14:42.222Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "c80f1f72-1274-4f42-b4e3-af8ac91afe82",
+  "gate": "flaws",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "Flaw gate: 4 fixes applied, 0 rejected",
+   "resolutions": [
+    {
+     "flawId": "f1",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f2",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f3",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f4",
+     "decision": "accepted"
+    }
+   ]
+  },
+  "humanEdit": {
+   "resolutions": [
+    {
+     "flawId": "f1",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f2",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f3",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f4",
+     "decision": "accepted"
+    }
+   ]
+  },
+  "seq": 15,
+  "prevHash": "fd68e81b880ee6baefad64409aedc0b36e87dca96d0d1879a6d8aff60ff4f543",
+  "chainHash": "6012160bed137d3c9595cb3c009bd61c4bdeccc3953bb5eb164364ed47c7f44f",
+  "createdAt": "2026-09-18T18:14:43.732Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "9999a60e-a7f0-40cd-a840-ce0c282bb7a3",
+  "gate": "suitability",
+  "eventType": "suitability_passed",
+  "detail": {
+   "summary": "Workflow suitable (confidence 95%)",
+   "confidence": 0.95
+  },
+  "seq": 16,
+  "prevHash": "6012160bed137d3c9595cb3c009bd61c4bdeccc3953bb5eb164364ed47c7f44f",
+  "chainHash": "798b988739b4f000339e19d653986845dfb57632e39354bcce72b79257e39aa3",
+  "createdAt": "2026-09-18T18:16:25.650Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "9999a60e-a7f0-40cd-a840-ce0c282bb7a3",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "Flaw scan queued for approval"
+  },
+  "seq": 17,
+  "prevHash": "798b988739b4f000339e19d653986845dfb57632e39354bcce72b79257e39aa3",
+  "chainHash": "6260fcfbde6a807d4f02bd8e62494f1a8bd84ed3d9d311cf52938c2c4a80de19",
+  "createdAt": "2026-09-18T18:16:25.662Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "9999a60e-a7f0-40cd-a840-ce0c282bb7a3",
+  "gate": "suitability",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User kept the original workflow"
+  },
+  "seq": 18,
+  "prevHash": "6260fcfbde6a807d4f02bd8e62494f1a8bd84ed3d9d311cf52938c2c4a80de19",
+  "chainHash": "44de30b5a6d968488d53e6c470eada356d0008716846b66bc8ddddf1a263e612",
+  "createdAt": "2026-09-18T18:16:25.831Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "9999a60e-a7f0-40cd-a840-ce0c282bb7a3",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "5 flaws found (medium risk)"
+  },
+  "seq": 19,
+  "prevHash": "44de30b5a6d968488d53e6c470eada356d0008716846b66bc8ddddf1a263e612",
+  "chainHash": "78d17ec368e90fba6480a789454851397f6099ba7bb947cf99910e777936aa1e",
+  "createdAt": "2026-09-18T18:16:34.399Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "9999a60e-a7f0-40cd-a840-ce0c282bb7a3",
+  "gate": "flaws",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "Flaw gate: 5 fixes applied, 0 rejected",
+   "resolutions": [
+    {
+     "flawId": "f1",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f2",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f3",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f4",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f5",
+     "decision": "accepted"
+    }
+   ]
+  },
+  "humanEdit": {
+   "resolutions": [
+    {
+     "flawId": "f1",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f2",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f3",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f4",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f5",
+     "decision": "accepted"
+    }
+   ]
+  },
+  "seq": 20,
+  "prevHash": "78d17ec368e90fba6480a789454851397f6099ba7bb947cf99910e777936aa1e",
+  "chainHash": "a5d31939e96d126d72e0f687b74b78c5af1ad9d8c22787c0e2bd7629b2f9548c",
+  "createdAt": "2026-09-18T18:16:35.905Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "f4cd24a0-0265-49b5-9089-cb62cd98f855",
+  "gate": "suitability",
+  "eventType": "suitability_flagged",
+  "detail": {
+   "summary": "The workflow is missing a critical integration or data entry phase. Since the tool needs to track response times and provide an audit trail for support agents, it cannot function as a standalone form without a mechanism to ingest the actual customer tickets. Additionally, the audit trail logging is placed after the agent interface, which risks data loss if the logging isn't integrated directly into the drafting submission process.",
+   "suggested": true
+  },
+  "seq": 21,
+  "prevHash": "a5d31939e96d126d72e0f687b74b78c5af1ad9d8c22787c0e2bd7629b2f9548c",
+  "chainHash": "c993f7cf0bdf395be943d4171e4d52cf303351fb0b8c01a6cbfdeec15d0bc083",
+  "createdAt": "2026-09-18T18:18:49.017Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "f4cd24a0-0265-49b5-9089-cb62cd98f855",
+  "gate": "suitability",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User kept the original workflow"
+  },
+  "seq": 22,
+  "prevHash": "c993f7cf0bdf395be943d4171e4d52cf303351fb0b8c01a6cbfdeec15d0bc083",
+  "chainHash": "3ab73c77b9ebc7defc9b03a783c8a02bfafb0681adeeaabc9e2a22d00a07b370",
+  "createdAt": "2026-09-18T18:18:49.061Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "f4cd24a0-0265-49b5-9089-cb62cd98f855",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "5 flaws found (high risk)"
+  },
+  "seq": 23,
+  "prevHash": "3ab73c77b9ebc7defc9b03a783c8a02bfafb0681adeeaabc9e2a22d00a07b370",
+  "chainHash": "87066c4f8806f54ff6c67a19d91d760ae91be71dc0f55b1f7852158522afbba4",
+  "createdAt": "2026-09-18T18:18:53.234Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "f4cd24a0-0265-49b5-9089-cb62cd98f855",
+  "gate": "flaws",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "Flaw gate: 5 fixes applied, 0 rejected",
+   "resolutions": [
+    {
+     "flawId": "f1",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f2",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f3",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f4",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f5",
+     "decision": "accepted"
+    }
+   ]
+  },
+  "humanEdit": {
+   "resolutions": [
+    {
+     "flawId": "f1",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f2",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f3",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f4",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f5",
+     "decision": "accepted"
+    }
+   ]
+  },
+  "seq": 24,
+  "prevHash": "87066c4f8806f54ff6c67a19d91d760ae91be71dc0f55b1f7852158522afbba4",
+  "chainHash": "f584e2b60b79b431879eddbada327f65765924e6b56fe5472284ad025d4e03e8",
+  "createdAt": "2026-09-18T18:18:54.120Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "a0a54c4b-943f-4830-ae23-d9ff16795fa3",
+  "gate": "suitability",
+  "eventType": "suitability_flagged",
+  "detail": {
+   "summary": "The workflow fails to address the integration with the existing ticketing system, which is critical for a support tool. Without connecting to the source of the tickets, the tool cannot automatically track response times or provide a meaningful audit trail. Furthermore, the sequence is flawed: the AI drafting service (Task 4) depends on the knowledge base (Task 3), but the knowledge base integration should be part of the core backend architecture established alongside the database design to ensure data availability for the AI.",
+   "suggested": true
+  },
+  "seq": 25,
+  "prevHash": "f584e2b60b79b431879eddbada327f65765924e6b56fe5472284ad025d4e03e8",
+  "chainHash": "9b85b44fd44f2227cf246081f4342166f49ccf9829243ea3dfbe56d55d72a543",
+  "createdAt": "2026-09-18T18:21:37.804Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "a0a54c4b-943f-4830-ae23-d9ff16795fa3",
+  "gate": "suitability",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User kept the original workflow"
+  },
+  "seq": 26,
+  "prevHash": "9b85b44fd44f2227cf246081f4342166f49ccf9829243ea3dfbe56d55d72a543",
+  "chainHash": "fe451de21c6a36853252803cd364b88c3de99fe20e230494ad56d384cdd7f5b0",
+  "createdAt": "2026-09-18T18:21:38.348Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "a0a54c4b-943f-4830-ae23-d9ff16795fa3",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "5 flaws found (medium risk)"
+  },
+  "seq": 27,
+  "prevHash": "fe451de21c6a36853252803cd364b88c3de99fe20e230494ad56d384cdd7f5b0",
+  "chainHash": "c3c684f950b3ea15dde1ec1936efbe84e4f34e55b52dfb2e4b14eaaf327beef5",
+  "createdAt": "2026-09-18T18:21:41.051Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "a0a54c4b-943f-4830-ae23-d9ff16795fa3",
+  "gate": "flaws",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "Flaw gate: 5 fixes applied, 0 rejected",
+   "resolutions": [
+    {
+     "flawId": "f1",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f2",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f3",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f4",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f5",
+     "decision": "accepted"
+    }
+   ]
+  },
+  "humanEdit": {
+   "resolutions": [
+    {
+     "flawId": "f1",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f2",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f3",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f4",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f5",
+     "decision": "accepted"
+    }
+   ]
+  },
+  "seq": 28,
+  "prevHash": "c3c684f950b3ea15dde1ec1936efbe84e4f34e55b52dfb2e4b14eaaf327beef5",
+  "chainHash": "45089f0760680e4fd74747012742abf2a377389dbf0ee9c35d6625d636c00a2e",
+  "createdAt": "2026-09-18T18:21:43.403Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "a0a54c4b-943f-4830-ae23-d9ff16795fa3",
+  "gate": "stack",
+  "eventType": "stack_tiebreak",
+  "detail": {
+   "summary": "2 stack candidates too close to auto-pick — user must choose",
+   "candidates": [
+    "Next.js Full-Stack Monolith (95%)",
+    "T3 Stack with TRPC (85%)"
+   ]
+  },
+  "seq": 29,
+  "prevHash": "45089f0760680e4fd74747012742abf2a377389dbf0ee9c35d6625d636c00a2e",
+  "chainHash": "579fc5596b6e8e481e9c6cd55d21552ba58c7fc328102e4413de26ccf0f59265",
+  "createdAt": "2026-09-18T18:21:49.918Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "a0a54c4b-943f-4830-ae23-d9ff16795fa3",
+  "gate": "stack",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User locked stack \"Next.js Full-Stack Monolith\""
+  },
+  "seq": 30,
+  "prevHash": "579fc5596b6e8e481e9c6cd55d21552ba58c7fc328102e4413de26ccf0f59265",
+  "chainHash": "d30a56baa051f200338248f1cb812520cd3161c0090008a6c61563db4978406c",
+  "createdAt": "2026-09-18T18:21:50.986Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "a0a54c4b-943f-4830-ae23-d9ff16795fa3",
+  "gate": "tasks",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "Task list confirmed with 8 tasks"
+  },
+  "seq": 31,
+  "prevHash": "d30a56baa051f200338248f1cb812520cd3161c0090008a6c61563db4978406c",
+  "chainHash": "ce0ecf70211d45370e261812c1755dffc569b3e3b481c41ea5cdcbb7e677bc64",
+  "createdAt": "2026-09-18T18:21:51.007Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "47bdf1cc-e046-47d5-9869-0f996ecc9e13",
+  "gate": "suitability",
+  "eventType": "suitability_flagged",
+  "detail": {
+   "summary": "The workflow fails to account for the integration with existing ticketing systems, which is critical for a support tool. Without defining whether this is a standalone tool or an integrated plugin, the data flow for 'response times' and 'audit trails' cannot be accurately implemented. Additionally, the workflow lacks a testing or validation phase for the AI-generated responses, which is a high-risk requirement for customer-facing communication.",
+   "suggested": true
+  },
+  "seq": 32,
+  "prevHash": "ce0ecf70211d45370e261812c1755dffc569b3e3b481c41ea5cdcbb7e677bc64",
+  "chainHash": "bd6b8d754f9c0d450918cf85da0a74944b6b90bef6e4648e70af7e3d0277d5b2",
+  "createdAt": "2026-09-18T18:23:59.942Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "47bdf1cc-e046-47d5-9869-0f996ecc9e13",
+  "gate": "suitability",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User kept the original workflow"
+  },
+  "seq": 33,
+  "prevHash": "bd6b8d754f9c0d450918cf85da0a74944b6b90bef6e4648e70af7e3d0277d5b2",
+  "chainHash": "88f716b1364a86ba92cd2cd03abd54ed46dc8db8e00fcd8ea6a6841e3d08fd7f",
+  "createdAt": "2026-09-18T18:24:00.521Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "47bdf1cc-e046-47d5-9869-0f996ecc9e13",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "5 flaws found (high risk)"
+  },
+  "seq": 34,
+  "prevHash": "88f716b1364a86ba92cd2cd03abd54ed46dc8db8e00fcd8ea6a6841e3d08fd7f",
+  "chainHash": "f88d4fa7e6eaecdd88ee8494c539ae343023a7e2555720a5556011f834831003",
+  "createdAt": "2026-09-18T18:24:11.531Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "47bdf1cc-e046-47d5-9869-0f996ecc9e13",
+  "gate": "flaws",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "Flaw gate: 5 fixes applied, 0 rejected",
+   "resolutions": [
+    {
+     "flawId": "f1",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f2",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f3",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f4",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f5",
+     "decision": "accepted"
+    }
+   ]
+  },
+  "humanEdit": {
+   "resolutions": [
+    {
+     "flawId": "f1",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f2",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f3",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f4",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f5",
+     "decision": "accepted"
+    }
+   ]
+  },
+  "seq": 35,
+  "prevHash": "f88d4fa7e6eaecdd88ee8494c539ae343023a7e2555720a5556011f834831003",
+  "chainHash": "b0c480ac8964076c59045b7dee41d00c3d0e3caa1119e30c0b265af512a43cda",
+  "createdAt": "2026-09-18T18:24:13.115Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "47bdf1cc-e046-47d5-9869-0f996ecc9e13",
+  "gate": "stack",
+  "eventType": "stack_selected",
+  "detail": {
+   "summary": "Auto-selected \"Next.js Full-Stack Monolith\" (clear winner, reason shown)",
+   "candidates": [
+    "Next.js Full-Stack Monolith (95%)",
+    "Next.js + Python AI Service (75%)"
+   ]
+  },
+  "seq": 36,
+  "prevHash": "b0c480ac8964076c59045b7dee41d00c3d0e3caa1119e30c0b265af512a43cda",
+  "chainHash": "ebeef9869128eddb7bfc02cd83b46f804bc7ccc4fc450983bf198d362449f611",
+  "createdAt": "2026-09-18T18:24:22.222Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "47bdf1cc-e046-47d5-9869-0f996ecc9e13",
+  "gate": "stack",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User locked stack \"Next.js Full-Stack Monolith\""
+  },
+  "seq": 37,
+  "prevHash": "ebeef9869128eddb7bfc02cd83b46f804bc7ccc4fc450983bf198d362449f611",
+  "chainHash": "fd8a26ca746ffe08dac72551f4220c72623aeadb2b15b4c8b98bb7fa2bd2bc92",
+  "createdAt": "2026-09-18T18:24:23.195Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "47bdf1cc-e046-47d5-9869-0f996ecc9e13",
+  "gate": "tasks",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "Task list confirmed with 8 tasks"
+  },
+  "seq": 38,
+  "prevHash": "fd8a26ca746ffe08dac72551f4220c72623aeadb2b15b4c8b98bb7fa2bd2bc92",
+  "chainHash": "cbf7e52dfe98a0dd03de13b52630ce54a6d59d70ac7c65fdea54821f2f96780d",
+  "createdAt": "2026-09-18T18:24:23.223Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "47bdf1cc-e046-47d5-9869-0f996ecc9e13",
+  "gate": "algorithms",
+  "eventType": "algorithm_selected",
+  "detail": {
+   "summary": "Approach auto-selected for every task (reasons shown)",
+   "tieCount": 0
+  },
+  "seq": 39,
+  "prevHash": "cbf7e52dfe98a0dd03de13b52630ce54a6d59d70ac7c65fdea54821f2f96780d",
+  "chainHash": "5eb4286180bd67e2536d4ab277647ead93616560922dd8ce88dbad14575b4a5d",
+  "createdAt": "2026-09-18T18:24:34.544Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "suitability",
+  "eventType": "suitability_flagged",
+  "detail": {
+   "summary": "The workflow fails to account for the critical dependency between the AI service and the database schema. Specifically, the audit trail and performance metrics rely on capturing data during the AI generation process, which is currently decoupled from the logging implementation. Furthermore, the workflow lacks a prototyping or validation phase for the AI output quality, which is essential for a tool used by 50 agents daily.",
+   "suggested": true
+  },
+  "seq": 40,
+  "prevHash": "5eb4286180bd67e2536d4ab277647ead93616560922dd8ce88dbad14575b4a5d",
+  "chainHash": "730e189c5aeb4c97fcfe39b180536708fde1a7d4b46a59fca035be115604e741",
+  "createdAt": "2026-09-18T18:27:28.487Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "suitability",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User kept the original workflow"
+  },
+  "seq": 41,
+  "prevHash": "730e189c5aeb4c97fcfe39b180536708fde1a7d4b46a59fca035be115604e741",
+  "chainHash": "aadd23273099ce01377e79985d67b295166f9ba776984e11013b96beac60fd0f",
+  "createdAt": "2026-09-18T18:27:30.012Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "5 flaws found (high risk)"
+  },
+  "seq": 42,
+  "prevHash": "aadd23273099ce01377e79985d67b295166f9ba776984e11013b96beac60fd0f",
+  "chainHash": "2ec54f92bd630858e70ebfd093908740e54c161260ff50596c5b0a2fbf77b865",
+  "createdAt": "2026-09-18T18:27:35.015Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "flaws",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "Flaw gate: 5 fixes applied, 0 rejected",
+   "resolutions": [
+    {
+     "flawId": "f1",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f2",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f3",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f4",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f5",
+     "decision": "accepted"
+    }
+   ]
+  },
+  "humanEdit": {
+   "resolutions": [
+    {
+     "flawId": "f1",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f2",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f3",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f4",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f5",
+     "decision": "accepted"
+    }
+   ]
+  },
+  "seq": 43,
+  "prevHash": "2ec54f92bd630858e70ebfd093908740e54c161260ff50596c5b0a2fbf77b865",
+  "chainHash": "2569feee7260fb7ba23f9f2f893a529a6f4052059bbf60cd138f2923ace64caf",
+  "createdAt": "2026-09-18T18:27:35.066Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "stack",
+  "eventType": "stack_selected",
+  "detail": {
+   "summary": "Auto-selected \"Next.js Full-Stack Monolith\" (clear winner, reason shown)",
+   "candidates": [
+    "Next.js Full-Stack Monolith (95%)",
+    "Next.js with Python AI Service (80%)"
+   ]
+  },
+  "seq": 44,
+  "prevHash": "2569feee7260fb7ba23f9f2f893a529a6f4052059bbf60cd138f2923ace64caf",
+  "chainHash": "2cdebef294319d9cc7edd21842b8ea51da7e06dfd9ae79f3957cc2e57a99f0d4",
+  "createdAt": "2026-09-18T18:27:49.137Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "stack",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User locked stack \"Next.js Full-Stack Monolith\""
+  },
+  "seq": 45,
+  "prevHash": "2cdebef294319d9cc7edd21842b8ea51da7e06dfd9ae79f3957cc2e57a99f0d4",
+  "chainHash": "bb712936c9c16749d278039518fd5f39303400132bbdbde0e82034ebe3a1fedd",
+  "createdAt": "2026-09-18T18:27:50.179Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "tasks",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "Task list confirmed with 8 tasks"
+  },
+  "seq": 46,
+  "prevHash": "bb712936c9c16749d278039518fd5f39303400132bbdbde0e82034ebe3a1fedd",
+  "chainHash": "ab76d20e4bb82ba443a334d62f965d520f5cb37c55251a09207469ab6fb0ff2f",
+  "createdAt": "2026-09-18T18:27:50.213Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "algorithms",
+  "eventType": "algorithm_selected",
+  "detail": {
+   "summary": "Approach auto-selected for every task (reasons shown)",
+   "tieCount": 0
+  },
+  "seq": 47,
+  "prevHash": "ab76d20e4bb82ba443a334d62f965d520f5cb37c55251a09207469ab6fb0ff2f",
+  "chainHash": "40c0cfb6ad04b3570c6f9fe80c44c8410be72a74e70229ec963ec143ecb54d06",
+  "createdAt": "2026-09-18T18:28:02.313Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "models",
+  "eventType": "routing_queued",
+  "detail": {
+   "summary": "Approaches auto-selected — model routing queued automatically"
+  },
+  "seq": 48,
+  "prevHash": "40c0cfb6ad04b3570c6f9fe80c44c8410be72a74e70229ec963ec143ecb54d06",
+  "chainHash": "e65c95e87fcdbb66caee47a400027ba49141a8e13f32196ae1c46e0a3b207f4b",
+  "createdAt": "2026-09-18T18:28:02.324Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "models",
+  "eventType": "model_tiebreak",
+  "detail": {
+   "summary": "8 model choice(s) need a human call (policy: balanced)",
+   "tieCount": 8,
+   "policy": "balanced",
+   "estimatedCostUsd": 1
+  },
+  "seq": 49,
+  "prevHash": "e65c95e87fcdbb66caee47a400027ba49141a8e13f32196ae1c46e0a3b207f4b",
+  "chainHash": "0924877b50f06f38c1118fff6d7c4bd8a2e484b702dc11657eaec82c4531311d",
+  "createdAt": "2026-09-18T18:28:21.021Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "models",
+  "eventType": "human_decision",
+  "actor": "human",
+  "taskId": "1",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "User routed Database Schema Design to openai/gpt-oss-20b"
+  },
+  "seq": 50,
+  "prevHash": "0924877b50f06f38c1118fff6d7c4bd8a2e484b702dc11657eaec82c4531311d",
+  "chainHash": "14ecb57faab1ff2f265d31e57a73b1f8842dc04f643f7128bcb0df0e49577b1a",
+  "createdAt": "2026-09-18T18:28:22.940Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "models",
+  "eventType": "human_decision",
+  "actor": "human",
+  "taskId": "2",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "User routed Authentication and RBAC Setup to openai/gpt-oss-20b"
+  },
+  "seq": 51,
+  "prevHash": "14ecb57faab1ff2f265d31e57a73b1f8842dc04f643f7128bcb0df0e49577b1a",
+  "chainHash": "8f159cd00d796fd87c64baf8e165722a42c1ea4921d486ad2ef5b03c69104ebf",
+  "createdAt": "2026-09-18T18:28:22.961Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "models",
+  "eventType": "human_decision",
+  "actor": "human",
+  "taskId": "3",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "User routed Knowledge Base Integration to openai/gpt-oss-20b"
+  },
+  "seq": 52,
+  "prevHash": "8f159cd00d796fd87c64baf8e165722a42c1ea4921d486ad2ef5b03c69104ebf",
+  "chainHash": "c9b60ed7e4a0627a7031bc50a576df9e4938e0b851747a16c37807b17aad66a2",
+  "createdAt": "2026-09-18T18:28:22.984Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "models",
+  "eventType": "human_decision",
+  "actor": "human",
+  "taskId": "4",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "User routed AI Draft Generation Service to openai/gpt-oss-20b"
+  },
+  "seq": 53,
+  "prevHash": "c9b60ed7e4a0627a7031bc50a576df9e4938e0b851747a16c37807b17aad66a2",
+  "chainHash": "73a783bf17a4f5b53bc903ccf9414483162c0e994ad230cac6fb84de92feb8ba",
+  "createdAt": "2026-09-18T18:28:23.008Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "models",
+  "eventType": "human_decision",
+  "actor": "human",
+  "taskId": "5",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "User routed Support Agent Interface to openai/gpt-oss-20b"
+  },
+  "seq": 54,
+  "prevHash": "73a783bf17a4f5b53bc903ccf9414483162c0e994ad230cac6fb84de92feb8ba",
+  "chainHash": "54b844cae29e57df935721c24828a6888b4b977850ff88f0c4c65caf8af2f050",
+  "createdAt": "2026-09-18T18:28:23.034Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "models",
+  "eventType": "human_decision",
+  "actor": "human",
+  "taskId": "6",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "User routed Audit Trail Logging to openai/gpt-oss-20b"
+  },
+  "seq": 55,
+  "prevHash": "54b844cae29e57df935721c24828a6888b4b977850ff88f0c4c65caf8af2f050",
+  "chainHash": "e330ef444c642c81b6050ffb777fcd137a510b94126e31ccb1db8b4c90644e22",
+  "createdAt": "2026-09-18T18:28:23.057Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "models",
+  "eventType": "human_decision",
+  "actor": "human",
+  "taskId": "7",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "User routed Admin Dashboard and Analytics to openai/gpt-oss-20b"
+  },
+  "seq": 56,
+  "prevHash": "e330ef444c642c81b6050ffb777fcd137a510b94126e31ccb1db8b4c90644e22",
+  "chainHash": "2a2feac8cade9cbda46e02e4b6fd50e7ef759ec8eb70fdb31c2aa35d433bb0f5",
+  "createdAt": "2026-09-18T18:28:23.082Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "fe8ae3f4-56c0-4793-8fe6-06d623547fef",
+  "gate": "models",
+  "eventType": "human_decision",
+  "actor": "human",
+  "taskId": "8",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "User routed Deployment and Monitoring to openai/gpt-oss-20b"
+  },
+  "seq": 57,
+  "prevHash": "2a2feac8cade9cbda46e02e4b6fd50e7ef759ec8eb70fdb31c2aa35d433bb0f5",
+  "chainHash": "41ec7d65c5bce01c10ddf3ae48d470e85e4d7ab2d33098c7204f8fc8e50fa6de",
+  "createdAt": "2026-09-18T18:28:23.104Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "suitability",
+  "eventType": "suitability_passed",
+  "detail": {
+   "summary": "Workflow suitable (confidence 90%)",
+   "confidence": 0.9
+  },
+  "seq": 58,
+  "prevHash": "41ec7d65c5bce01c10ddf3ae48d470e85e4d7ab2d33098c7204f8fc8e50fa6de",
+  "chainHash": "bf25388fcfce654dd41e53886df35767ba4c546e499e76c91c8b330fae9659b3",
+  "createdAt": "2026-09-18T18:29:13.055Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "Flaw scan queued for approval"
+  },
+  "seq": 59,
+  "prevHash": "bf25388fcfce654dd41e53886df35767ba4c546e499e76c91c8b330fae9659b3",
+  "chainHash": "759da010c0c685654af7ddc77328894b16df95350d49b60c1139367fcc84b362",
+  "createdAt": "2026-09-18T18:29:13.069Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "suitability",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User kept the original workflow"
+  },
+  "seq": 60,
+  "prevHash": "759da010c0c685654af7ddc77328894b16df95350d49b60c1139367fcc84b362",
+  "chainHash": "ce3c0e87edba340a6a17a763ba35ea025c35e0efd38613c454735906bd6ea628",
+  "createdAt": "2026-09-18T18:29:13.880Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "5 flaws found (high risk)"
+  },
+  "seq": 61,
+  "prevHash": "ce3c0e87edba340a6a17a763ba35ea025c35e0efd38613c454735906bd6ea628",
+  "chainHash": "39c0ef17171eb13d75d306e9ef953223a36dc04f9cfc0e468adc3bbfd5f3f46b",
+  "createdAt": "2026-09-18T18:29:29.888Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "flaws",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "Flaw gate: 5 fixes applied, 0 rejected",
+   "resolutions": [
+    {
+     "flawId": "f1",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f2",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f3",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f4",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f5",
+     "decision": "accepted"
+    }
+   ]
+  },
+  "humanEdit": {
+   "resolutions": [
+    {
+     "flawId": "f1",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f2",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f3",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f4",
+     "decision": "accepted"
+    },
+    {
+     "flawId": "f5",
+     "decision": "accepted"
+    }
+   ]
+  },
+  "seq": 62,
+  "prevHash": "39c0ef17171eb13d75d306e9ef953223a36dc04f9cfc0e468adc3bbfd5f3f46b",
+  "chainHash": "2cc32befb6ca0eedf9b0c5a2044d03fae7d84de567c0710044a86342a7efaf2a",
+  "createdAt": "2026-09-18T18:29:31.505Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "stack",
+  "eventType": "stack_selected",
+  "detail": {
+   "summary": "Auto-selected \"Next.js Full-Stack Monolith\" (clear winner, reason shown)",
+   "candidates": [
+    "Next.js Full-Stack Monolith (95%)",
+    "Next.js with Python AI Service (75%)"
+   ]
+  },
+  "seq": 63,
+  "prevHash": "2cc32befb6ca0eedf9b0c5a2044d03fae7d84de567c0710044a86342a7efaf2a",
+  "chainHash": "57171cefe598d37b21ff2b8f88c446959598a7e12f3f2c2ad0b20cc8b5990ba0",
+  "createdAt": "2026-09-18T18:29:37.104Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "stack",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User locked stack \"Next.js Full-Stack Monolith\""
+  },
+  "seq": 64,
+  "prevHash": "57171cefe598d37b21ff2b8f88c446959598a7e12f3f2c2ad0b20cc8b5990ba0",
+  "chainHash": "9641e0f4a9f870ba29273015dce0807e28358bc3d31588fe9ba2de43b304677b",
+  "createdAt": "2026-09-18T18:29:39.089Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "tasks",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "Task list confirmed with 7 tasks"
+  },
+  "seq": 65,
+  "prevHash": "9641e0f4a9f870ba29273015dce0807e28358bc3d31588fe9ba2de43b304677b",
+  "chainHash": "c1175af7faeb7a58b995287f5a6a29c9c0e7d8c717cc5e5cbaf6484ee891fdde",
+  "createdAt": "2026-09-18T18:29:39.115Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "algorithms",
+  "eventType": "algorithm_tiebreak",
+  "detail": {
+   "summary": "1 task(s) need a human call on approach",
+   "tieCount": 1
+  },
+  "seq": 66,
+  "prevHash": "c1175af7faeb7a58b995287f5a6a29c9c0e7d8c717cc5e5cbaf6484ee891fdde",
+  "chainHash": "e7da2574e07b059842b8a52786082c30b6bf5e88a1935fc659d5ceeeaab9bde9",
+  "createdAt": "2026-09-18T18:29:54.527Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "algorithms",
+  "eventType": "human_decision",
+  "actor": "human",
+  "taskId": "7",
+  "detail": {
+   "summary": "User chose approach \"Recharts with Server-side Aggregation\" for Response Time Analytics Dashboard"
+  },
+  "seq": 67,
+  "prevHash": "e7da2574e07b059842b8a52786082c30b6bf5e88a1935fc659d5ceeeaab9bde9",
+  "chainHash": "1d7ea6cd31d1d3bfac5193160ffb8933d57c6be036b9c6c56a69df80b57592fa",
+  "createdAt": "2026-09-18T18:29:56.734Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "models",
+  "eventType": "model_tiebreak",
+  "detail": {
+   "summary": "7 model choice(s) need a human call (policy: balanced)",
+   "tieCount": 7,
+   "policy": "balanced",
+   "estimatedCostUsd": 1
+  },
+  "seq": 68,
+  "prevHash": "1d7ea6cd31d1d3bfac5193160ffb8933d57c6be036b9c6c56a69df80b57592fa",
+  "chainHash": "fc46ad7aa60ee195b6c836f3ad995d9ebf82e28c773637c1851d4e1a8897f21e",
+  "createdAt": "2026-09-18T18:30:19.945Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "models",
+  "eventType": "human_decision",
+  "actor": "human",
+  "taskId": "1",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "User routed Database Schema Design to openai/gpt-oss-20b"
+  },
+  "seq": 69,
+  "prevHash": "fc46ad7aa60ee195b6c836f3ad995d9ebf82e28c773637c1851d4e1a8897f21e",
+  "chainHash": "d28e7f4a1fd927e1a890d43817de361e192f4e0d012b97e7c6890fe88c85ed1e",
+  "createdAt": "2026-09-18T18:30:21.874Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "models",
+  "eventType": "human_decision",
+  "actor": "human",
+  "taskId": "2",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "User routed Authentication and RBAC Setup to openai/gpt-oss-20b"
+  },
+  "seq": 70,
+  "prevHash": "d28e7f4a1fd927e1a890d43817de361e192f4e0d012b97e7c6890fe88c85ed1e",
+  "chainHash": "7b1a30b419022ae58f1b86347789c2e5c36834345a6dc6557578205e3a090b13",
+  "createdAt": "2026-09-18T18:30:21.903Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "models",
+  "eventType": "human_decision",
+  "actor": "human",
+  "taskId": "3",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "User routed Knowledge Base Integration to openai/gpt-oss-20b"
+  },
+  "seq": 71,
+  "prevHash": "7b1a30b419022ae58f1b86347789c2e5c36834345a6dc6557578205e3a090b13",
+  "chainHash": "9a07b58dab0f033e2e73c33d3de4556782506a2b0a724d772f979624e02e498e",
+  "createdAt": "2026-09-18T18:30:21.927Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "models",
+  "eventType": "human_decision",
+  "actor": "human",
+  "taskId": "4",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "User routed AI Response Generation Service to openai/gpt-oss-20b"
+  },
+  "seq": 72,
+  "prevHash": "9a07b58dab0f033e2e73c33d3de4556782506a2b0a724d772f979624e02e498e",
+  "chainHash": "52b32103b60b9ba531cf225dd6719403ec1eec3efd28f6cf6a4f7b21c873b443",
+  "createdAt": "2026-09-18T18:30:21.952Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "models",
+  "eventType": "human_decision",
+  "actor": "human",
+  "taskId": "5",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "User routed Agent Dashboard UI to openai/gpt-oss-20b"
+  },
+  "seq": 73,
+  "prevHash": "52b32103b60b9ba531cf225dd6719403ec1eec3efd28f6cf6a4f7b21c873b443",
+  "chainHash": "6c698757cc7aaf64e925f696566b685fe2116927ce755e1cb375fac164b85d98",
+  "createdAt": "2026-09-18T18:30:21.977Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "models",
+  "eventType": "human_decision",
+  "actor": "human",
+  "taskId": "6",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "User routed Audit Trail and History Logging to openai/gpt-oss-20b"
+  },
+  "seq": 74,
+  "prevHash": "6c698757cc7aaf64e925f696566b685fe2116927ce755e1cb375fac164b85d98",
+  "chainHash": "84a9a008030fb568d716950e084d14f99c1c42516b4450f5d5c3a87116c29ae7",
+  "createdAt": "2026-09-18T18:30:22.000Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "models",
+  "eventType": "human_decision",
+  "actor": "human",
+  "taskId": "7",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "User routed Response Time Analytics Dashboard to openai/gpt-oss-20b"
+  },
+  "seq": 75,
+  "prevHash": "84a9a008030fb568d716950e084d14f99c1c42516b4450f5d5c3a87116c29ae7",
+  "chainHash": "d8518bef8f9e5698013e7b56c362f70c10e590bbbd81a089001e4e488ce005e4",
+  "createdAt": "2026-09-18T18:30:22.026Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "execution",
+  "eventType": "task_execution",
+  "taskId": "1",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "Database Schema Design executed by openai/gpt-oss-20b — verified",
+   "latencyMs": 1801,
+   "tokens": {
+    "input": 265,
+    "output": 1105
+   },
+   "servedBy": "openai/gpt-oss-20b",
+   "costUnits": 1,
+   "externalChecked": 1,
+   "externalUnsupported": [],
+   "escalationFloor": 0.4
+  },
+  "verification": {
+   "passed": true,
+   "issues": []
+  },
+  "seq": 76,
+  "prevHash": "d8518bef8f9e5698013e7b56c362f70c10e590bbbd81a089001e4e488ce005e4",
+  "chainHash": "b65c2443f3715c3020feacfa84062bc6fb8d068b8a36153491b8268bbf770beb",
+  "createdAt": "2026-09-18T18:30:24.939Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "execution",
+  "eventType": "task_execution",
+  "taskId": "2",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "Authentication and RBAC Setup executed by openai/gpt-oss-20b — flagged",
+   "latencyMs": 2341,
+   "tokens": {
+    "input": 269,
+    "output": 1452
+   },
+   "servedBy": "openai/gpt-oss-20b",
+   "costUnits": 1,
+   "externalChecked": 3,
+   "externalUnsupported": [],
+   "escalationFloor": 0.85
+  },
+  "verification": {
+   "passed": false,
+   "issues": [
+    "Auth task output does not mention password hashing.",
+    "### Issues Found:\n\n1. **Security Issue**: The `.env.example` file contains hardcoded secrets (`NEXTAUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`). These should be replaced with placeholders or removed from the example file.\n2. **Security Issue**: The `authorize` function in `CredentialsPr"
+   ]
+  },
+  "seq": 77,
+  "prevHash": "b65c2443f3715c3020feacfa84062bc6fb8d068b8a36153491b8268bbf770beb",
+  "chainHash": "6e9d3ff7c369334846240609889253b9ffd1ffba086e064e52f544b79bafa03d",
+  "createdAt": "2026-09-18T18:32:21.405Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "execution",
+  "eventType": "task_execution",
+  "taskId": "3",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "Knowledge Base Integration executed by openai/gpt-oss-20b — verified",
+   "latencyMs": 2804,
+   "tokens": {
+    "input": 268,
+    "output": 2048
+   },
+   "servedBy": "openai/gpt-oss-20b",
+   "costUnits": 1,
+   "externalChecked": 3,
+   "externalUnsupported": [],
+   "escalationFloor": 0.55
+  },
+  "verification": {
+   "passed": true,
+   "issues": [
+    "Here are the issues found in the output:\n\n1. **Security Issues**:\n   - Hardcoded credentials in `/pages/api/auth/[...nextauth].ts` (`agent@example.com`/`secret`) are a major security risk.\n   - No input sanitization in `/pages/api/knowledgebase/upload.ts` or `/pages/api/knowledgebase/search.ts` (XSS"
+   ]
+  },
+  "seq": 78,
+  "prevHash": "6e9d3ff7c369334846240609889253b9ffd1ffba086e064e52f544b79bafa03d",
+  "chainHash": "79e97b6517db2b43cedc253fefe3ce34f38064268bbab100fc6d9a4422e55de6",
+  "createdAt": "2026-09-18T18:37:49.442Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "execution",
+  "eventType": "task_execution",
+  "taskId": "4",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "AI Response Generation Service executed by openai/gpt-oss-20b — flagged",
+   "latencyMs": 1669,
+   "tokens": {
+    "input": 269,
+    "output": 1183
+   },
+   "servedBy": "openai/gpt-oss-20b",
+   "costUnits": 1,
+   "externalChecked": 2,
+   "externalUnsupported": [
+    "@ai-sdk/ai"
+   ],
+   "escalationFloor": 0.55
+  },
+  "verification": {
+   "passed": false,
+   "issues": [
+    "passed=true\n\nThe output appears to be well-structured and follows the chosen approach of using the OpenAI API via Vercel AI SDK. Here are a few minor observations:\n\n1. **Environment Variable**: The OpenAI API key is correctly referenced from the environment variable, which is a good practice for sec",
+    "References non-existent npm package \"@ai-sdk/ai\" (registry check)."
+   ]
+  },
+  "seq": 79,
+  "prevHash": "79e97b6517db2b43cedc253fefe3ce34f38064268bbab100fc6d9a4422e55de6",
+  "chainHash": "d74f0e984715acc4e7e260880c101884f6769173d3cdd5698c9a3ee15ae4c883",
+  "createdAt": "2026-09-18T18:39:28.534Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "execution",
+  "eventType": "task_execution",
+  "taskId": "5",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "Agent Dashboard UI executed by openai/gpt-oss-20b — flagged",
+   "latencyMs": 2747,
+   "tokens": {
+    "input": 266,
+    "output": 2048
+   },
+   "servedBy": "openai/gpt-oss-20b",
+   "costUnits": 1,
+   "externalChecked": 6,
+   "externalUnsupported": [
+    "@/lib",
+    "@/types",
+    "@/components"
+   ],
+   "escalationFloor": 0.4
+  },
+  "verification": {
+   "passed": false,
+   "issues": [
+    "References non-existent npm package \"@/lib\" (registry check).",
+    "References non-existent npm package \"@/types\" (registry check).",
+    "References non-existent npm package \"@/components\" (registry check)."
+   ]
+  },
+  "seq": 80,
+  "prevHash": "d74f0e984715acc4e7e260880c101884f6769173d3cdd5698c9a3ee15ae4c883",
+  "chainHash": "c8d273c3b5c59044509038abc93a631cb181ceb8be1e9143890266636f8ecba1",
+  "createdAt": "2026-09-18T18:39:32.193Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "execution",
+  "eventType": "task_execution",
+  "taskId": "6",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "Audit Trail and History Logging executed by openai/gpt-oss-20b — flagged",
+   "latencyMs": 2252,
+   "tokens": {
+    "input": 267,
+    "output": 1757
+   },
+   "servedBy": "openai/gpt-oss-20b",
+   "costUnits": 1,
+   "externalChecked": 3,
+   "externalUnsupported": [
+    "@/lib"
+   ],
+   "escalationFloor": 0.4
+  },
+  "verification": {
+   "passed": false,
+   "issues": [
+    "References non-existent npm package \"@/lib\" (registry check)."
+   ]
+  },
+  "seq": 81,
+  "prevHash": "c8d273c3b5c59044509038abc93a631cb181ceb8be1e9143890266636f8ecba1",
+  "chainHash": "4e937b6f3471089a960c52056da835f5f2adf0e0764f70281ae79d1df1257cd8",
+  "createdAt": "2026-09-18T18:39:34.569Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "execution",
+  "eventType": "task_execution",
+  "taskId": "7",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "Response Time Analytics Dashboard executed by openai/gpt-oss-20b — verified",
+   "latencyMs": 1939,
+   "tokens": {
+    "input": 267,
+    "output": 1380
+   },
+   "servedBy": "openai/gpt-oss-20b",
+   "costUnits": 1,
+   "externalChecked": 4,
+   "externalUnsupported": [],
+   "escalationFloor": 0.4
+  },
+  "verification": {
+   "passed": true,
+   "issues": []
+  },
+  "seq": 82,
+  "prevHash": "4e937b6f3471089a960c52056da835f5f2adf0e0764f70281ae79d1df1257cd8",
+  "chainHash": "e9b97344816c932087d7cfcecabff0484e78a43d6ab345a99c1e458d341608f5",
+  "createdAt": "2026-09-18T18:39:37.369Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "7d8901bc-aa3c-4df5-983a-afd62ddb8057",
+  "gate": "review",
+  "eventType": "human_feedback",
+  "actor": "human",
+  "taskId": "1",
+  "model": "openai/gpt-oss-20b",
+  "detail": {
+   "summary": "Database Schema Design: accepted (rated 5/5)",
+   "rating": 5,
+   "note": "e2e review",
+   "edited": false
+  },
+  "seq": 83,
+  "prevHash": "e9b97344816c932087d7cfcecabff0484e78a43d6ab345a99c1e458d341608f5",
+  "chainHash": "161f9b60c109e81a364ca25c0794801c98bfce85a8245740b375965e9f96c7d2",
+  "createdAt": "2026-09-18T18:40:33.808Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "ef52d058-eee5-4c64-99b5-16f649ff6c8e",
+  "gate": "suitability",
+  "eventType": "suitability_passed",
+  "detail": {
+   "summary": "Workflow suitable (confidence 95%)",
+   "confidence": 0.95
+  },
+  "seq": 84,
+  "prevHash": "161f9b60c109e81a364ca25c0794801c98bfce85a8245740b375965e9f96c7d2",
+  "chainHash": "4a652a9e258a8ca3eafa2bafe306aec8905a9d1f8f82319bae729c4640326da0",
+  "createdAt": "2026-09-18T18:48:39.659Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "ef52d058-eee5-4c64-99b5-16f649ff6c8e",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "Flaw scan queued for approval"
+  },
+  "seq": 85,
+  "prevHash": "4a652a9e258a8ca3eafa2bafe306aec8905a9d1f8f82319bae729c4640326da0",
+  "chainHash": "074f467b55224bef5513dd5845fd21b27b5aca48b3f54cd2618a2404a92753ef",
+  "createdAt": "2026-09-18T18:48:39.670Z"
  }
 ]

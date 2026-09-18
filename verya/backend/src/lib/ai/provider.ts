@@ -296,10 +296,49 @@ function validationError(error: z.ZodError): Error {
  * the /Schema validation failed/ contract so the caller's re-ask logic fires.
  */
 export function validateCoerced<S extends z.ZodType>(schema: S, data: unknown): z.output<S> {
-  const first = schema.safeParse(data);
+  // Models sometimes wrap the payload in a single-key envelope (e.g.
+  // {"workflow": {...}}). If the object has exactly one key whose value is an
+  // object/array, unwrap once before validating.
+  let candidate: unknown = data;
+  if (data && typeof data === "object" && !Array.isArray(data)) {
+    const keys = Object.keys(data as Record<string, unknown>);
+    if (keys.length === 1) {
+      const inner = (data as Record<string, unknown>)[keys[0]];
+      if (inner && typeof inner === "object") candidate = inner;
+    }
+  }
+  // Models sometimes return a BARE ARRAY where the schema wants an object
+  // (e.g. [{...},{...}] for a {candidates:[...]} schema). On a root type
+  // mismatch, wrap under the first array-typed top-level key of the shape; the
+  // repair loop below then fixes item-level sloppiness.
+  let first = schema.safeParse(candidate);
+  if (!first.success && Array.isArray(candidate)) {
+    const rootTypeMismatch = first.error.issues.some(
+      (i) => i.code === "invalid_type" && (i.path as unknown[]).length === 0
+    );
+    if (rootTypeMismatch) {
+      const shape = (schema as unknown as { _zod?: { def?: { shape?: Record<string, unknown> } } })._zod?.def?.shape;
+      const keys = Object.keys(shape ?? {});
+      const zodTypeOf = (inner: unknown): string => {
+        let def = (inner as { _zod?: { def?: { type?: string; innerType?: unknown } } })?._zod?.def;
+        let t = def?.type ?? "";
+        while (t === "preprocess" || t === "optional" || t === "default" || t === "nullable") {
+          def = (def?.innerType as { _zod?: { def?: { type?: string; innerType?: unknown } } })?._zod?.def;
+          t = def?.type ?? "";
+        }
+        return t;
+      };
+      const arrayKey = keys.find((k) => zodTypeOf(shape?.[k]) === "array") ?? keys[0];
+      if (arrayKey) {
+        candidate = { [arrayKey]: candidate };
+        first = schema.safeParse(candidate);
+        if (first.success) return first.data;
+      }
+    }
+  }
   if (first.success) return first.data;
 
-  const fixed: unknown = structuredClone(data);
+  const fixed: unknown = structuredClone(candidate);
   let coerced = 0;
   for (const issue of first.error.issues) {
     const path = issue.path as Array<string | number | symbol>;
@@ -439,6 +478,9 @@ async function runStructuredStage<S extends z.ZodType>(
           if (attempt === 0) {
             try {
               const reaskUser = `${user}\n\nYour previous JSON response failed schema validation:\n${String(lastErr).slice(0, 500)}\nReturn the complete corrected JSON object that satisfies the schema: ids/tokens as strings, enum values exactly lowercase as listed, arrays non-empty where required.`;
+              if (attemptModel.structured) {
+                return await geminiStructured(stage, system, reaskUser, zodSchema, attemptModel.model);
+              }
               const res2 = await chatCompatible(provider, attemptModel.model, system, reaskUser, {
                 json: true,
                 jsonHint: hint,

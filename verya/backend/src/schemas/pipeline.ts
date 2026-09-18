@@ -206,7 +206,9 @@ export const TaskAlgorithmSchema = z.object({
   humanChoice: z.string().max(80).nullish(),
 });
 export const AlgorithmPlanSchema = z.object({
-  tasks: objArr(TaskAlgorithmSchema, 1, 40),
+  // min 0: models sometimes return an empty list; repairAlgorithmPlan rebuilds
+  // every row deterministically from the known workflow tasks.
+  tasks: objArr(TaskAlgorithmSchema, 0, 40),
 });
 export type AlgorithmOption = z.infer<typeof AlgorithmOptionSchema>;
 export type TaskAlgorithm = z.infer<typeof TaskAlgorithmSchema>;
@@ -296,7 +298,8 @@ export const TaskModelRouteSchema = z.object({
   humanChoice: z.string().max(40).nullish(),
 });
 export const RoutingPlanSchema = z.object({
-  routes: objArr(TaskModelRouteSchema, 1, 40),
+  // min 0: repairRoutingPlan synthesizes default routes for any missing tasks.
+  routes: objArr(TaskModelRouteSchema, 0, 40),
   policy: z.enum(["lowest_cost", "highest_accuracy", "balanced"]).default("balanced"),
   estimatedCostUsd: z.number().min(0),
   notes: z.string().max(400).default(""),

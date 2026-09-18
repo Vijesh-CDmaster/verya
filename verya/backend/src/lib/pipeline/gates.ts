@@ -264,10 +264,32 @@ async function runStack(
     return session;
   }
 
-  const proposals = await adapters.proposeStacks({
-    raw: session.input,
-    workflow: session.workflow!,
-  });
+  let proposals: StackProposal[] = [];
+  try {
+    proposals = await adapters.proposeStacks({
+      raw: session.input,
+      workflow: session.workflow!,
+    });
+  } catch (err) {
+    console.warn(`[stack] AI proposal failed, using rule-based fallback: ${err instanceof Error ? err.message : err}`);
+  }
+  // Drop degenerate candidates (no components) and fall back deterministically
+  // when the AI returns nothing usable — this gate must never deadlock.
+  proposals = proposals.filter((p) => p.components.length >= 3);
+  if (proposals.length === 0) {
+    proposals = [
+      {
+        name: "Next.js full-stack",
+        components: [
+          { layer: "frontend", choice: "Next.js (React) + Tailwind CSS", rationale: "One codebase for UI and API routes; fast iteration." },
+          { layer: "backend", choice: "Next.js API routes (Node.js)", rationale: "Sufficient for CRUD-scale workflows at this size." },
+          { layer: "database", choice: "Postgres (Neon)", rationale: "Relational integrity with a generous free tier." },
+        ],
+        summary: "Boring, proven full-stack default sized for small teams.",
+        confidence: 0.6,
+      },
+    ];
+  }
   const candidates: StackCandidate[] = proposals.map((p) => ({
     proposal: p,
     confidence: p.confidence ?? 0.6,
@@ -323,7 +345,6 @@ async function runAlgorithms(
   });
   repairAlgorithmPlan(plan, session.workflow!.tasks);
   session.algorithms = plan;
-  session.gateStatus = "awaiting_user";
   const ties = plan.tasks.filter((t) => t.tieBreakRequired).length;
   await recordToLedger({
     orgId: ORG_ID,
@@ -338,6 +359,22 @@ async function runAlgorithms(
       tieCount: ties,
     },
   });
+  if (ties === 0) {
+    // No human calls required: auto-advance into model routing instead of
+    // deadlocking at "awaiting_user" with nothing to decide (F8 — ties alone
+    // demand a human).
+    session.gate = "models";
+    session.gateStatus = "running";
+    await recordToLedger({
+      orgId: ORG_ID,
+      sessionId: session.id,
+      gate: "models",
+      eventType: "routing_queued",
+      detail: { summary: "Approaches auto-selected — model routing queued automatically" },
+    });
+  } else {
+    session.gateStatus = "awaiting_user";
+  }
   return session;
 }
 

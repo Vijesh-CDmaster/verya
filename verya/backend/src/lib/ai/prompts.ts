@@ -60,7 +60,10 @@ Each candidate:
 - summary: one sentence on the main bet.
 Prefer boring, proven choices matched to the implied scale and team. Candidates should differ
 meaningfully (e.g. monolith vs split services), not cosmetic variants. Return exactly 1-3
-candidates; if two are genuinely equally good, give them similar confidence values.`;
+candidates; if two are genuinely equally good, give them similar confidence values.
+IMPORTANT: every candidate MUST include at least 3 components — frontend, backend, and
+database — as objects like {"layer":"frontend","choice":"Next.js","rationale":"..."}.
+Exact JSON shape: {"candidates":[{"name":"...","components":[{"layer":"frontend","choice":"...","rationale":"..."}],"summary":"...","confidence":0.8}]}`;
 
 export const ALGORITHM_SYSTEM = `You are Verya's Algorithm Selector.
 The stack is now FIXED. For each task, determine the best technical approach for that task

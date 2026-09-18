@@ -1,0 +1,56 @@
+[
+ {
+  "orgId": "default-org",
+  "model": "openai/gpt-oss-20b",
+  "taskCategory": "database",
+  "trustScore": 61.3,
+  "samples": 2,
+  "trend": "up",
+  "lastUpdated": "2026-09-18T18:40:33.799Z"
+ },
+ {
+  "orgId": "default-org",
+  "model": "openai/gpt-oss-20b",
+  "taskCategory": "auth",
+  "trustScore": 45.5,
+  "samples": 1,
+  "trend": "down",
+  "lastUpdated": "2026-09-18T18:32:21.396Z"
+ },
+ {
+  "orgId": "default-org",
+  "model": "openai/gpt-oss-20b",
+  "taskCategory": "integration",
+  "trustScore": 54.5,
+  "samples": 1,
+  "trend": "up",
+  "lastUpdated": "2026-09-18T18:37:49.434Z"
+ },
+ {
+  "orgId": "default-org",
+  "model": "openai/gpt-oss-20b",
+  "taskCategory": "ai",
+  "trustScore": 45.5,
+  "samples": 1,
+  "trend": "down",
+  "lastUpdated": "2026-09-18T18:39:28.509Z"
+ },
+ {
+  "orgId": "default-org",
+  "model": "openai/gpt-oss-20b",
+  "taskCategory": "frontend",
+  "trustScore": 50.7,
+  "samples": 2,
+  "trend": "up",
+  "lastUpdated": "2026-09-18T18:39:37.360Z"
+ },
+ {
+  "orgId": "default-org",
+  "model": "openai/gpt-oss-20b",
+  "taskCategory": "backend",
+  "trustScore": 45.5,
+  "samples": 1,
+  "trend": "down",
+  "lastUpdated": "2026-09-18T18:39:34.560Z"
+ }
+]

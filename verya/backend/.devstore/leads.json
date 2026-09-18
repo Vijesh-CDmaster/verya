@@ -7,5 +7,14 @@
   "phone": null,
   "source": "landing",
   "createdAt": "2026-09-18T16:29:35.654Z"
+ },
+ {
+  "id": 2,
+  "orgId": "marketing",
+  "name": "Vijesh",
+  "email": "viju7122006@gmail.com",
+  "phone": "9384596466",
+  "source": "website",
+  "createdAt": "2026-09-18T18:48:12.833Z"
  }
 ]
