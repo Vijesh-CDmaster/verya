@@ -56,4 +56,20 @@ export const api = {
   dashboard: () => request<Record<string, unknown>>("/api/dashboard"),
 
   verifyLedger: () => request<{ valid: boolean; checked: number }>("/api/ledger/verify"),
+
+  ledgerRecords: (sessionId?: string) =>
+    request<{ records: Array<Record<string, unknown>> }>(
+      `/api/ledger/records${sessionId ? `?sessionId=${encodeURIComponent(sessionId)}` : ""}`
+    ),
+
+  createLead: (lead: { name: string; email: string; phone?: string }) =>
+    request<{ ok: boolean; message: string }>("/api/leads", {
+      method: "POST",
+      body: JSON.stringify(lead),
+    }),
+
+  memorySearch: (query: string, category?: string) =>
+    request<{ results: Array<Record<string, unknown>> }>(
+      `/api/memory/search?q=${encodeURIComponent(query)}${category ? `&category=${encodeURIComponent(category)}` : ""}`
+    ),
 };

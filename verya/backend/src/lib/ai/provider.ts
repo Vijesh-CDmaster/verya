@@ -472,11 +472,12 @@ export interface StageAdapters {
     statedStack: string;
   }): Promise<StackValidation>;
   proposeStacks(input: { raw: string; workflow: Workflow }): Promise<StackProposalT[]>;
-  recommendAlgorithms(input: { workflow: Workflow; stack: string }): Promise<AlgorithmPlan>;
+  recommendAlgorithms(input: { workflow: Workflow; stack: string; memoryContext?: string }): Promise<AlgorithmPlan>;
   routeModels(input: {
     workflow: Workflow;
     algorithmPlan: AlgorithmPlan;
     stack: string;
+    memoryContext?: string;
   }): Promise<RoutingPlan>;
   executeTask(input: {
     task: Task;
@@ -548,19 +549,19 @@ export const geminiAdapters: StageAdapters = {
     return out.candidates;
   },
 
-  recommendAlgorithms: ({ workflow, stack }) =>
+  recommendAlgorithms: ({ workflow, stack, memoryContext }) =>
     runStructuredStage(
       "algorithms",
       ALGORITHM_SYSTEM,
-      `WORKFLOW:\n${JSON.stringify(workflow)}\n\nCHOSEN STACK:\n${stack}`,
+      `WORKFLOW:\n${JSON.stringify(workflow)}\n\nCHOSEN STACK:\n${stack}${memoryContext ? `\n\nORG MEMORY (outcomes from this organization's similar past tasks — prefer approaches whose category historically did well; treat "rejected"/"flagged" histories as warnings):\n${memoryContext}` : ""}`,
       AlgorithmPlanSchema
     ),
 
-  routeModels: ({ workflow, algorithmPlan, stack }) =>
+  routeModels: ({ workflow, algorithmPlan, stack, memoryContext }) =>
     runStructuredStage(
       "routing",
       ROUTING_SYSTEM,
-      `WORKFLOW:\n${JSON.stringify(workflow)}\n\nCHOSEN STACK:\n${stack}\n\nALGORITHM PLAN:\n${JSON.stringify(algorithmPlan)}`,
+      `WORKFLOW:\n${JSON.stringify(workflow)}\n\nCHOSEN STACK:\n${stack}\n\nALGORITHM PLAN:\n${JSON.stringify(algorithmPlan)}${memoryContext ? `\n\nORG MEMORY (this organization's recorded outcomes per model and task category — a model that repeatedly earned "accepted" for a category deserves a confidence bump for similar tasks; one with "rejected"/"flagged" history deserves caution):\n${memoryContext}` : ""}`,
       RoutingPlanSchema
     ),
 

@@ -2,6 +2,12 @@
 
 # dependencies
 /node_modules
+node_modules/
+
+# builds
+.next/
+dist/
+backend/dist/
 /.pnp
 .pnp.*
 .yarn/*

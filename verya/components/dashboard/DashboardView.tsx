@@ -1,6 +1,7 @@
 "use client";
 
 import { useDashboard } from "@/hooks/use-session";
+import { MemorySearchCard } from "@/components/dashboard/MemorySearchCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
@@ -100,6 +101,9 @@ export function DashboardView() {
           )}
         </CardContent>
       </Card>
+
+      {/* Org memory semantic search (pgvector) */}
+      <MemorySearchCard />
 
       {/* Reputation leaderboard */}
       <Card>

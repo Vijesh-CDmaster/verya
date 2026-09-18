@@ -31,10 +31,18 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, ...pr
 ));
 Input.displayName = "Input";
 
-function Label({ className, ...props }: React.LabelHTMLAttributes<HTMLLabelElement>) {
+function Label({
+  className,
+  variant = "eyebrow",
+  ...props
+}: React.LabelHTMLAttributes<HTMLLabelElement> & { variant?: "eyebrow" | "form" }) {
   return (
     <label
-      className={cn("text-[11px] font-semibold uppercase tracking-[0.08em] text-muted", className)}
+      className={cn(
+        variant === "eyebrow" && "text-[11px] font-semibold uppercase tracking-[0.08em] text-muted",
+        variant === "form" && "mb-2 block text-sm font-medium text-fg",
+        className
+      )}
       {...props}
     />
   );

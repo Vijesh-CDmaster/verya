@@ -4,14 +4,14 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ClerkProvider } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { useIntakeStore } from "@/stores/intake-store";
+import { useUiStore } from "@/stores/ui-store";
 
 const CLERK_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
 function ThemeSync() {
-  const theme = useIntakeStore((s) => s.theme);
+  const theme = useUiStore((s) => s.theme);
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
+    document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
   return null;
 }

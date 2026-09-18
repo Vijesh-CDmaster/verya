@@ -7,6 +7,7 @@ import { authenticate, clerkConfigured, type AuthContext } from "./middleware/au
 import pipelineRoutes from "./routes/pipeline";
 import ledgerRoutes from "./routes/ledger";
 import dashboardRoutes from "./routes/dashboard";
+import leadRoutes from "./routes/leads";
 
 // Every request carries the auth context (org scoping) after the onRequest hook.
 declare module "fastify" {
@@ -54,6 +55,7 @@ export async function buildApp(): Promise<FastifyInstance> {
   await app.register(pipelineRoutes, { prefix: "/api" });
   await app.register(ledgerRoutes, { prefix: "/api" });
   await app.register(dashboardRoutes, { prefix: "/api" });
+  await app.register(leadRoutes, { prefix: "/api" });
 
   app.setErrorHandler((err, req, reply) => {
     const e = err as Error & { statusCode?: number; validation?: unknown };

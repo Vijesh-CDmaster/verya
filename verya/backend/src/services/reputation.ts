@@ -22,7 +22,6 @@ export async function leaderboard(orgId: string): Promise<ReputationEntry[]> {
 /** Skill-map heatmap merged with reputation scores (F22 dashboard). */
 export async function skillHeatmap(orgId: string) {
   const [rep, skill] = await Promise.all([repoGet(orgId), getSkillMap(orgId)]);
-  const byKey = new Map(rep.map((r) => [`${r.model}::${r.taskCategory}`, r]));
   const rows = new Map<string, { model: string; taskCategory: string; trustScore: number; samples: number }>();
   for (const s of skill) {
     rows.set(`${s.model}::${s.taskCategory}`, { ...s });
