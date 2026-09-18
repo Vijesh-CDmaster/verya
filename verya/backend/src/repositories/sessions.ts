@@ -1,5 +1,9 @@
 // Session repository — persistence for gated pipeline sessions.
-import { query, requireDb } from "../db/pool";
+// When DATABASE_URL is unset, persistence falls back to the file-backed dev store
+// (backend/.devstore) with identical semantics; Neon Postgres takes over wholly
+// the moment the connection string is configured.
+import { query, requireDb, isDbConfigured } from "../db/pool";
+import * as dev from "../db/devstore";
 import type { PipelineSession } from "../schemas/pipeline";
 
 type SessionRow = {
@@ -18,6 +22,7 @@ function titleOf(session: PipelineSession): string {
 }
 
 export async function createSession(orgId: string, session: PipelineSession): Promise<void> {
+  if (!isDbConfigured()) return dev.devCreateSession(orgId, session);
   requireDb();
   await query(
     `INSERT INTO sessions (id, org_id, title, gate, gate_status, state)
@@ -27,6 +32,7 @@ export async function createSession(orgId: string, session: PipelineSession): Pr
 }
 
 export async function saveSession(orgId: string, session: PipelineSession): Promise<void> {
+  if (!isDbConfigured()) return dev.devSaveSession(orgId, session);
   requireDb();
   await query(
     `UPDATE sessions
@@ -37,6 +43,7 @@ export async function saveSession(orgId: string, session: PipelineSession): Prom
 }
 
 export async function getSession(orgId: string, id: string): Promise<PipelineSession | null> {
+  if (!isDbConfigured()) return dev.devGetSession(orgId, id);
   requireDb();
   const rows = await query<SessionRow>(
     `SELECT id, org_id, created_at, updated_at, title, gate, gate_status, state
@@ -51,6 +58,7 @@ export async function listSessions(
   orgId: string,
   limit = 50
 ): Promise<Array<Pick<PipelineSession, "id" | "gate" | "gateStatus"> & { title: string; updatedAt: string }>> {
+  if (!isDbConfigured()) return dev.devListSessions(orgId, limit);
   requireDb();
   const rows = await query<SessionRow>(
     `SELECT id, org_id, created_at, updated_at, title, gate, gate_status, state

@@ -51,8 +51,10 @@ const GEMINI_FAILOVER_MODELS = (process.env.GEMINI_FAILOVER_MODELS ||
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);
-// Per-model retries for transient 503/429 demand spikes.
-const RETRY_DELAYS_MS = [2000, 6000, 15000];
+// Per-model retries for transient 503/429 demand spikes. Free tiers rate-limit
+// per minute per model, so the total retry window must span a full cooldown
+// (~60s) — otherwise the chain gives up just before quota resets.
+const RETRY_DELAYS_MS = [3000, 8000, 15000, 25000, 40000];
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 

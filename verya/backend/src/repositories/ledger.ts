@@ -2,7 +2,8 @@
 // Each row's chain_hash = SHA-256(prev_hash || canonical payload). Normal application
 // flow only ever INSERTs; corrections are new rows referencing the original.
 import { createHash } from "crypto";
-import { query, requireDb, pool } from "../db/pool";
+import { query, requireDb, pool, isDbConfigured } from "../db/pool";
+import * as dev from "../db/devstore";
 
 export type LedgerInput = {
   orgId: string;
@@ -42,6 +43,7 @@ function canonical(entry: LedgerInput, prevHash: string, ts: string): string {
 }
 
 export async function recordToLedger(input: LedgerInput): Promise<LedgerEntry> {
+  if (!isDbConfigured()) return dev.devRecordLedger(input);
   requireDb();
   const client = await pool.connect();
   try {
@@ -103,6 +105,7 @@ export type LedgerQuery = {
 };
 
 export async function listLedger(q: LedgerQuery): Promise<LedgerEntry[]> {
+  if (!isDbConfigured()) return dev.devListLedger(q);
   requireDb();
   const clauses: string[] = ["org_id = $1"];
   const params: unknown[] = [q.orgId];
@@ -145,6 +148,7 @@ function rowToEntry(r: Record<string, unknown>): LedgerEntry {
 
 /** Verify the org's hash chain end-to-end; returns first broken seq if tampered. */
 export async function verifyChain(orgId: string): Promise<{ valid: boolean; brokenAt?: number; checked: number }> {
+  if (!isDbConfigured()) return dev.devVerifyChain(orgId);
   requireDb();
   const rows = await query<Record<string, unknown>>(
     `SELECT * FROM ledger_entries WHERE org_id = $1 ORDER BY seq ASC`,

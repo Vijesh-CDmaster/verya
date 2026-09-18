@@ -16,3 +16,10 @@
  GET / 200 in 316ms
  ○ Compiling /_error ...
  ✓ Compiled /_error in 1209ms
+ GET / 200 in 226ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 1564ms
+ GET /dashboard 200 in 1727ms
+ GET / 200 in 274ms
+ GET / 200 in 257ms
+[?25h

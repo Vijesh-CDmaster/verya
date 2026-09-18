@@ -10,9 +10,9 @@ import type { VeryaRequest } from "../app";
 
 export default async function dashboardRoutes(app: FastifyInstance): Promise<void> {
   app.get("/dashboard", async (req: VeryaRequest) => {
-    if (!isDbConfigured()) {
-      return { dbConfigured: false, queue: await queueHealth() };
-    }
+    // DATABASE_URL unset → the file-backed dev store is serving persistence;
+    // every stat below is still real recorded data, flagged for the UI banner.
+    const devStore = !isDbConfigured();
     const orgId = req.auth.orgId;
     const [records, reputation, heatmap, analytics, sessions, chain] = await Promise.all([
       listLedger({ orgId, limit: 60 }),
@@ -29,7 +29,8 @@ export default async function dashboardRoutes(app: FastifyInstance): Promise<voi
         (r.detail as { summary?: string })?.summary?.includes("escalated")
     );
     return {
-      dbConfigured: true,
+      dbConfigured: !devStore,
+      devStore,
       queue: await queueHealth(),
       analytics,
       reputation,

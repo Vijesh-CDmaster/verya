@@ -17,7 +17,11 @@ import { recordToLedger } from "../../services/ledger";
 
 const ORG_ID = process.env.VERYA_ORG_ID || "default-org";
 
-/** Kick off AI processing for the current gate. */
+/**
+ * Kick off AI processing for the current gate. Called in the background after the
+ * session is persisted with gateStatus="running" — the HTTP path returns immediately
+ * and the UI polls until the gate reaches "awaiting_user" (or "failed").
+ */
 export async function processGate(
   session: PipelineSession,
   adapters: StageAdapters
@@ -25,6 +29,8 @@ export async function processGate(
   switch (session.gate) {
     case "suitability":
       return runSuitability(session, adapters);
+    case "flaws":
+      return runFlaws(session, adapters);
     case "stack":
       return runStack(session, adapters);
     case "algorithms":
@@ -32,13 +38,41 @@ export async function processGate(
     case "models":
       return runRouting(session, adapters);
     case "intake":
-    case "flaws":
     case "tasks":
     case "execution":
     case "review":
       // User-action-driven gates; nothing to precompute.
       return session;
   }
+}
+
+// ---------- Gate 2: Flaw detection (runs after the suitability decision) ----------
+async function runFlaws(
+  session: PipelineSession,
+  adapters: StageAdapters
+): Promise<PipelineSession> {
+  session.gateStatus = "running";
+  const finalWorkflow = session.workflow;
+  if (!finalWorkflow) {
+    session.gateStatus = "failed";
+    return session;
+  }
+  const flawReport = await adapters.detectFlaws({
+    raw: session.input,
+    workflow: finalWorkflow,
+  });
+  session.flawReport = flawReport;
+  session.gateStatus = "awaiting_user";
+  await recordToLedger({
+    orgId: ORG_ID,
+    sessionId: session.id,
+    gate: "flaws",
+    eventType: "flaw_report",
+    detail: {
+      summary: `${flawReport.flaws.length} flaws found (${flawReport.overallRisk} risk)`,
+    },
+  });
+  return session;
 }
 
 // Deterministic repair for the understanding stage: models sometimes omit ids/titles or
@@ -415,25 +449,10 @@ export async function applyGateAction(
           summary: `User ${action.choice === "suggested" ? "accepted the suggested workflow" : "kept the original workflow"}`,
         },
       });
+      // AI flaw detection runs in the background via processGate — the route
+      // responds immediately and the UI polls until the report is ready.
       session.gate = "flaws";
       session.gateStatus = "running";
-      const finalWorkflow = session.workflow;
-      if (!finalWorkflow) break;
-      const flawReport = await adapters.detectFlaws({
-        raw: session.input,
-        workflow: finalWorkflow,
-      });
-      session.flawReport = flawReport;
-      session.gateStatus = "awaiting_user";
-      await recordToLedger({
-        orgId: ORG_ID,
-        sessionId: session.id,
-        gate: "flaws",
-        eventType: "flaw_report",
-        detail: {
-          summary: `${flawReport.flaws.length} flaws found (${flawReport.overallRisk} risk)`,
-        },
-      });
       break;
     }
 
@@ -462,9 +481,9 @@ export async function applyGateAction(
       if (unresolvedCritical.length > 0) {
         session.gateStatus = "awaiting_user"; // F3: nothing moves forward until gate cleared
       } else {
+        // Stack analysis (AI) runs in the background via processGate.
         session.gate = "stack";
         session.gateStatus = "running";
-        session = await runStack(session, adapters);
       }
       break;
     }
@@ -496,9 +515,9 @@ export async function applyGateAction(
         t.dependsOn = (t.dependsOn ?? []).filter((d: string) => ids.has(d));
       }
       session.workflow.tasks = action.tasks;
+      // Algorithm recommendation (AI) runs in the background via processGate.
       session.gate = "algorithms";
       session.gateStatus = "running";
-      session = await runAlgorithms(session, adapters);
       await recordToLedger({
         orgId: ORG_ID,
         sessionId: session.id,
@@ -519,9 +538,9 @@ export async function applyGateAction(
       task.tieBreakRequired = false;
       const stillWaiting = session.algorithms.tasks.filter((t) => t.tieBreakRequired);
       if (stillWaiting.length === 0) {
+        // Model routing (AI) runs in the background via processGate.
         session.gate = "models";
         session.gateStatus = "running";
-        session = await runRouting(session, adapters);
       }
       await recordToLedger({
         orgId: ORG_ID,

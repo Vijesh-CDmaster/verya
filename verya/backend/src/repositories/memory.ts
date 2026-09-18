@@ -1,7 +1,8 @@
 // Organization memory repository (F9) — Postgres + pgvector.
 // Every AI interaction + outcome is stored per org with a 1536-dim embedding;
 // routing pulls similar past tasks via cosine similarity. Strict tenant isolation.
-import { query, requireDb, pool } from "../db/pool";
+import { query, requireDb, pool, isDbConfigured } from "../db/pool";
+import * as dev from "../db/devstore";
 
 export type MemoryInput = {
   orgId: string;
@@ -18,6 +19,7 @@ export type MemoryInput = {
 export type MemoryRow = MemoryInput & { id: number; createdAt: string; similarity?: number };
 
 export async function insertMemory(input: MemoryInput): Promise<void> {
+  if (!isDbConfigured()) return dev.devInsertMemory(input);
   requireDb();
   const emb = input.embedding
     ? `[${input.embedding.map((n) => Number.isFinite(n) ? n : 0).join(",")}]`
@@ -44,6 +46,7 @@ export async function searchMemory(
   embedding: number[],
   opts: { taskCategory?: string; limit?: number }
 ): Promise<MemoryRow[]> {
+  if (!isDbConfigured()) return dev.devSearchMemory(orgId, embedding, opts);
   requireDb();
   const emb = `[${embedding.map((n) => (Number.isFinite(n) ? n : 0)).join(",")}]`;
   const params: unknown[] = [orgId, emb];
@@ -79,6 +82,7 @@ export async function searchMemory(
 
 /** Aggregate skill map: trust per model x task category from outcome history. */
 export async function skillMap(orgId: string): Promise<Array<{ model: string; taskCategory: string; trustScore: number; samples: number }>> {
+  if (!isDbConfigured()) return dev.devSkillMap(orgId);
   requireDb();
   const rows = await query<{ model: string; task_category: string; avg_score: string; samples: string }>(
     `SELECT model, task_category,
@@ -106,6 +110,7 @@ export async function skillMap(orgId: string): Promise<Array<{ model: string; ta
 }
 
 export async function exportMemory(orgId: string): Promise<MemoryRow[]> {
+  if (!isDbConfigured()) return dev.devExportMemory(orgId);
   requireDb();
   const rows = await query<Record<string, unknown>>(
     `SELECT id, org_id, session_id, task_category, model, outcome, title, content, meta, created_at
@@ -128,6 +133,7 @@ export async function exportMemory(orgId: string): Promise<MemoryRow[]> {
 }
 
 export async function deleteMemory(orgId: string): Promise<number> {
+  if (!isDbConfigured()) return dev.devDeleteMemory(orgId);
   requireDb();
   const res = await pool.query("DELETE FROM org_memory WHERE org_id = $1", [orgId]);
   return res.rowCount ?? 0;

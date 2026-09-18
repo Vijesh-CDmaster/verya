@@ -49,9 +49,9 @@ const objArr = <T extends z.ZodTypeAny>(item: T, min = 0, max = 50) =>
 
 // ---------- Gate 1: Suitability ----------
 export const SuitabilitySchema = z.object({
-  suitable: z.boolean(),
-  confidence: z.number().min(0).max(1),
-  reason: z.string().max(600),
+  suitable: nullTo(false, z.boolean()),
+  confidence: nullTo(0.6, z.number().min(0).max(1)),
+  reason: nullTo("", z.string().max(600)),
   suggestedWorkflow: z.string().max(3000).nullish(),
   suggestedSummary: z.string().max(400).nullish(),
 });
@@ -101,23 +101,23 @@ export type Workflow = z.infer<typeof WorkflowSchema>;
 export const FlawSchema = z.object({
   id: nullTo("", z.string().max(40)),
   title: nullTo("", z.string().max(140)),
-  category: z.enum([
+  category: nullTo("logic" as const, z.enum([
     "security",
     "architecture",
     "logic",
     "scale",
     "cost",
     "nonfunctional",
-  ]),
-  severity: SeveritySchema,
-  description: z.string().max(700),
-  suggestedFix: z.string().max(700),
+  ] as const)),
+  severity: nullTo("medium" as const, SeveritySchema),
+  description: nullTo("", z.string().max(700)),
+  suggestedFix: nullTo("", z.string().max(700)),
   relatedTaskIds: arr(z.string()),
 });
 export const FlawReportSchema = z.object({
   flaws: objArr(FlawSchema, 0, 40),
-  overallRisk: z.enum(["low", "medium", "high"]),
-  summary: z.string().max(500),
+  overallRisk: nullTo("medium" as const, z.enum(["low", "medium", "high"])),
+  summary: nullTo("", z.string().max(500)),
 });
 export type Flaw = z.infer<typeof FlawSchema>;
 export type FlawReport = z.infer<typeof FlawReportSchema>;
@@ -131,7 +131,7 @@ export type FlawResolution = {
 
 // ---------- Gate 3: Stack ----------
 export const StackComponentSchema = z.object({
-  layer: z.enum([
+  layer: nullTo("backend" as const, z.enum([
     "frontend",
     "backend",
     "database",
@@ -140,27 +140,27 @@ export const StackComponentSchema = z.object({
     "hosting",
     "jobs",
     "storage",
-  ]),
-  choice: z.string().min(1).max(80),
+  ] as const)),
+  choice: nullTo("", z.string().max(80)),
   rationale: nullTo("", z.string().max(300)),
 });
 export const StackProposalSchema = z.object({
   name: z.string().max(80).default("Proposed stack"),
-  components: objArr(StackComponentSchema, 3, 9),
-  summary: z.string().max(400),
+  components: objArr(StackComponentSchema, 1, 9),
+  summary: nullTo("", z.string().max(400)),
   confidence: z.number().min(0).max(1).default(0.7),
 });
 export type StackProposal = z.infer<typeof StackProposalSchema>;
 
 export const StackValidationSchema = z.object({
-  verdict: z.enum(["fit", "fit_with_changes", "poor_fit"]),
+  verdict: nullTo("fit" as const, z.enum(["fit", "fit_with_changes", "poor_fit"])),
   notes: arr(z.string(), 16),
   changes: objArr(
     z.object({
-      layer: z.string().max(40),
-      from: z.string().max(80),
-      to: z.string().max(80),
-      why: z.string().max(300),
+      layer: nullTo("", z.string().max(40)),
+      from: nullTo("", z.string().max(80)),
+      to: nullTo("", z.string().max(80)),
+      why: nullTo("", z.string().max(300)),
     }),
     0,
     8

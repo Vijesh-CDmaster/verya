@@ -2,3 +2,41 @@ Failed to proxy http://localhost:4000/api/pipeline [Error: socket hang up] { cod
 [Error: socket hang up] { code: 'ECONNRESET' }
 Failed to proxy http://localhost:4000/api/pipeline [Error: socket hang up] { code: 'ECONNRESET' }
 [Error: socket hang up] { code: 'ECONNRESET' }
+Failed to proxy http://localhost:4000/api/pipeline [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+Failed to proxy http://localhost:4000/api/pipeline [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+Failed to proxy http://localhost:4000/api/dashboard [AggregateError: ] { code: 'ECONNREFUSED' }
+[AggregateError: ] { code: 'ECONNREFUSED' }
+Failed to proxy http://localhost:4000/api/dashboard [AggregateError: ] { code: 'ECONNREFUSED' }
+[AggregateError: ] { code: 'ECONNREFUSED' }
+Failed to proxy http://localhost:4000/api/dashboard [AggregateError: ] { code: 'ECONNREFUSED' }
+[AggregateError: ] { code: 'ECONNREFUSED' }
+Failed to proxy http://localhost:4000/api/dashboard [AggregateError: ] { code: 'ECONNREFUSED' }
+[AggregateError: ] { code: 'ECONNREFUSED' }
+Failed to proxy http://localhost:4000/health [AggregateError: ] { code: 'ECONNREFUSED' }
+[AggregateError: ] { code: 'ECONNREFUSED' }
+Failed to proxy http://localhost:4000/api/dashboard [AggregateError: ] { code: 'ECONNREFUSED' }
+[AggregateError: ] { code: 'ECONNREFUSED' }
+Failed to proxy http://localhost:4000/api/dashboard [AggregateError: ] { code: 'ECONNREFUSED' }
+[AggregateError: ] { code: 'ECONNREFUSED' }
+Failed to proxy http://localhost:4000/api/dashboard [AggregateError: ] { code: 'ECONNREFUSED' }
+[AggregateError: ] { code: 'ECONNREFUSED' }
+Failed to proxy http://localhost:4000/api/dashboard [AggregateError: ] { code: 'ECONNREFUSED' }
+[AggregateError: ] { code: 'ECONNREFUSED' }
+Failed to proxy http://localhost:4000/api/dashboard [AggregateError: ] { code: 'ECONNREFUSED' }
+[AggregateError: ] { code: 'ECONNREFUSED' }
+Failed to proxy http://localhost:4000/health [AggregateError: ] { code: 'ECONNREFUSED' }
+[AggregateError: ] { code: 'ECONNREFUSED' }
+Failed to proxy http://localhost:4000/api/dashboard [AggregateError: ] { code: 'ECONNREFUSED' }
+[AggregateError: ] { code: 'ECONNREFUSED' }
+Failed to proxy http://localhost:4000/api/dashboard [AggregateError: ] { code: 'ECONNREFUSED' }
+[AggregateError: ] { code: 'ECONNREFUSED' }
+Failed to proxy http://localhost:4000/api/pipeline [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+Failed to proxy http://localhost:4000/api/pipeline [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+Failed to proxy http://localhost:4000/api/pipeline [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }
+Failed to proxy http://localhost:4000/api/pipeline [Error: socket hang up] { code: 'ECONNRESET' }
+[Error: socket hang up] { code: 'ECONNRESET' }

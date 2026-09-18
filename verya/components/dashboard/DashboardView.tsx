@@ -41,18 +41,7 @@ export function DashboardView() {
   }
   const d = (data ?? {}) as AnyRecord;
 
-  if (d.dbConfigured === false) {
-    return (
-      <Alert variant="warn">
-        <AlertTitle>Database not connected</AlertTitle>
-        <AlertDescription>
-          Add your Neon <code>DATABASE_URL</code> to <code>backend/.env</code> and run{" "}
-          <code>npm run migrate</code> inside <code>backend/</code>. The API is up and the pipeline
-          will start persisting the moment the database is reachable.
-        </AlertDescription>
-      </Alert>
-    );
-  }
+  const devStore = d.dbConfigured === false;
 
   const analytics = (d.analytics ?? {}) as AnyRecord;
   const byModel = (analytics.byModel ?? []) as Array<{ model: string; tasks: number; avgLatencyMs: number; tokens: number }>;
@@ -66,6 +55,17 @@ export function DashboardView() {
 
   return (
     <div className="space-y-6">
+      {devStore && (
+        <Alert variant="warn">
+          <AlertTitle>Dev store active — Neon not connected yet</AlertTitle>
+          <AlertDescription>
+            Persistence is running on the local file-backed dev store, so every stat below is real
+            recorded data from your pipelines. Add your Neon <code>DATABASE_URL</code> to{" "}
+            <code>backend/.env</code> and run <code>npm run migrate</code> inside <code>backend/</code>{" "}
+            to switch wholly to Postgres — the dev-store schema is identical.
+          </AlertDescription>
+        </Alert>
+      )}
       {!chain.valid && (
         <Alert variant="error">
           <AlertTitle>Ledger integrity warning</AlertTitle>

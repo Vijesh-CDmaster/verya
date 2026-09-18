@@ -1,6 +1,7 @@
 // Model reputation repository (F12) — living trust scores per model x task category.
 // Continuous updates (not scheduled): every verification/feedback event nudges the score.
-import { query, requireDb } from "../db/pool";
+import { query, requireDb, isDbConfigured } from "../db/pool";
+import * as dev from "../db/devstore";
 
 export type ReputationEntry = {
   orgId: string;
@@ -27,6 +28,7 @@ export async function updateReputation(input: {
   taskCategory: string;
   outcome: "accepted" | "edited" | "rejected" | "escalated" | "verified" | "flagged";
 }): Promise<ReputationEntry> {
+  if (!isDbConfigured()) return dev.devUpdateReputation(input);
   requireDb();
   const alpha = 0.15;
   const target = OUTCOME_TARGET[input.outcome] ?? 50;
@@ -62,6 +64,7 @@ export async function updateReputation(input: {
 }
 
 export async function getReputation(orgId: string): Promise<ReputationEntry[]> {
+  if (!isDbConfigured()) return dev.devGetReputation(orgId);
   requireDb();
   const rows = await query<Record<string, unknown>>(
     `SELECT org_id, model, task_category, trust_score, samples, trend, last_updated
