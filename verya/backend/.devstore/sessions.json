@@ -4247,5 +4247,1109 @@
     "ratings": {}
    }
   }
+ },
+ {
+  "id": "e9557707-203e-4279-8f29-87559ba2c849",
+  "orgId": "default-org",
+  "title": "Support Ticket Drafting Tool",
+  "gate": "flaws",
+  "gateStatus": "awaiting_user",
+  "createdAt": "2026-09-18T19:00:09.196Z",
+  "updatedAt": "2026-09-18T19:00:29.640Z",
+  "state": {
+   "id": "e9557707-203e-4279-8f29-87559ba2c849",
+   "createdAt": "2026-09-18T19:00:09.193Z",
+   "updatedAt": "2026-09-18T19:00:29.638Z",
+   "input": "Build an internal tool for our support team. Staff paste a customer's issue and the tool drafts a reply using our knowledge base, with an audit trail. Around 50 agents daily. Role-based access, full history, response-time dashboard. Stack: Next.js and Postgres.",
+   "statedStack": "",
+   "policy": "balanced",
+   "uploads": [],
+   "gate": "flaws",
+   "gateStatus": "awaiting_user",
+   "suitability": {
+    "suitable": true,
+    "confidence": 0.95,
+    "reason": "The workflow is logically sound and follows a standard development lifecycle for a CRUD-based AI application. The dependencies correctly prioritize foundational database and auth structures before layering on the AI integration and UI components, ensuring that the audit trail and analytics have the necessary data hooks to function properly.",
+    "suggestedWorkflow": null,
+    "suggestedSummary": null
+   },
+   "suggestedWorkflow": null,
+   "workflow": {
+    "title": "Support Ticket Drafting Tool",
+    "summary": "An internal dashboard for support agents to generate ticket responses based on a knowledge base, featuring role-based access control, response history tracking, and performance analytics.",
+    "tasks": [
+     {
+      "id": "1",
+      "title": "Database Schema Design",
+      "description": "",
+      "category": "database",
+      "dependsOn": [],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "2",
+      "title": "Authentication and RBAC Setup",
+      "description": "",
+      "category": "auth",
+      "dependsOn": [
+       "1"
+      ],
+      "complexity": "medium",
+      "risk": "high"
+     },
+     {
+      "id": "3",
+      "title": "Knowledge Base Integration",
+      "description": "",
+      "category": "integration",
+      "dependsOn": [
+       "1"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "4",
+      "title": "AI Drafting Engine Implementation",
+      "description": "",
+      "category": "ai",
+      "dependsOn": [
+       "3"
+      ],
+      "complexity": "high",
+      "risk": "high"
+     },
+     {
+      "id": "5",
+      "title": "Agent Dashboard UI Development",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "2"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "6",
+      "title": "Audit Trail and History Logging",
+      "description": "",
+      "category": "backend",
+      "dependsOn": [
+       "1",
+       "4"
+      ],
+      "complexity": "low",
+      "risk": "low"
+     },
+     {
+      "id": "7",
+      "title": "Response Time Analytics Dashboard",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "6"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "8",
+      "title": "Deployment and Monitoring",
+      "description": "",
+      "category": "devops",
+      "dependsOn": [
+       "5",
+       "7"
+      ],
+      "complexity": "low",
+      "risk": "low"
+     }
+    ],
+    "ambiguities": [
+     "[\"What is the source format and location of the existing knowledge base?",
+     "Are there specific requirements for the AI model provider (e.g.",
+     "OpenAI vs local)?",
+     "What specific metrics define 'response-time' for the dashboard?",
+     "How should the audit trail be exported or reviewed by managers?\"]"
+    ]
+   },
+   "flawReport": {
+    "flaws": [
+     {
+      "id": "f1",
+      "title": "Missing Rate Limiting and Cost Controls",
+      "category": "security",
+      "severity": "high",
+      "description": "The plan lacks rate limiting for the AI drafting engine, which could lead to runaway costs or API exhaustion if an agent triggers excessive requests.",
+      "suggestedFix": "Implement server-side rate limiting per user and per hour, and add a cost-tracking middleware to monitor token usage.",
+      "relatedTaskIds": [
+       "4"
+      ]
+     },
+     {
+      "id": "f2",
+      "title": "Lack of Data Privacy and PII Redaction",
+      "category": "security",
+      "severity": "high",
+      "description": "The workflow does not mention sanitizing customer PII before sending data to an AI model, risking data leakage.",
+      "suggestedFix": "Add a PII redaction step or middleware to strip sensitive customer information before the prompt is sent to the AI.",
+      "relatedTaskIds": [
+       "4"
+      ]
+     },
+     {
+      "id": "f3",
+      "title": "No Error Handling or Fallback Strategy",
+      "category": "logic",
+      "severity": "medium",
+      "description": "The plan assumes the AI drafting engine is always available and accurate, with no mention of handling API timeouts or hallucinated responses.",
+      "suggestedFix": "Implement a retry mechanism with exponential backoff and a UI fallback that allows agents to manually draft if the AI service is down.",
+      "relatedTaskIds": [
+       "4"
+      ]
+     },
+     {
+      "id": "f4",
+      "title": "Missing Backup and Disaster Recovery",
+      "category": "nonfunctional",
+      "severity": "medium",
+      "description": "There is no mention of database backups or recovery procedures for the audit trail and history logs.",
+      "suggestedFix": "Define a database backup policy (e.g., daily snapshots) and a retention policy for audit logs.",
+      "relatedTaskIds": [
+       "1",
+       "6"
+      ]
+     },
+     {
+      "id": "f5",
+      "title": "Lack of Input Validation for Knowledge Base",
+      "category": "security",
+      "severity": "medium",
+      "description": "The knowledge base integration lacks a plan for validating or sanitizing the content being ingested, which could lead to prompt injection vulnerabilities.",
+      "suggestedFix": "Implement strict input validation and sanitization for all knowledge base entries before they are indexed or used in prompts.",
+      "relatedTaskIds": [
+       "3"
+      ]
+     }
+    ],
+    "overallRisk": "medium",
+    "summary": "The plan covers the functional requirements well but lacks critical non-functional safeguards, specifically regarding AI cost control, PII protection, and system resilience. The absence of error handling and data security measures poses a significant risk to both budget and data compliance."
+   },
+   "flawResolutions": [],
+   "stackGate": null,
+   "algorithms": null,
+   "routing": null,
+   "executions": [],
+   "humanFeedback": {
+    "ratings": {}
+   }
+  }
+ },
+ {
+  "id": "2a2085cd-a037-4ac4-9d99-329129060034",
+  "orgId": "default-org",
+  "title": "make me an app it should be good and have users and stuff ma",
+  "gate": "flaws",
+  "gateStatus": "failed",
+  "createdAt": "2026-09-18T19:00:57.225Z",
+  "updatedAt": "2026-09-18T19:01:14.910Z",
+  "state": {
+   "id": "2a2085cd-a037-4ac4-9d99-329129060034",
+   "createdAt": "2026-09-18T19:00:57.221Z",
+   "updatedAt": "2026-09-18T19:01:14.906Z",
+   "input": "make me an app it should be good and have users and stuff maybe ai i dunno you figure it out, needs login probably and a dashboard, budget is whatever, timeline is when its done",
+   "statedStack": "",
+   "policy": "balanced",
+   "uploads": [],
+   "gate": "flaws",
+   "gateStatus": "failed",
+   "suitability": {
+    "suitable": false,
+    "confidence": 0.95,
+    "reason": "The project description is too vague to support a functional development workflow. The proposed workflow assumes a generic 'dashboard' and 'AI' without defining the core value proposition, target audience, or problem being solved. Without a defined product scope, the workflow lacks critical discovery, requirements gathering, and validation phases, which are essential for a project with undefined goals.",
+    "suggestedWorkflow": "1. Conduct a discovery workshop to define the core problem, target audience, and primary use case for the application. 2. Create a product requirements document (PRD) outlining the specific features, user roles, and the exact role of AI in the user experience. 3. Develop wireframes and a high-level UI/UX prototype to visualize the dashboard functionality. 4. Select a technology stack based on the defined requirements and scalability needs. 5. Set up the development environment, repository, and CI/CD pipeline. 6. Implement user authentication and core database schema. 7. Build the backend API and integrate the specific AI service as defined in the PRD. 8. Develop the frontend dashboard and connect it to the backend and AI services. 9. Perform user testing to validate that the AI features provide actual value. 10. Iterate based on feedback and prepare for deployment.",
+    "suggestedSummary": "The workflow must begin with a discovery and requirements phase to define the application's purpose and AI utility before proceeding to technical implementation."
+   },
+   "suggestedWorkflow": {
+    "title": "User Dashboard Application with AI Integration",
+    "summary": "A web application featuring user authentication, a personalized dashboard interface, and an integrated AI service for data processing or content generation.",
+    "tasks": [
+     {
+      "id": "1",
+      "title": "Setup project repository and CI/CD pipeline",
+      "description": "",
+      "category": "devops",
+      "dependsOn": [],
+      "complexity": "low",
+      "risk": "low"
+     },
+     {
+      "id": "2",
+      "title": "Implement user authentication system",
+      "description": "",
+      "category": "auth",
+      "dependsOn": [
+       "1"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "3",
+      "title": "Design and implement database schema for users and application data",
+      "description": "",
+      "category": "database",
+      "dependsOn": [
+       "1"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "4",
+      "title": "Develop dashboard frontend layout",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "2"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "5",
+      "title": "Build backend API for dashboard data retrieval",
+      "description": "",
+      "category": "backend",
+      "dependsOn": [
+       "2",
+       "3"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "6",
+      "title": "Integrate third-party AI API for content generation",
+      "description": "",
+      "category": "ai",
+      "dependsOn": [
+       "5"
+      ],
+      "complexity": "medium",
+      "risk": "high"
+     },
+     {
+      "id": "7",
+      "title": "Connect frontend dashboard to AI service",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "4",
+       "6"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     }
+    ],
+    "ambiguities": [
+     "[\"What is the specific purpose of the AI integration?",
+     "What specific data should be displayed on the dashboard?",
+     "Are there specific user roles or permission levels required beyond basic login?",
+     "Are there preferred technology stacks for the frontend or backend?\"]"
+    ]
+   },
+   "workflow": null,
+   "flawReport": null,
+   "flawResolutions": [],
+   "stackGate": null,
+   "algorithms": null,
+   "routing": null,
+   "executions": [],
+   "humanFeedback": {
+    "ratings": {}
+   }
+  }
+ },
+ {
+  "id": "80b4d32b-e9e5-4f57-b774-30bf2b6c9512",
+  "orgId": "default-org",
+  "title": "AI-Powered User Dashboard Application",
+  "gate": "flaws",
+  "gateStatus": "awaiting_user",
+  "createdAt": "2026-09-18T19:07:44.571Z",
+  "updatedAt": "2026-09-18T19:08:14.786Z",
+  "state": {
+   "id": "80b4d32b-e9e5-4f57-b774-30bf2b6c9512",
+   "createdAt": "2026-09-18T19:07:44.567Z",
+   "updatedAt": "2026-09-18T19:08:14.784Z",
+   "input": "make me an app it should be good and have users and stuff maybe ai i dunno you figure it out, needs login probably and a dashboard, budget is whatever, timeline is when its done",
+   "statedStack": "",
+   "policy": "balanced",
+   "uploads": [],
+   "gate": "flaws",
+   "gateStatus": "awaiting_user",
+   "suitability": {
+    "suitable": false,
+    "confidence": 0.95,
+    "reason": "The project description is critically underspecified, lacking a defined purpose, target audience, or core problem statement. The workflow assumes a standard web application structure but fails to include a discovery or requirements gathering phase, which is essential given the vague project scope. Without defining what the AI is supposed to do or what the dashboard should display, the development process will lack direction and likely result in a product that does not meet user needs.",
+    "suggestedWorkflow": "1. Discovery and Requirements Gathering: Conduct stakeholder interviews to define the core problem, target audience, and specific goals for the AI integration. 2. Project Scoping and Feature Prioritization: Create a product roadmap and define the Minimum Viable Product (MVP) feature set based on discovery. 3. System Architecture and Tech Stack Selection: Choose appropriate frameworks, databases, and AI service providers based on the defined requirements. 4. Database and API Design: Define the schema and API endpoints required to support the MVP features. 5. UI/UX Design: Create wireframes and high-fidelity prototypes for the dashboard and authentication flows. 6. Backend Development: Implement the authentication system and core API services. 7. AI Integration: Develop and test the integration with the chosen AI service provider. 8. Frontend Development: Build the dashboard interface and connect it to the backend and AI services. 9. Testing and Quality Assurance: Perform functional, security, and usability testing. 10. Deployment and Monitoring: Deploy to a cloud environment and set up logging and performance monitoring.",
+    "suggestedSummary": "A structured development lifecycle that prioritizes discovery and requirements gathering to define the project scope before proceeding to technical implementation."
+   },
+   "suggestedWorkflow": {
+    "title": "User Dashboard Application with AI Integration",
+    "summary": "A web application featuring user authentication, a personalized dashboard, and an integrated AI service to assist with user tasks.",
+    "tasks": [
+     {
+      "id": "1",
+      "title": "Set up authentication system",
+      "description": "",
+      "category": "auth",
+      "dependsOn": [],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "2",
+      "title": "Design and implement dashboard layout",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "3",
+      "title": "Set up database schema for users and data",
+      "description": "",
+      "category": "database",
+      "dependsOn": [],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "4",
+      "title": "Develop backend API for dashboard data",
+      "description": "",
+      "category": "backend",
+      "dependsOn": [
+       "3"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "5",
+      "title": "Integrate AI service provider API",
+      "description": "",
+      "category": "ai",
+      "dependsOn": [
+       "4"
+      ],
+      "complexity": "high",
+      "risk": "high"
+     },
+     {
+      "id": "6",
+      "title": "Connect dashboard frontend to backend API",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "2",
+       "4"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "7",
+      "title": "Deploy application to cloud environment",
+      "description": "",
+      "category": "devops",
+      "dependsOn": [
+       "5",
+       "6"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     }
+    ],
+    "ambiguities": [
+     "[\"What specific functionality should the dashboard display?",
+     "What is the primary purpose of the AI integration?",
+     "Are there specific user roles or permission levels required?",
+     "Which authentication provider or method is preferred?",
+     "What specific cloud platform should be used for deployment?\"]"
+    ]
+   },
+   "workflow": {
+    "title": "AI-Powered User Dashboard Application",
+    "summary": "A web application featuring user authentication and a dashboard interface that integrates AI services to provide data insights or automated tasks.",
+    "tasks": [
+     {
+      "id": "1",
+      "title": "Discovery and Requirements Gathering",
+      "description": "",
+      "category": "other",
+      "dependsOn": [],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "2",
+      "title": "Project Scoping and MVP Definition",
+      "description": "",
+      "category": "other",
+      "dependsOn": [
+       "1"
+      ],
+      "complexity": "low",
+      "risk": "low"
+     },
+     {
+      "id": "3",
+      "title": "System Architecture and Tech Stack Selection",
+      "description": "",
+      "category": "other",
+      "dependsOn": [
+       "2"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "4",
+      "title": "Database and API Schema Design",
+      "description": "",
+      "category": "database",
+      "dependsOn": [
+       "3"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "5",
+      "title": "UI/UX Design for Dashboard and Auth",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "2"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "6",
+      "title": "Backend Development and Auth Implementation",
+      "description": "",
+      "category": "backend",
+      "dependsOn": [
+       "4"
+      ],
+      "complexity": "high",
+      "risk": "medium"
+     },
+     {
+      "id": "7",
+      "title": "AI Service Integration",
+      "description": "",
+      "category": "ai",
+      "dependsOn": [
+       "4"
+      ],
+      "complexity": "high",
+      "risk": "high"
+     },
+     {
+      "id": "8",
+      "title": "Frontend Dashboard Development",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "5",
+       "6",
+       "7"
+      ],
+      "complexity": "high",
+      "risk": "medium"
+     },
+     {
+      "id": "9",
+      "title": "Testing and Quality Assurance",
+      "description": "",
+      "category": "other",
+      "dependsOn": [
+       "8"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "10",
+      "title": "Deployment and Monitoring Setup",
+      "description": "",
+      "category": "devops",
+      "dependsOn": [
+       "9"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     }
+    ],
+    "ambiguities": [
+     "1. What is the specific problem or domain the AI should address? 2. Who is the primary target audience for the dashboard? 3. Are there specific AI models or providers preferred? 4. What data sources will the AI need to access? 5. What are the specific security or compliance requirements for user data?"
+    ]
+   },
+   "flawReport": {
+    "flaws": [
+     {
+      "id": "f1",
+      "title": "Lack of Security and Compliance Framework",
+      "category": "security",
+      "severity": "critical",
+      "description": "The workflow lacks explicit tasks for security implementation such as data encryption at rest/transit, input validation, rate limiting, or GDPR/CCPA compliance, which are essential for any app handling user authentication.",
+      "suggestedFix": "Add a dedicated task for Security Architecture and Compliance that includes implementing OAuth2/OpenID Connect, encryption standards, and rate limiting.",
+      "relatedTaskIds": [
+       "6"
+      ]
+     },
+     {
+      "id": "f2",
+      "title": "Absence of Non-Functional Requirements and Disaster Recovery",
+      "category": "nonfunctional",
+      "severity": "high",
+      "description": "The workflow does not mention logging, monitoring, backup strategies, or business continuity plans, leaving the system vulnerable to data loss and operational blindness.",
+      "suggestedFix": "Include tasks for implementing structured logging (e.g., ELK stack), automated database backups, and monitoring/alerting (e.g., Prometheus/Grafana) in the DevOps phase.",
+      "relatedTaskIds": [
+       "10"
+      ]
+     },
+     {
+      "id": "f3",
+      "title": "AI Integration Cost and Scalability Risk",
+      "category": "cost",
+      "severity": "medium",
+      "description": "Task 7 lacks a strategy for managing AI API costs or handling latency/rate limits, which could lead to massive bills or service outages under load.",
+      "suggestedFix": "Add a sub-task to Task 7 for implementing caching (e.g., Redis) for AI responses and cost-monitoring alerts for API usage.",
+      "relatedTaskIds": [
+       "7"
+      ]
+     },
+     {
+      "id": "f4",
+      "title": "Undefined Deployment and CI/CD Strategy",
+      "category": "nonfunctional",
+      "severity": "medium",
+      "description": "The workflow treats deployment as a final, singular task rather than an integrated CI/CD process, which increases the risk of deployment failures and manual errors.",
+      "suggestedFix": "Replace Task 10 with a CI/CD pipeline implementation task that includes automated testing and staging environments.",
+      "relatedTaskIds": [
+       "10"
+      ]
+     }
+    ],
+    "overallRisk": "high",
+    "summary": "The project plan is highly abstract and lacks the necessary rigor for a production-grade application. It fails to address critical security, operational, and financial safeguards, treating them as afterthoughts rather than foundational requirements."
+   },
+   "flawResolutions": [],
+   "stackGate": null,
+   "algorithms": null,
+   "routing": null,
+   "executions": [],
+   "humanFeedback": {
+    "ratings": {}
+   }
+  }
+ },
+ {
+  "id": "1f574d18-b25d-4612-9375-ff0ba8551106",
+  "orgId": "default-org",
+  "title": "AI-Powered User Dashboard Application",
+  "gate": "flaws",
+  "gateStatus": "awaiting_user",
+  "createdAt": "2026-09-18T19:08:15.777Z",
+  "updatedAt": "2026-09-18T19:08:42.145Z",
+  "state": {
+   "id": "1f574d18-b25d-4612-9375-ff0ba8551106",
+   "createdAt": "2026-09-18T19:08:15.774Z",
+   "updatedAt": "2026-09-18T19:08:42.142Z",
+   "input": "make me an app it should be good and have users and stuff maybe ai i dunno you figure it out, needs login probably and a dashboard, budget is whatever, timeline is when its done",
+   "statedStack": "",
+   "policy": "balanced",
+   "uploads": [],
+   "gate": "flaws",
+   "gateStatus": "awaiting_user",
+   "suitability": {
+    "suitable": false,
+    "confidence": 0.9,
+    "reason": "The project description is too vague to support a functional workflow. The workflow assumes a standard web application architecture, but without defining the core value proposition, target audience, or the specific problem the AI is meant to solve, the development process will lack direction and likely result in a product that does not meet user needs. The workflow skips the essential discovery and requirements gathering phase.",
+    "suggestedWorkflow": "1. Conduct a discovery session to define the core problem, target audience, and primary use case for the AI integration. 2. Create a product requirements document (PRD) outlining the specific features, user roles, and dashboard data requirements. 3. Define the technology stack based on the specific AI integration needs and scalability requirements. 4. Create wireframes and a high-level UI/UX design to visualize the dashboard workflow. 5. Setup project repository and CI/CD pipeline. 6. Implement user authentication and database schema. 7. Develop the backend API endpoints and integrate the chosen AI service provider. 8. Build the frontend dashboard and connect it to the backend services. 9. Perform user testing to validate the AI utility and dashboard usability. 10. Refine features based on feedback and deploy to production.",
+    "suggestedSummary": "The workflow must begin with a discovery and requirements phase to define the product's purpose and AI utility before moving into technical implementation."
+   },
+   "suggestedWorkflow": {
+    "title": "User Dashboard Application with AI Integration",
+    "summary": "A web application featuring user authentication, a personalized dashboard interface, and an integrated AI service for data processing or content generation.",
+    "tasks": [
+     {
+      "id": "1",
+      "title": "Setup project repository and CI/CD pipeline",
+      "description": "",
+      "category": "devops",
+      "dependsOn": [],
+      "complexity": "low",
+      "risk": "low"
+     },
+     {
+      "id": "2",
+      "title": "Implement user authentication system",
+      "description": "",
+      "category": "auth",
+      "dependsOn": [
+       "1"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "3",
+      "title": "Design and implement database schema for users and application data",
+      "description": "",
+      "category": "database",
+      "dependsOn": [
+       "1"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "4",
+      "title": "Develop dashboard frontend layout",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "2"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "5",
+      "title": "Create backend API endpoints for dashboard data",
+      "description": "",
+      "category": "backend",
+      "dependsOn": [
+       "2",
+       "3"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "6",
+      "title": "Integrate AI service provider API",
+      "description": "",
+      "category": "ai",
+      "dependsOn": [
+       "5"
+      ],
+      "complexity": "medium",
+      "risk": "high"
+     },
+     {
+      "id": "7",
+      "title": "Connect dashboard frontend to backend and AI services",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "4",
+       "6"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     }
+    ],
+    "ambiguities": [
+     "[\"What is the specific purpose of the AI integration (e.g.",
+     "chatbot",
+     "data analysis",
+     "image generation)?",
+     "What specific data should be displayed on the dashboard?",
+     "Are there specific user roles or permission levels required?",
+     "What is the preferred technology stack for frontend and backend development?\"]"
+    ]
+   },
+   "workflow": {
+    "title": "AI-Powered User Dashboard Application",
+    "summary": "A web application featuring user authentication, a centralized dashboard, and integrated AI capabilities to provide data-driven insights.",
+    "tasks": [
+     {
+      "id": "1",
+      "title": "Discovery and PRD creation",
+      "description": "",
+      "category": "other",
+      "dependsOn": [],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "2",
+      "title": "Technology stack and architecture definition",
+      "description": "",
+      "category": "other",
+      "dependsOn": [
+       "1"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "3",
+      "title": "UI/UX wireframing and design",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "1"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "4",
+      "title": "Repository setup and CI/CD configuration",
+      "description": "",
+      "category": "devops",
+      "dependsOn": [],
+      "complexity": "low",
+      "risk": "low"
+     },
+     {
+      "id": "5",
+      "title": "Authentication system implementation",
+      "description": "",
+      "category": "auth",
+      "dependsOn": [
+       "2"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "6",
+      "title": "Database schema design and implementation",
+      "description": "",
+      "category": "database",
+      "dependsOn": [
+       "2"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "7",
+      "title": "Backend API development and AI integration",
+      "description": "",
+      "category": "backend",
+      "dependsOn": [
+       "5",
+       "6"
+      ],
+      "complexity": "high",
+      "risk": "high"
+     },
+     {
+      "id": "8",
+      "title": "Frontend dashboard development",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "3",
+       "7"
+      ],
+      "complexity": "high",
+      "risk": "medium"
+     },
+     {
+      "id": "9",
+      "title": "User testing and validation",
+      "description": "",
+      "category": "other",
+      "dependsOn": [
+       "8"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "10",
+      "title": "Feature refinement and production deployment",
+      "description": "",
+      "category": "devops",
+      "dependsOn": [
+       "9"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     }
+    ],
+    "ambiguities": [
+     "[\"What specific problem or domain is the AI intended to solve?",
+     "What are the primary user roles (e.g.",
+     "admin",
+     "standard user)?",
+     "What specific data sources or metrics should be displayed on the dashboard?",
+     "Are there specific compliance or data privacy requirements for the user data?",
+     "What is the preferred scale or expected user volume for the initial launch?\"]"
+    ]
+   },
+   "flawReport": {
+    "flaws": [
+     {
+      "id": "f1",
+      "title": "Missing Security and Compliance Framework",
+      "category": "security",
+      "severity": "critical",
+      "description": "The plan lacks explicit mention of data encryption (at rest/in transit), input validation, rate limiting, or secrets management, which are essential for an AI-integrated application.",
+      "suggestedFix": "Add tasks for implementing TLS, environment variable management via a vault, and API rate limiting to prevent abuse of AI endpoints.",
+      "relatedTaskIds": [
+       "5",
+       "7"
+      ]
+     },
+     {
+      "id": "f2",
+      "title": "Lack of Error Handling and Resilience Strategy",
+      "category": "logic",
+      "severity": "high",
+      "description": "There is no mention of handling AI model timeouts, API failures, or fallback mechanisms for when the AI service is unavailable.",
+      "suggestedFix": "Include a task for implementing robust error handling, circuit breakers, and graceful degradation strategies for AI service calls.",
+      "relatedTaskIds": [
+       "7"
+      ]
+     },
+     {
+      "id": "f3",
+      "title": "Absence of Observability and Monitoring",
+      "category": "nonfunctional",
+      "severity": "medium",
+      "description": "The plan does not include logging, performance monitoring, or alerting, making it impossible to debug production issues or track AI token usage.",
+      "suggestedFix": "Add a task for integrating centralized logging (e.g., ELK or Datadog) and performance monitoring for both backend and AI latency.",
+      "relatedTaskIds": [
+       "10"
+      ]
+     },
+     {
+      "id": "f4",
+      "title": "Undefined AI Cost Management",
+      "category": "cost",
+      "severity": "medium",
+      "description": "Integrating AI without a cost-control strategy poses a risk of runaway billing due to uncontrolled API calls.",
+      "suggestedFix": "Add a task to implement request throttling, caching strategies for AI responses, and budget alerts for AI provider usage.",
+      "relatedTaskIds": [
+       "7"
+      ]
+     }
+    ],
+    "overallRisk": "high",
+    "summary": "The project plan is highly abstract and lacks critical non-functional requirements. The primary risks are the absence of security protocols, failure to plan for AI-specific operational costs, and the lack of error handling for external service dependencies."
+   },
+   "flawResolutions": [],
+   "stackGate": null,
+   "algorithms": null,
+   "routing": null,
+   "executions": [],
+   "humanFeedback": {
+    "ratings": {}
+   }
+  }
+ },
+ {
+  "id": "56a4cc75-8e18-4fa5-ade1-e76c42836ea1",
+  "orgId": "default-org",
+  "title": "Support Team AI Response Assistant",
+  "gate": "flaws",
+  "gateStatus": "awaiting_user",
+  "createdAt": "2026-09-18T19:08:53.121Z",
+  "updatedAt": "2026-09-18T19:09:21.959Z",
+  "state": {
+   "id": "56a4cc75-8e18-4fa5-ade1-e76c42836ea1",
+   "createdAt": "2026-09-18T19:08:53.119Z",
+   "updatedAt": "2026-09-18T19:09:21.956Z",
+   "input": "Build an internal tool for our support team. Staff paste a customer's issue and the tool drafts a reply using our knowledge base, with an audit trail. Around 50 agents daily. Role-based access, full history, response-time dashboard. Stack: Next.js and Postgres.",
+   "statedStack": "",
+   "policy": "balanced",
+   "uploads": [],
+   "gate": "flaws",
+   "gateStatus": "awaiting_user",
+   "suitability": {
+    "suitable": true,
+    "confidence": 0.95,
+    "reason": "The workflow is logically sound and follows a standard development lifecycle for an internal tool. The dependencies correctly prioritize infrastructure (database, auth) before building the UI and analytics features. The identified ambiguities are helpful for implementation details but do not invalidate the structural integrity of the proposed workflow.",
+    "suggestedWorkflow": null,
+    "suggestedSummary": null
+   },
+   "suggestedWorkflow": null,
+   "workflow": {
+    "title": "Support Team AI Response Assistant",
+    "summary": "An internal dashboard for support agents to generate draft replies based on a knowledge base, featuring role-based access control, an audit trail of interactions, and performance analytics.",
+    "tasks": [
+     {
+      "id": "1",
+      "title": "Database Schema Design",
+      "description": "",
+      "category": "database",
+      "dependsOn": [],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "2",
+      "title": "Authentication and RBAC Setup",
+      "description": "",
+      "category": "auth",
+      "dependsOn": [
+       "1"
+      ],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "3",
+      "title": "Knowledge Base Integration API",
+      "description": "",
+      "category": "integration",
+      "dependsOn": [],
+      "complexity": "medium",
+      "risk": "medium"
+     },
+     {
+      "id": "4",
+      "title": "AI Draft Generation Service",
+      "description": "",
+      "category": "ai",
+      "dependsOn": [
+       "3"
+      ],
+      "complexity": "medium",
+      "risk": "high"
+     },
+     {
+      "id": "5",
+      "title": "Support Dashboard UI",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "2"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     },
+     {
+      "id": "6",
+      "title": "Audit Trail Logging Implementation",
+      "description": "",
+      "category": "backend",
+      "dependsOn": [
+       "1",
+       "4"
+      ],
+      "complexity": "low",
+      "risk": "low"
+     },
+     {
+      "id": "7",
+      "title": "Response Time Analytics Dashboard",
+      "description": "",
+      "category": "frontend",
+      "dependsOn": [
+       "5",
+       "6"
+      ],
+      "complexity": "medium",
+      "risk": "low"
+     }
+    ],
+    "ambiguities": [
+     "[\"What is the source format and location of the existing knowledge base?",
+     "Are there specific requirements for the AI model provider (e.g.",
+     "OpenAI",
+     "Anthropic",
+     "or self-hosted)?",
+     "What specific metrics define 'response-time' for the dashboard?",
+     "How should the audit trail be exported or reviewed by managers?\"]"
+    ]
+   },
+   "flawReport": {
+    "flaws": [
+     {
+      "id": "f1",
+      "title": "Missing Rate Limiting and Cost Controls",
+      "category": "security",
+      "severity": "high",
+      "description": "The AI generation service (Task 4) lacks rate limiting or budget caps, exposing the system to potential API cost spikes or abuse by internal users.",
+      "suggestedFix": "Implement server-side rate limiting per user and a monthly budget cap on the AI service provider API keys.",
+      "relatedTaskIds": [
+       "4"
+      ]
+     },
+     {
+      "id": "f2",
+      "title": "Lack of Data Privacy and PII Redaction",
+      "category": "security",
+      "severity": "critical",
+      "description": "The plan does not mention PII (Personally Identifiable Information) redaction before sending customer issues to an external AI model.",
+      "suggestedFix": "Implement a middleware layer to detect and mask PII (names, emails, account numbers) before forwarding data to the AI provider.",
+      "relatedTaskIds": [
+       "4"
+      ]
+     },
+     {
+      "id": "f3",
+      "title": "Missing Error Handling and Fallback Strategy",
+      "category": "logic",
+      "severity": "medium",
+      "description": "There is no plan for handling AI service outages or timeouts, which would block support agents from working.",
+      "suggestedFix": "Implement a circuit breaker pattern and a 'manual draft' fallback mode if the AI service is unavailable.",
+      "relatedTaskIds": [
+       "4"
+      ]
+     },
+     {
+      "id": "f4",
+      "title": "Missing Secrets Management",
+      "category": "security",
+      "severity": "high",
+      "description": "The workflow does not specify how API keys for the AI service or database credentials will be stored securely.",
+      "suggestedFix": "Use a dedicated secret management service (e.g., AWS Secrets Manager, Vercel Environment Variables) instead of hardcoding or using plain config files.",
+      "relatedTaskIds": [
+       "3",
+       "4"
+      ]
+     },
+     {
+      "id": "f5",
+      "title": "No Deployment or Backup Strategy",
+      "category": "nonfunctional",
+      "severity": "medium",
+      "description": "The plan lacks provisions for database backups or a deployment pipeline, risking data loss and manual deployment errors.",
+      "suggestedFix": "Define a database backup schedule and a CI/CD pipeline with automated testing before deployment.",
+      "relatedTaskIds": [
+       "1"
+      ]
+     }
+    ],
+    "overallRisk": "high",
+    "summary": "The plan is missing critical security infrastructure, specifically PII protection and cost controls, and lacks operational requirements like backups and error handling which are essential for a production-grade internal tool."
+   },
+   "flawResolutions": [],
+   "stackGate": null,
+   "algorithms": null,
+   "routing": null,
+   "executions": [],
+   "humanFeedback": {
+    "ratings": {}
+   }
+  }
  }
 ]

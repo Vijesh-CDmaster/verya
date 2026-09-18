@@ -31,3 +31,89 @@ To learn more, including how to opt-out from the telemetry program, visit: https
  ✓ Compiled in 267ms (553 modules)
  ✓ Compiled in 291ms (553 modules)
  ✓ Compiled in 289ms (553 modules)
+ ✓ Compiled in 361ms (553 modules)
+ ✓ Compiled in 190ms (553 modules)
+ ✓ Compiled in 307ms (553 modules)
+ ✓ Compiled in 179ms (553 modules)
+ ✓ Compiled in 197ms (553 modules)
+ ✓ Compiled in 218ms (553 modules)
+ ✓ Compiled in 173ms (553 modules)
+ ✓ Compiled in 168ms (553 modules)
+ ✓ Compiled in 146ms (553 modules)
+ ✓ Compiled in 140ms (553 modules)
+ ✓ Compiled in 166ms (553 modules)
+ ✓ Compiled in 201ms (553 modules)
+ ✓ Compiled in 185ms (553 modules)
+ ✓ Compiled in 173ms (553 modules)
+ ✓ Compiled in 170ms (553 modules)
+ ✓ Compiled in 214ms (553 modules)
+ ✓ Compiled in 291ms (553 modules)
+ ✓ Compiled in 276ms (553 modules)
+ ✓ Compiled in 360ms (553 modules)
+ ✓ Compiled in 254ms (553 modules)
+ ✓ Compiled in 214ms (553 modules)
+ ✓ Compiled in 240ms (553 modules)
+ ✓ Compiled in 243ms (553 modules)
+ ✓ Compiled in 196ms (553 modules)
+ ✓ Compiled in 257ms (553 modules)
+ ✓ Compiled in 319ms (553 modules)
+ ✓ Compiled in 215ms (553 modules)
+ ✓ Compiled in 199ms (553 modules)
+ ✓ Compiled in 233ms (553 modules)
+ ✓ Compiled in 164ms (553 modules)
+ ✓ Compiled in 159ms (553 modules)
+ ✓ Compiled in 231ms (553 modules)
+ ✓ Compiled in 178ms (553 modules)
+ ✓ Compiled in 165ms (553 modules)
+ ✓ Compiled in 176ms (553 modules)
+ ✓ Compiled in 154ms (553 modules)
+ ✓ Compiled in 145ms (553 modules)
+ ✓ Compiled in 152ms (553 modules)
+ ✓ Compiled in 180ms (553 modules)
+ ✓ Compiled in 172ms (553 modules)
+ ✓ Compiled in 208ms (553 modules)
+ ✓ Compiled in 224ms (553 modules)
+ ✓ Compiled in 179ms (553 modules)
+ ✓ Compiled in 184ms (553 modules)
+ ✓ Compiled in 260ms (553 modules)
+ ✓ Compiled in 183ms (553 modules)
+ ✓ Compiled in 154ms (553 modules)
+ ✓ Compiled in 182ms (553 modules)
+ ✓ Compiled in 214ms (553 modules)
+ ✓ Compiled in 213ms (553 modules)
+ ✓ Compiled in 191ms (553 modules)
+ ✓ Compiled in 157ms (553 modules)
+ ✓ Compiled in 184ms (553 modules)
+ ✓ Compiled in 196ms (553 modules)
+ ✓ Compiled in 158ms (553 modules)
+ ✓ Compiled in 158ms (553 modules)
+ GET / 200 in 191ms
+ GET / 200 in 170ms
+ GET / 200 in 157ms
+ GET / 200 in 217ms
+ ✓ Compiled in 315ms (553 modules)
+ ✓ Compiled in 247ms (553 modules)
+ GET / 200 in 221ms
+ GET / 200 in 88ms
+ ✓ Compiled in 176ms (553 modules)
+ GET / 200 in 100ms
+ ✓ Compiled in 178ms (553 modules)
+ GET / 200 in 125ms
+ ✓ Compiled in 486ms (553 modules)
+ GET / 200 in 105ms
+ GET / 200 in 318ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1197ms (900 modules)
+ GET /favicon.ico 200 in 1860ms
+ GET / 200 in 1488ms
+ GET / 200 in 109ms
+ GET / 200 in 100ms
+ ✓ Compiled in 372ms (553 modules)
+ GET / 200 in 172ms
+ GET / 200 in 173ms
+ ✓ Compiled in 398ms (553 modules)
+ GET / 200 in 154ms
+ GET / 200 in 156ms
+ ✓ Compiled in 188ms (553 modules)
+ GET / 200 in 156ms
+ GET / 200 in 158ms

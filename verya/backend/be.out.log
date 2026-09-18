@@ -1,34 +1,34 @@
 [db] DATABASE_URL is not set. The API will start but every database-backed route will fail with a clear error until Neon Postgres is configured.
-[18:41:17] [32mINFO[39m: [36mServer listening at http://127.0.0.1:4000[39m
-[18:41:17] [32mINFO[39m: [36mServer listening at http://192.168.31.139:4000[39m
-[18:41:17] [32mINFO[39m: [36mVerya backend listening on http://localhost:4000[39m
-[18:41:17] [32mINFO[39m: [36mDatabase: NOT configured — set DATABASE_URL in backend/.env[39m
-[18:41:17] [32mINFO[39m: [36mAuth: Clerk (derived from publishable key)[39m
-[18:41:26] [32mINFO[39m: [36mincoming request[39m
+[19:11:47] [32mINFO[39m: [36mServer listening at http://127.0.0.1:4000[39m
+[19:11:47] [32mINFO[39m: [36mServer listening at http://192.168.31.139:4000[39m
+[19:11:47] [32mINFO[39m: [36mVerya backend listening on http://localhost:4000[39m
+[19:11:47] [32mINFO[39m: [36mDatabase: NOT configured — set DATABASE_URL in backend/.env[39m
+[19:11:47] [32mINFO[39m: [36mAuth: Clerk (derived from publishable key)[39m
+[19:11:54] [32mINFO[39m: [36mincoming request[39m
     [35mreqId[39m: "req-1"
     [35mreq[39m: {
       "method": "GET",
       "url": "/health",
       "host": "127.0.0.1:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 60302
+      "remotePort": 58565
     }
-[18:41:26] [32mINFO[39m: [36mrequest completed[39m
+[19:11:54] [32mINFO[39m: [36mrequest completed[39m
     [35mreqId[39m: "req-1"
     [35mres[39m: {
       "statusCode": 200
     }
-    [35mresponseTime[39m: 10.279099999999744
-[18:41:46] [32mINFO[39m: [36mincoming request[39m
+    [35mresponseTime[39m: 6.8103000000000975
+[19:11:54] [32mINFO[39m: [36mincoming request[39m
     [35mreqId[39m: "req-2"
     [35mreq[39m: {
       "method": "GET",
       "url": "/api/pipeline",
       "host": "127.0.0.1:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 52639
+      "remotePort": 58566
     }
-[18:41:46] [32mINFO[39m: [36mMissing Authorization header[39m
+[19:11:54] [32mINFO[39m: [36mMissing Authorization header[39m
     [35mreqId[39m: "req-2"
     [35mres[39m: {
       "statusCode": 401
@@ -50,329 +50,645 @@
               at next (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\fastify\lib\hooks.js:242:18)
       "statusCode": 401
     }
-[18:41:46] [32mINFO[39m: [36mrequest completed[39m
+[19:11:54] [32mINFO[39m: [36mrequest completed[39m
     [35mreqId[39m: "req-2"
     [35mres[39m: {
       "statusCode": 401
     }
-    [35mresponseTime[39m: 5.911000000000058
-[18:44:32] [32mINFO[39m: [36mincoming request[39m
+    [35mresponseTime[39m: 3.555099999999584
+[19:11:56] [32mINFO[39m: [36mincoming request[39m
     [35mreqId[39m: "req-3"
     [35mreq[39m: {
       "method": "GET",
       "url": "/health",
       "host": "localhost:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 64680
+      "remotePort": 58575
     }
-[18:44:32] [32mINFO[39m: [36mrequest completed[39m
+[19:11:56] [32mINFO[39m: [36mrequest completed[39m
     [35mreqId[39m: "req-3"
     [35mres[39m: {
       "statusCode": 200
     }
-    [35mresponseTime[39m: 1.066499999986263
-[18:44:56] [32mINFO[39m: [36mincoming request[39m
+    [35mresponseTime[39m: 0.780799999998635
+[19:12:26] [32mINFO[39m: [36mincoming request[39m
     [35mreqId[39m: "req-4"
     [35mreq[39m: {
       "method": "GET",
       "url": "/health",
       "host": "localhost:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 53775
+      "remotePort": 56128
     }
-[18:44:56] [32mINFO[39m: [36mrequest completed[39m
+[19:12:26] [32mINFO[39m: [36mrequest completed[39m
     [35mreqId[39m: "req-4"
     [35mres[39m: {
       "statusCode": 200
     }
-    [35mresponseTime[39m: 0.7456999999994878
-[18:45:03] [32mINFO[39m: [36mincoming request[39m
+    [35mresponseTime[39m: 0.5842999999949825
+[19:12:56] [32mINFO[39m: [36mincoming request[39m
     [35mreqId[39m: "req-5"
     [35mreq[39m: {
       "method": "GET",
       "url": "/health",
       "host": "localhost:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 59871
+      "remotePort": 50931
     }
-[18:45:03] [32mINFO[39m: [36mrequest completed[39m
+[19:12:56] [32mINFO[39m: [36mrequest completed[39m
     [35mreqId[39m: "req-5"
     [35mres[39m: {
       "statusCode": 200
     }
-    [35mresponseTime[39m: 0.8095000000030268
-[18:45:26] [32mINFO[39m: [36mincoming request[39m
+    [35mresponseTime[39m: 0.526400000002468
+[19:13:26] [32mINFO[39m: [36mincoming request[39m
     [35mreqId[39m: "req-6"
     [35mreq[39m: {
       "method": "GET",
       "url": "/health",
       "host": "localhost:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 57276
+      "remotePort": 62156
     }
-[18:45:26] [32mINFO[39m: [36mrequest completed[39m
+[19:13:26] [32mINFO[39m: [36mrequest completed[39m
     [35mreqId[39m: "req-6"
     [35mres[39m: {
       "statusCode": 200
     }
-    [35mresponseTime[39m: 0.6422000000020489
-[18:45:33] [32mINFO[39m: [36mincoming request[39m
+    [35mresponseTime[39m: 0.5212999999930616
+[19:13:56] [32mINFO[39m: [36mincoming request[39m
     [35mreqId[39m: "req-7"
     [35mreq[39m: {
       "method": "GET",
       "url": "/health",
       "host": "localhost:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 64850
+      "remotePort": 61756
     }
-[18:45:33] [32mINFO[39m: [36mrequest completed[39m
+[19:13:56] [32mINFO[39m: [36mrequest completed[39m
     [35mreqId[39m: "req-7"
     [35mres[39m: {
       "statusCode": 200
     }
-    [35mresponseTime[39m: 0.5885000000125729
-[18:46:03] [32mINFO[39m: [36mincoming request[39m
+    [35mresponseTime[39m: 0.45279999999911524
+[19:14:26] [32mINFO[39m: [36mincoming request[39m
     [35mreqId[39m: "req-8"
     [35mreq[39m: {
       "method": "GET",
       "url": "/health",
       "host": "localhost:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 55554
+      "remotePort": 63910
     }
-[18:46:03] [32mINFO[39m: [36mrequest completed[39m
+[19:14:26] [32mINFO[39m: [36mrequest completed[39m
     [35mreqId[39m: "req-8"
     [35mres[39m: {
       "statusCode": 200
     }
-    [35mresponseTime[39m: 0.8177000000141561
-[18:46:28] [32mINFO[39m: [36mincoming request[39m
+    [35mresponseTime[39m: 0.5097999999998137
+[19:14:56] [32mINFO[39m: [36mincoming request[39m
     [35mreqId[39m: "req-9"
     [35mreq[39m: {
       "method": "GET",
       "url": "/health",
       "host": "localhost:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 52059
+      "remotePort": 53317
     }
-[18:46:28] [32mINFO[39m: [36mrequest completed[39m
+[19:14:56] [32mINFO[39m: [36mrequest completed[39m
     [35mreqId[39m: "req-9"
     [35mres[39m: {
       "statusCode": 200
     }
-    [35mresponseTime[39m: 2.712200000009034
-[18:46:33] [32mINFO[39m: [36mincoming request[39m
+    [35mresponseTime[39m: 1.1505999999935739
+[19:15:26] [32mINFO[39m: [36mincoming request[39m
     [35mreqId[39m: "req-a"
     [35mreq[39m: {
       "method": "GET",
       "url": "/health",
       "host": "localhost:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 53751
+      "remotePort": 51160
     }
-[18:46:33] [32mINFO[39m: [36mrequest completed[39m
+[19:15:26] [32mINFO[39m: [36mrequest completed[39m
     [35mreqId[39m: "req-a"
     [35mres[39m: {
       "statusCode": 200
     }
-    [35mresponseTime[39m: 1.134299999976065
-[18:46:58] [32mINFO[39m: [36mincoming request[39m
+    [35mresponseTime[39m: 0.8422999999893364
+[19:15:56] [32mINFO[39m: [36mincoming request[39m
     [35mreqId[39m: "req-b"
     [35mreq[39m: {
       "method": "GET",
       "url": "/health",
       "host": "localhost:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 64647
+      "remotePort": 51191
     }
-[18:46:59] [32mINFO[39m: [36mrequest completed[39m
+[19:15:56] [32mINFO[39m: [36mrequest completed[39m
     [35mreqId[39m: "req-b"
     [35mres[39m: {
       "statusCode": 200
     }
-    [35mresponseTime[39m: 555.2944000000134
-[18:47:03] [32mINFO[39m: [36mincoming request[39m
+    [35mresponseTime[39m: 0.7283000000170432
+[19:16:26] [32mINFO[39m: [36mincoming request[39m
     [35mreqId[39m: "req-c"
     [35mreq[39m: {
       "method": "GET",
       "url": "/health",
       "host": "localhost:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 62396
+      "remotePort": 58888
     }
-[18:47:03] [32mINFO[39m: [36mrequest completed[39m
+[19:16:26] [32mINFO[39m: [36mrequest completed[39m
     [35mreqId[39m: "req-c"
     [35mres[39m: {
       "statusCode": 200
     }
-    [35mresponseTime[39m: 0.4605000000447035
-[18:47:05] [32mINFO[39m: [36mincoming request[39m
+    [35mresponseTime[39m: 0.3642000000108965
+[19:16:56] [32mINFO[39m: [36mincoming request[39m
     [35mreqId[39m: "req-d"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 57463
+    }
+[19:16:56] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-d"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.5939999999827705
+[19:17:26] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-e"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 65353
+    }
+[19:17:26] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-e"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.5746999999973923
+[19:17:56] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-f"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 65383
+    }
+[19:17:56] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-f"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.4740999999921769
+[19:18:26] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-g"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 61410
+    }
+[19:18:26] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-g"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.3643000000156462
+[19:18:56] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-h"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 59234
+    }
+[19:18:56] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-h"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.35809999995399266
+[19:19:26] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-i"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 57054
+    }
+[19:19:26] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-i"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.40299999999115244
+[19:19:56] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-j"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 57822
+    }
+[19:19:56] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-j"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.407100000011269
+[19:20:26] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-k"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 55883
+    }
+[19:20:26] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-k"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.5
+[19:20:57] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-l"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 63520
+    }
+[19:20:57] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-l"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.47789999993983656
+[19:21:27] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-m"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 54331
+    }
+[19:21:27] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-m"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.31669999996665865
+[19:21:57] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-n"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 54560
+    }
+[19:21:57] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-n"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.44319999997969717
+[19:21:59] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-o"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 56931
+    }
+[19:21:59] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-o"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.6385000000009313
+[19:22:28] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-p"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 60474
+    }
+[19:22:28] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-p"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.4328000000678003
+[19:22:29] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-q"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 65364
+    }
+[19:22:29] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-q"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.5135000000009313
+[19:22:41] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-r"
     [35mreq[39m: {
       "method": "GET",
       "url": "/api/ledger/records",
       "host": "localhost:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 54353
+      "remotePort": 58281
     }
-[18:47:05] [32mINFO[39m: [36mrequest completed[39m
-    [35mreqId[39m: "req-d"
+[19:22:41] [32mINFO[39m: [36mMissing Authorization header[39m
+    [35mreqId[39m: "req-r"
     [35mres[39m: {
-      "statusCode": 200
+      "statusCode": 401
     }
-    [35mresponseTime[39m: 6.20339999999851
-[18:47:29] [32mINFO[39m: [36mincoming request[39m
-    [35mreqId[39m: "req-e"
+    err: {
+      "type": "Error",
+      "message": "Missing Authorization header",
+      "stack":
+          Error: Missing Authorization header
+              at authenticate (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\src\middleware\auth.ts:82:25)
+              at Object.<anonymous> (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\src\app.ts:50:40)
+              at hookIterator (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\fastify\lib\hooks.js:412:10)
+              at next (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\fastify\lib\hooks.js:242:18)
+              at C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\@fastify\cors\index.js:209:12
+              at resolveOriginOption (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\@fastify\cors\index.js:162:129)
+              at addCorsHeadersHandler (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\@fastify\cors\index.js:164:3)
+              at Object.handleCors (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\@fastify\cors\index.js:64:9)
+              at hookIterator (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\fastify\lib\hooks.js:412:10)
+              at next (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\fastify\lib\hooks.js:242:18)
+      "statusCode": 401
+    }
+[19:22:41] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-r"
+    [35mres[39m: {
+      "statusCode": 401
+    }
+    [35mresponseTime[39m: 2.102199999964796
+[19:22:42] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-s"
     [35mreq[39m: {
       "method": "GET",
-      "url": "/health",
+      "url": "/api/ledger/records",
       "host": "localhost:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 55089
+      "remotePort": 56194
     }
-[18:47:29] [32mINFO[39m: [36mrequest completed[39m
-    [35mreqId[39m: "req-e"
+[19:22:42] [32mINFO[39m: [36mMissing Authorization header[39m
+    [35mreqId[39m: "req-s"
     [35mres[39m: {
-      "statusCode": 200
+      "statusCode": 401
     }
-    [35mresponseTime[39m: 1.3167999999714084
-[18:47:39] [32mINFO[39m: [36mincoming request[39m
-    [35mreqId[39m: "req-f"
-    [35mreq[39m: {
-      "method": "GET",
-      "url": "/health",
-      "host": "localhost:4000",
-      "remoteAddress": "127.0.0.1",
-      "remotePort": 51951
+    err: {
+      "type": "Error",
+      "message": "Missing Authorization header",
+      "stack":
+          Error: Missing Authorization header
+              at authenticate (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\src\middleware\auth.ts:82:25)
+              at Object.<anonymous> (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\src\app.ts:50:40)
+              at hookIterator (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\fastify\lib\hooks.js:412:10)
+              at next (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\fastify\lib\hooks.js:242:18)
+              at C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\@fastify\cors\index.js:209:12
+              at resolveOriginOption (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\@fastify\cors\index.js:162:129)
+              at addCorsHeadersHandler (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\@fastify\cors\index.js:164:3)
+              at Object.handleCors (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\@fastify\cors\index.js:64:9)
+              at hookIterator (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\fastify\lib\hooks.js:412:10)
+              at next (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\fastify\lib\hooks.js:242:18)
+      "statusCode": 401
     }
-[18:47:39] [32mINFO[39m: [36mrequest completed[39m
-    [35mreqId[39m: "req-f"
+[19:22:42] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-s"
     [35mres[39m: {
-      "statusCode": 200
+      "statusCode": 401
     }
-    [35mresponseTime[39m: 0.6107000000192784
-[18:47:51] [32mINFO[39m: [36mincoming request[39m
-    [35mreqId[39m: "req-g"
-    [35mreq[39m: {
-      "method": "GET",
-      "url": "/health",
-      "host": "127.0.0.1:4000",
-      "remoteAddress": "127.0.0.1",
-      "remotePort": 65417
-    }
-[18:47:51] [32mINFO[39m: [36mrequest completed[39m
-    [35mreqId[39m: "req-g"
-    [35mres[39m: {
-      "statusCode": 200
-    }
-    [35mresponseTime[39m: 0.834000000031665
-[18:48:12] [32mINFO[39m: [36mincoming request[39m
-    [35mreqId[39m: "req-h"
-    [35mreq[39m: {
-      "method": "GET",
-      "url": "/health",
-      "host": "localhost:4000",
-      "remoteAddress": "127.0.0.1",
-      "remotePort": 53441
-    }
-[18:48:12] [32mINFO[39m: [36mincoming request[39m
-    [35mreqId[39m: "req-i"
-    [35mreq[39m: {
-      "method": "GET",
-      "url": "/health",
-      "host": "localhost:4000",
-      "remoteAddress": "127.0.0.1",
-      "remotePort": 53442
-    }
-[18:48:12] [32mINFO[39m: [36mrequest completed[39m
-    [35mreqId[39m: "req-i"
-    [35mres[39m: {
-      "statusCode": 200
-    }
-    [35mresponseTime[39m: 0.7730999999912456
-[18:48:12] [32mINFO[39m: [36mrequest completed[39m
-    [35mreqId[39m: "req-h"
-    [35mres[39m: {
-      "statusCode": 200
-    }
-    [35mresponseTime[39m: 3.3646000000298955
-[18:48:12] [32mINFO[39m: [36mincoming request[39m
-    [35mreqId[39m: "req-j"
-    [35mreq[39m: {
-      "method": "POST",
-      "url": "/api/leads",
-      "host": "localhost:4000",
-      "remoteAddress": "127.0.0.1",
-      "remotePort": 53443
-    }
-[devstore] DATABASE_URL not set — persisting to backend/.devstore (dev mode).
-[18:48:12] [32mINFO[39m: [36mrequest completed[39m
-    [35mreqId[39m: "req-j"
-    [35mres[39m: {
-      "statusCode": 201
-    }
-    [35mresponseTime[39m: 24.258000000030734
-[18:48:24] [32mINFO[39m: [36mincoming request[39m
-    [35mreqId[39m: "req-k"
+    [35mresponseTime[39m: 0.6507999999448657
+[19:22:49] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-t"
     [35mreq[39m: {
       "method": "POST",
       "url": "/api/pipeline",
       "host": "localhost:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 54099
+      "remotePort": 65514
     }
-[18:48:24] [32mINFO[39m: [36mrequest completed[39m
-    [35mreqId[39m: "req-k"
+[19:22:49] [32mINFO[39m: [36mMissing Authorization header[39m
+    [35mreqId[39m: "req-t"
     [35mres[39m: {
-      "statusCode": 200
+      "statusCode": 401
     }
-    [35mresponseTime[39m: 34.900199999974575
-[18:48:24] [32mINFO[39m: [36mincoming request[39m
-    [35mreqId[39m: "req-l"
-    [35mreq[39m: {
-      "method": "GET",
-      "url": "/api/pipeline/ef52d058-eee5-4c64-99b5-16f649ff6c8e",
-      "host": "localhost:4000",
-      "remoteAddress": "127.0.0.1",
-      "remotePort": 54458
+    err: {
+      "type": "Error",
+      "message": "Missing Authorization header",
+      "stack":
+          Error: Missing Authorization header
+              at authenticate (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\src\middleware\auth.ts:82:25)
+              at Object.<anonymous> (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\src\app.ts:50:40)
+              at hookIterator (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\fastify\lib\hooks.js:412:10)
+              at next (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\fastify\lib\hooks.js:242:18)
+              at C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\@fastify\cors\index.js:209:12
+              at resolveOriginOption (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\@fastify\cors\index.js:162:129)
+              at addCorsHeadersHandler (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\@fastify\cors\index.js:164:3)
+              at Object.handleCors (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\@fastify\cors\index.js:64:9)
+              at hookIterator (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\fastify\lib\hooks.js:412:10)
+              at next (C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend\node_modules\fastify\lib\hooks.js:242:18)
+      "statusCode": 401
     }
-[18:48:24] [32mINFO[39m: [36mrequest completed[39m
-    [35mreqId[39m: "req-l"
+[19:22:49] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-t"
     [35mres[39m: {
-      "statusCode": 200
+      "statusCode": 401
     }
-    [35mresponseTime[39m: 9.68650000001071
-[ai] understanding: gemini/gemini-3.6-flash attempt 0 failed: {"error":{"code":429,"message":"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\nPlease retry in 34.005917686s.","status":"RESOURCE_EXHAUSTED","details":[{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-3.6-flash"},"quotaValue":"20"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"34s"}]}}
-[ai] understanding: gemini/gemini-3.5-flash attempt 0 failed: {"error":{"code":429,"message":"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\nPlease retry in 33.503483144s.","status":"RESOURCE_EXHAUSTED","details":[{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-3.5-flash"},"quotaValue":"20"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"33s"}]}}
-[ai] understanding: gemini/gemini-3.1-flash-lite attempt 0 failed: Schema validation failed: tasks.0.id: Invalid input: expected string, received number; tasks.1.id: Invalid input: expected string, received number; tasks.1.dependsOn.0: Invalid input: expected string, received number
-[18:48:36] [32mINFO[39m: [36mincoming request[39m
-    [35mreqId[39m: "req-m"
-    [35mreq[39m: {
-      "method": "GET",
-      "url": "/api/pipeline/ef52d058-eee5-4c64-99b5-16f649ff6c8e",
-      "host": "localhost:4000",
-      "remoteAddress": "127.0.0.1",
-      "remotePort": 55850
-    }
-[18:48:36] [32mINFO[39m: [36mrequest completed[39m
-    [35mreqId[39m: "req-m"
-    [35mres[39m: {
-      "statusCode": 200
-    }
-    [35mresponseTime[39m: 7.020399999979418
-[ai] schema coercion repaired 2 model field(s) — validation passed
-[18:48:49] [32mINFO[39m: [36mincoming request[39m
-    [35mreqId[39m: "req-n"
+    [35mresponseTime[39m: 1.4885000000940636
+[19:22:59] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-u"
     [35mreq[39m: {
       "method": "GET",
       "url": "/health",
       "host": "localhost:4000",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 59001
+      "remotePort": 51562
     }
-[18:48:49] [32mINFO[39m: [36mrequest completed[39m
-    [35mreqId[39m: "req-n"
+[19:22:59] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-u"
     [35mres[39m: {
       "statusCode": 200
     }
-    [35mresponseTime[39m: 0.7940000000526197
+    [35mresponseTime[39m: 0.4649000000208616
+[19:22:59] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-v"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 63233
+    }
+[19:22:59] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-v"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.5196999999461696
+[19:23:30] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-w"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 60656
+    }
+[19:23:30] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-w"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.7210000000195578
+[19:24:01] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-x"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 62703
+    }
+[19:24:01] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-x"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.5951999999815598
+[19:24:32] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-y"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 57665
+    }
+[19:24:32] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-y"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.6018000000622123
+[19:25:03] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-z"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 57699
+    }
+[19:25:03] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-z"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.34000000008381903
+[19:25:34] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-10"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 65515
+    }
+[19:25:34] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-10"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.4481000000378117
+[19:26:05] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-11"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 49709
+    }
+[19:26:05] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-11"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.39619999995920807
+[19:26:36] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-12"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 62552
+    }
+[19:26:36] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-12"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.5324000000255182
+[19:27:06] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-13"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 55990
+    }
+[19:27:06] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-13"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.31520000007003546
+[19:27:37] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-14"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 59727
+    }
+[19:27:37] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-14"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.6141000000061467

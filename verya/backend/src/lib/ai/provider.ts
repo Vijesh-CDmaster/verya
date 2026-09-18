@@ -134,7 +134,10 @@ const RATE_LIMIT_BENCH_MS = Number(process.env.RATE_LIMIT_BENCH_MS || 90_000);
 const DAILY_BENCH_MS = Number(process.env.DAILY_BENCH_MS || 6 * 60 * 60 * 1000);
 function isDailyQuotaExhaustion(err: unknown): boolean {
   const msg = err instanceof Error ? err.message : String(err);
-  return /RESOURCE_EXHAUSTED|quota/i.test(msg) && /PerDay|per_day|daily|PerProjectPerModel/i.test(msg);
+  // Must match ONLY day-scale quotas: the loose `PerProjectPerModel` suffix also
+  // matches Gemini's per-minute quota id (…PerMinutePerProjectPerModel), which
+  // would bench a model for hours over a ~60s reset.
+  return /RESOURCE_EXHAUSTED|quota/i.test(msg) && /PerDay|per_day|daily quota/i.test(msg);
 }
 function isRateLimit(err: unknown): boolean {
   const msg = err instanceof Error ? err.message : String(err);

@@ -157,6 +157,26 @@ async function runSuitability(
   adapters: StageAdapters
 ): Promise<PipelineSession> {
   session.gateStatus = "running";
+  // Re-entry after "suggested" was chosen: re-extract the workflow with the
+  // user-endorsed suggestion folded into the prompt, then hand off to flaws.
+  if (session.suitability) {
+    const wf = await adapters.understand(
+      `${session.input}\n\nUse this improved workflow instead:\n${session.suitability.suggestedWorkflow ?? ""}`
+    );
+    repairWorkflow(wf);
+    if (!wf.title) wf.title = "Untitled project";
+    session.workflow = wf;
+    await recordToLedger({
+      orgId: ORG_ID,
+      sessionId: session.id,
+      gate: "suitability",
+      eventType: "suggested_workflow_adopted",
+      detail: { summary: "Re-extracted workflow from the suggested improvement" },
+    });
+    session.gate = "flaws";
+    session.gateStatus = "running";
+    return session;
+  }
   const workflow: Workflow = await adapters.understand(session.input);
   repairWorkflow(workflow);
   if (!workflow.title) workflow.title = "Untitled project";
@@ -535,10 +555,10 @@ export async function applyGateAction(
     case "suitability_choose": {
       if (session.gate !== "suitability") break;
       if (action.choice === "suggested") {
-        const wf = await adapters.understand(
-          `${session.input}\n\nUse this improved workflow instead:\n${session.suitability?.suggestedWorkflow ?? ""}`
-        );
-        session.workflow = wf;
+        // Re-extraction from the suggestion happens in runSuitability (background
+        // via processGate — suitability already populated is the signal). Doing
+        // the understand() call here blocked the HTTP response for 30-60s.
+        session.gateStatus = "running";
       } else {
         session.workflow = session.suggestedWorkflow ?? session.workflow;
       }
@@ -552,10 +572,15 @@ export async function applyGateAction(
           summary: `User ${action.choice === "suggested" ? "accepted the suggested workflow" : "kept the original workflow"}`,
         },
       });
-      // AI flaw detection runs in the background via processGate — the route
-      // responds immediately and the UI polls until the report is ready.
-      session.gate = "flaws";
-      session.gateStatus = "running";
+      // "original": workflow is ready → advance to flaws directly (flaw detection
+      // runs in background via processGate; the UI polls until the report is
+      // ready). "suggested": the gate STAYS on suitability — processGate routes
+      // back into runSuitability, whose populated-suitability re-entry branch
+      // performs the re-extraction and THEN advances to flaws.
+      if (action.choice !== "suggested") {
+        session.gate = "flaws";
+        session.gateStatus = "running";
+      }
       break;
     }
 

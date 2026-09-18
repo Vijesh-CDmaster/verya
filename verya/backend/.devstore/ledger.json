@@ -1712,5 +1712,249 @@
   "prevHash": "4a652a9e258a8ca3eafa2bafe306aec8905a9d1f8f82319bae729c4640326da0",
   "chainHash": "074f467b55224bef5513dd5845fd21b27b5aca48b3f54cd2618a2404a92753ef",
   "createdAt": "2026-09-18T18:48:39.670Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "e9557707-203e-4279-8f29-87559ba2c849",
+  "gate": "suitability",
+  "eventType": "suitability_passed",
+  "detail": {
+   "summary": "Workflow suitable (confidence 95%)",
+   "confidence": 0.95
+  },
+  "seq": 86,
+  "prevHash": "074f467b55224bef5513dd5845fd21b27b5aca48b3f54cd2618a2404a92753ef",
+  "chainHash": "05987cc35d6f19ff8e8a51d4e1a92c4f94399393449760e015a63a6a892d1910",
+  "createdAt": "2026-09-18T19:00:26.327Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "e9557707-203e-4279-8f29-87559ba2c849",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "Flaw scan queued for approval"
+  },
+  "seq": 87,
+  "prevHash": "05987cc35d6f19ff8e8a51d4e1a92c4f94399393449760e015a63a6a892d1910",
+  "chainHash": "ed9f7380f6627738a6aaad2a7cf3c7ec71ad4b0f583b333f822bd942c1276018",
+  "createdAt": "2026-09-18T19:00:26.339Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "e9557707-203e-4279-8f29-87559ba2c849",
+  "gate": "suitability",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User kept the original workflow"
+  },
+  "seq": 88,
+  "prevHash": "ed9f7380f6627738a6aaad2a7cf3c7ec71ad4b0f583b333f822bd942c1276018",
+  "chainHash": "3da439d3bdf86a73f61754de165814f86803a65befeb8315ba557fe3d29eded6",
+  "createdAt": "2026-09-18T19:00:26.868Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "e9557707-203e-4279-8f29-87559ba2c849",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "5 flaws found (medium risk)"
+  },
+  "seq": 89,
+  "prevHash": "3da439d3bdf86a73f61754de165814f86803a65befeb8315ba557fe3d29eded6",
+  "chainHash": "51bc3c07c4f519a177ab4b1de9db3cfbec6caeddd6ec8aa3bbcc5ead28077828",
+  "createdAt": "2026-09-18T19:00:29.625Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "2a2085cd-a037-4ac4-9d99-329129060034",
+  "gate": "suitability",
+  "eventType": "suitability_flagged",
+  "detail": {
+   "summary": "The project description is too vague to support a functional development workflow. The proposed workflow assumes a generic 'dashboard' and 'AI' without defining the core value proposition, target audience, or problem being solved. Without a defined product scope, the workflow lacks critical discovery, requirements gathering, and validation phases, which are essential for a project with undefined goals.",
+   "suggested": true
+  },
+  "seq": 90,
+  "prevHash": "51bc3c07c4f519a177ab4b1de9db3cfbec6caeddd6ec8aa3bbcc5ead28077828",
+  "chainHash": "59ea1376ec5ebe0bf4d3eff8277b0cf139fdfde3c464b1f13e1e029b134fbee8",
+  "createdAt": "2026-09-18T19:01:13.132Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "2a2085cd-a037-4ac4-9d99-329129060034",
+  "gate": "suitability",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User accepted the suggested workflow"
+  },
+  "seq": 91,
+  "prevHash": "59ea1376ec5ebe0bf4d3eff8277b0cf139fdfde3c464b1f13e1e029b134fbee8",
+  "chainHash": "2eeeb574cb4b2fca490e8bbd9f35164b0d8f1c687890d6cf1059b57aed01f647",
+  "createdAt": "2026-09-18T19:01:14.883Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "80b4d32b-e9e5-4f57-b774-30bf2b6c9512",
+  "gate": "suitability",
+  "eventType": "suitability_flagged",
+  "detail": {
+   "summary": "The project description is critically underspecified, lacking a defined purpose, target audience, or core problem statement. The workflow assumes a standard web application structure but fails to include a discovery or requirements gathering phase, which is essential given the vague project scope. Without defining what the AI is supposed to do or what the dashboard should display, the development process will lack direction and likely result in a product that does not meet user needs.",
+   "suggested": true
+  },
+  "seq": 92,
+  "prevHash": "2eeeb574cb4b2fca490e8bbd9f35164b0d8f1c687890d6cf1059b57aed01f647",
+  "chainHash": "21a9e55e4490e1e76ca384a81e81122f82abe0a0fd76ba6df70b3e923f27b755",
+  "createdAt": "2026-09-18T19:07:58.318Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "80b4d32b-e9e5-4f57-b774-30bf2b6c9512",
+  "gate": "suitability",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User accepted the suggested workflow"
+  },
+  "seq": 93,
+  "prevHash": "21a9e55e4490e1e76ca384a81e81122f82abe0a0fd76ba6df70b3e923f27b755",
+  "chainHash": "e3e3c8707e202846840b370ee770e9d0edafac767d78db4606daf2f6fb7da398",
+  "createdAt": "2026-09-18T19:07:59.733Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "80b4d32b-e9e5-4f57-b774-30bf2b6c9512",
+  "gate": "suitability",
+  "eventType": "suggested_workflow_adopted",
+  "detail": {
+   "summary": "Re-extracted workflow from the suggested improvement"
+  },
+  "seq": 94,
+  "prevHash": "e3e3c8707e202846840b370ee770e9d0edafac767d78db4606daf2f6fb7da398",
+  "chainHash": "5ce1920281d45b6849802c66e50286246fbae99e85296cfc9aae9187d4a6898d",
+  "createdAt": "2026-09-18T19:08:09.331Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "80b4d32b-e9e5-4f57-b774-30bf2b6c9512",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "4 flaws found (high risk)"
+  },
+  "seq": 95,
+  "prevHash": "5ce1920281d45b6849802c66e50286246fbae99e85296cfc9aae9187d4a6898d",
+  "chainHash": "74a8c14ec9d9efeedb221e35fb9b8785d7232f9caf1babaca81ab65051387322",
+  "createdAt": "2026-09-18T19:08:14.776Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "1f574d18-b25d-4612-9375-ff0ba8551106",
+  "gate": "suitability",
+  "eventType": "suitability_flagged",
+  "detail": {
+   "summary": "The project description is too vague to support a functional workflow. The workflow assumes a standard web application architecture, but without defining the core value proposition, target audience, or the specific problem the AI is meant to solve, the development process will lack direction and likely result in a product that does not meet user needs. The workflow skips the essential discovery and requirements gathering phase.",
+   "suggested": true
+  },
+  "seq": 96,
+  "prevHash": "74a8c14ec9d9efeedb221e35fb9b8785d7232f9caf1babaca81ab65051387322",
+  "chainHash": "62394709f1c4a1d11eabb4480684d69fda28c5c7e8ca7bb9d47a3df7ac639a57",
+  "createdAt": "2026-09-18T19:08:27.555Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "1f574d18-b25d-4612-9375-ff0ba8551106",
+  "gate": "suitability",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User accepted the suggested workflow"
+  },
+  "seq": 97,
+  "prevHash": "62394709f1c4a1d11eabb4480684d69fda28c5c7e8ca7bb9d47a3df7ac639a57",
+  "chainHash": "26d440da70f4fec17a2fa182b2d2855e614a36c51ae435adebdc755d54fe2776",
+  "createdAt": "2026-09-18T19:08:28.399Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "1f574d18-b25d-4612-9375-ff0ba8551106",
+  "gate": "suitability",
+  "eventType": "suggested_workflow_adopted",
+  "detail": {
+   "summary": "Re-extracted workflow from the suggested improvement"
+  },
+  "seq": 98,
+  "prevHash": "26d440da70f4fec17a2fa182b2d2855e614a36c51ae435adebdc755d54fe2776",
+  "chainHash": "ed9e38d604567b96316b0b1a4766f0d6d1797ec347c357fe6d8270fd78df57c5",
+  "createdAt": "2026-09-18T19:08:36.905Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "1f574d18-b25d-4612-9375-ff0ba8551106",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "4 flaws found (high risk)"
+  },
+  "seq": 99,
+  "prevHash": "ed9e38d604567b96316b0b1a4766f0d6d1797ec347c357fe6d8270fd78df57c5",
+  "chainHash": "337f72eacd81361182862a05b65313c895279ad191dae7afaabbf4018f782bd9",
+  "createdAt": "2026-09-18T19:08:42.135Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "56a4cc75-8e18-4fa5-ade1-e76c42836ea1",
+  "gate": "suitability",
+  "eventType": "suitability_passed",
+  "detail": {
+   "summary": "Workflow suitable (confidence 95%)",
+   "confidence": 0.95
+  },
+  "seq": 100,
+  "prevHash": "337f72eacd81361182862a05b65313c895279ad191dae7afaabbf4018f782bd9",
+  "chainHash": "e97c1c0645e11975fe54f48b7ce30c08d4dbcc4029442e655360825e61376da5",
+  "createdAt": "2026-09-18T19:09:14.521Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "56a4cc75-8e18-4fa5-ade1-e76c42836ea1",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "Flaw scan queued for approval"
+  },
+  "seq": 101,
+  "prevHash": "e97c1c0645e11975fe54f48b7ce30c08d4dbcc4029442e655360825e61376da5",
+  "chainHash": "1b075fcbe326705d6c4a9e6a510606a3a67036ec7938c8b5d9789990c02c4c20",
+  "createdAt": "2026-09-18T19:09:14.532Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "56a4cc75-8e18-4fa5-ade1-e76c42836ea1",
+  "gate": "suitability",
+  "eventType": "human_decision",
+  "actor": "human",
+  "detail": {
+   "summary": "User kept the original workflow"
+  },
+  "seq": 102,
+  "prevHash": "1b075fcbe326705d6c4a9e6a510606a3a67036ec7938c8b5d9789990c02c4c20",
+  "chainHash": "ed0a428af1d92ea4adfee6e6194cc0ca403c987d819d705fffef807ae7515133",
+  "createdAt": "2026-09-18T19:09:15.814Z"
+ },
+ {
+  "orgId": "default-org",
+  "sessionId": "56a4cc75-8e18-4fa5-ade1-e76c42836ea1",
+  "gate": "flaws",
+  "eventType": "flaw_report",
+  "detail": {
+   "summary": "5 flaws found (high risk)"
+  },
+  "seq": 103,
+  "prevHash": "ed0a428af1d92ea4adfee6e6194cc0ca403c987d819d705fffef807ae7515133",
+  "chainHash": "721bab995323ca3597dfa883e25693ba59ec3933e2e1609b8f93aaf5766263dc",
+  "createdAt": "2026-09-18T19:09:21.945Z"
  }
 ]
