@@ -6,6 +6,7 @@ import { findSimilar, exportOrgMemory, deleteOrgMemory } from "../services/memor
 import { listPipelines } from "../services/pipeline";
 import { isDbConfigured } from "../db/pool";
 import { queueHealth } from "../jobs/queues";
+import { requireAdmin } from "../middleware/auth";
 import type { VeryaRequest } from "../app";
 
 export default async function dashboardRoutes(app: FastifyInstance): Promise<void> {
@@ -55,6 +56,7 @@ export default async function dashboardRoutes(app: FastifyInstance): Promise<voi
   });
 
   app.get("/memory/export", async (req: VeryaRequest, reply) => {
+    requireAdmin(req);
     const rows = await exportOrgMemory(req.auth.orgId);
     reply.header("Content-Type", "application/json");
     reply.header("Content-Disposition", `attachment; filename="org-memory-export.json"`);
@@ -62,6 +64,7 @@ export default async function dashboardRoutes(app: FastifyInstance): Promise<voi
   });
 
   app.delete("/memory", async (req: VeryaRequest) => {
+    requireAdmin(req);
     const deleted = await deleteOrgMemory(req.auth.orgId);
     return { deleted };
   });

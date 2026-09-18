@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS leads (
   email       TEXT NOT NULL,
   phone       TEXT,
   source      TEXT NOT NULL DEFAULT 'website',
+  accepted_terms_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

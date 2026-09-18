@@ -4,6 +4,7 @@ import type { FastifyInstance } from "fastify";
 import { LeadCreateSchema } from "../schemas/lead";
 import { insertLead, listLeads } from "../repositories/leads";
 import { rateLimitKey, sanitizeInput } from "../lib/middleware";
+import { requireAdmin } from "../middleware/auth";
 import type { VeryaRequest } from "../app";
 
 export default async function leadRoutes(app: FastifyInstance): Promise<void> {
@@ -43,6 +44,7 @@ export default async function leadRoutes(app: FastifyInstance): Promise<void> {
   });
 
   app.get("/leads", async (req: VeryaRequest) => {
+    requireAdmin(req);
     const q = req.query as Record<string, string | undefined>;
     return { leads: await listLeads(req.auth.orgId, q.limit ? Number(q.limit) : 100) };
   });

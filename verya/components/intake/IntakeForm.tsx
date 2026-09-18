@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IntakeFormSchema, type IntakeFormValues } from "@/schemas/pipeline";
-import { useStartPipeline } from "@/hooks/use-session";
+import { useStartPipeline, useUploadPipeline } from "@/hooks/use-session";
 import { useUiStore } from "@/stores/ui-store";
 import { Button } from "@/components/ui/button";
 import { Textarea, Input, Label, Select } from "@/components/ui/input";
@@ -23,6 +23,7 @@ export function IntakeForm({ onStarted }: { onStarted?: (session: Session) => vo
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const start = useStartPipeline();
+  const upload = useUploadPipeline();
 
   const form = useForm<IntakeFormValues>({
     resolver: zodResolver(IntakeFormSchema),
@@ -50,6 +51,24 @@ export function IntakeForm({ onStarted }: { onStarted?: (session: Session) => vo
   const submit = form.handleSubmit(async (values) => {
     setError(null);
     try {
+      // F1.3: PDF/DOCX/RTF go through the server-side extraction endpoint; text
+      // formats are read client-side and combined with the description as before.
+      const binary = files.find((f) => /\.(pdf|docx?|rtf)$/i.test(f.name));
+      if (binary) {
+        if (files.length > 1) {
+          setError("Upload one document at a time for PDF/DOCX files.");
+          return;
+        }
+        const res = await upload.mutateAsync({
+          file: binary,
+          description: values.input,
+          statedStack: values.hasStack ? values.statedStack : "",
+        });
+        store.setStatedStack(values.hasStack ? values.statedStack : "");
+        onStarted?.(res.session as Session);
+        return;
+      }
+
       let combined = values.input;
       for (const f of files) {
         const text = await f.text();
@@ -115,13 +134,13 @@ export function IntakeForm({ onStarted }: { onStarted?: (session: Session) => vo
       </div>
 
       <div>
-        <Label htmlFor="files">Attach a plan or spec (TXT, MD, CSV, JSON, YAML · max 2MB each)</Label>
+        <Label htmlFor="files">Attach a plan or spec (PDF, DOCX, TXT, MD, CSV, JSON, YAML · max 10MB)</Label>
         <Input
           id="files"
           ref={fileRef}
           type="file"
           multiple
-          accept=".txt,.md,.csv,.json,.yaml,.yml,.log"
+          accept=".pdf,.doc,.docx,.rtf,.txt,.md,.csv,.json,.yaml,.yml,.log"
           className="mt-1.5 cursor-pointer file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-elev file:px-3 file:py-1.5 file:text-sm"
           onChange={(e) => setFiles(Array.from(e.target.files ?? []).slice(0, 5))}
         />
@@ -139,8 +158,8 @@ export function IntakeForm({ onStarted }: { onStarted?: (session: Session) => vo
 
       <div className="flex items-center justify-between gap-3">
         <span className="text-[11px] text-muted">Enter to start · Shift+Enter for a new line</span>
-        <Button type="submit" disabled={start.isPending || (input ?? "").trim().length < 20}>
-          {start.isPending ? "Analyzing…" : "Analyze my project →"}
+        <Button type="submit" disabled={start.isPending || upload.isPending || (input ?? "").trim().length < 20}>
+          {start.isPending || upload.isPending ? "Analyzing…" : "Analyze my project →"}
         </Button>
       </div>
 

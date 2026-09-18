@@ -3,6 +3,7 @@
 import type { Session } from "@/schemas/pipeline";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { TrustBadge } from "@/components/dashboard/TrustBadge";
 
 type Route = {
   taskId: string;
@@ -45,6 +46,7 @@ export function GateModels({
               <span className="ml-2 rounded border border-line bg-card px-2 py-0.5 font-mono text-[11px]">
                 {r.selectedModel}
               </span>
+              <TrustBadge model={r.selectedModel} />
               <p className="mt-1 text-[12px] text-muted">{r.reason}</p>
             </li>
           ))}
@@ -76,6 +78,7 @@ export function GateModels({
                     <span className="font-mono text-[12px] font-semibold">{opt.model}</span>
                     <span className="text-[11px] text-muted">{Math.round(opt.confidence * 100)}%</span>
                   </div>
+                  <TrustBadge model={opt.model} />
                   <p className="mt-1 text-[12px] text-muted">{opt.qualifiesBecause}</p>
                   <p className="mt-1 text-[11px] text-muted">
                     cost ≈ ${opt.estimatedCost.toFixed(2)} · ≈{(opt.estimatedLatencyMs / 1000).toFixed(0)}s

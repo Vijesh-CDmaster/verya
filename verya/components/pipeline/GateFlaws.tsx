@@ -34,6 +34,8 @@ export function GateFlaws({
     }
     return init;
   });
+  const [editedFixes, setEditedFixes] = useState<Record<string, string>>({});
+  const [editing, setEditing] = useState<Record<string, boolean>>({});
 
   if (!report) return <p className="text-sm text-muted">Loading…</p>;
 
@@ -62,7 +64,7 @@ export function GateFlaws({
             <p className="mt-1.5 text-[12px]">
               <span className="font-medium">Fix:</span> <span className="text-muted">{flaw.suggestedFix}</span>
             </p>
-            <div className="mt-2 flex gap-2">
+            <div className="mt-2 flex flex-wrap gap-2">
               {(["accepted", "rejected"] as const).map((d) => (
                 <button
                   key={d}
@@ -79,7 +81,41 @@ export function GateFlaws({
                   {d === "accepted" ? "Accept fix" : "Reject"}
                 </button>
               ))}
+              {/* F3 edited-fix path: accept your own wording of the fix */}
+              {!editing[flaw.id] ? (
+                <button
+                  type="button"
+                  onClick={() => setEditing((prev) => ({ ...prev, [flaw.id]: true }))}
+                  className={`rounded px-3 py-1 text-[12px] font-medium transition ${
+                    decisions[flaw.id] === "edited"
+                      ? "bg-amber-500/20 text-amber-400"
+                      : "border border-line text-muted hover:border-fg hover:text-fg"
+                  }`}
+                >
+                  Edit fix
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDecisions((prev) => ({ ...prev, [flaw.id]: "edited" }));
+                    setEditing((prev) => ({ ...prev, [flaw.id]: false }));
+                  }}
+                  className="rounded bg-amber-500/20 px-3 py-1 text-[12px] font-medium text-amber-400"
+                >
+                  Save edit
+                </button>
+              )}
             </div>
+            {editing[flaw.id] && (
+              <textarea
+                value={editedFixes[flaw.id] ?? ""}
+                onChange={(e) => setEditedFixes((prev) => ({ ...prev, [flaw.id]: e.target.value }))}
+                rows={3}
+                placeholder="Write your own fix for this flaw…"
+                className="mt-2 w-full rounded border border-line bg-card p-2 text-[12px]"
+              />
+            )}
           </li>
         ))}
       </ul>
@@ -97,7 +133,13 @@ export function GateFlaws({
         onClick={() =>
           call({
             action: "flaw_resolve",
-            resolutions: report.flaws.map((f) => ({ flawId: f.id, decision: decisions[f.id] ?? "rejected" })),
+            resolutions: report.flaws.map((f) => ({
+              flawId: f.id,
+              decision: decisions[f.id] ?? "rejected",
+              ...(decisions[f.id] === "edited" && editedFixes[f.id]?.trim()
+                ? { editedFix: editedFixes[f.id].trim() }
+                : {}),
+            })),
           })
         }
       >

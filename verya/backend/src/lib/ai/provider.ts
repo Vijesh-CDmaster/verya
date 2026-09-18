@@ -365,7 +365,7 @@ async function runStructuredStage<S extends z.ZodType>(
 // ---------- Free-text execution with cross-provider failover ----------
 export type TextResult = ChatResult & { servedBy: string };
 
-async function runModelText(
+export async function runModelText(
   requestedModel: string,
   system: string,
   user: string,

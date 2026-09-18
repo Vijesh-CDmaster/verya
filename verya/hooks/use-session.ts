@@ -32,6 +32,21 @@ export function useStartPipeline() {
   });
 }
 
+/** F1.3: document upload intake (server-side PDF/DOCX/text extraction). */
+export function useUploadPipeline() {
+  const qc = useQueryClient();
+  const setSessionId = useUiStore((s) => s.setSessionId);
+  return useMutation({
+    mutationFn: (payload: { file: File; description?: string; statedStack?: string }) =>
+      api.uploadPipeline(payload.file, { description: payload.description, statedStack: payload.statedStack }),
+    onSuccess: (data) => {
+      const session = data.session as { id?: string } | undefined;
+      if (session?.id) setSessionId(session.id);
+      void qc.invalidateQueries({ queryKey: ["dashboard"] });
+    },
+  });
+}
+
 export function useGateAction(sessionId: string | null) {
   const qc = useQueryClient();
   return useMutation({
@@ -73,5 +88,15 @@ export function useBackendHealth() {
     queryFn: () => api.health(),
     refetchInterval: 30_000,
     retry: false,
+  });
+}
+
+/** Model reputation leaderboard (F12/F22 trust badges). */
+export function useReputation() {
+  return useQuery({
+    queryKey: ["reputation"],
+    queryFn: () => api.reputation(),
+    staleTime: 30_000,
+    retry: (count, err) => (err instanceof ApiError && err.status < 500 ? false : count < 2),
   });
 }

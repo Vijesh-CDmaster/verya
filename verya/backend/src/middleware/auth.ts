@@ -19,6 +19,7 @@ export type AuthContext = {
   userId: string | null;
   orgId: string;
   mode: "clerk" | "development";
+  role: string | null;
 };
 
 export async function authenticate(req: { headers: Record<string, string | string[] | undefined> }): Promise<AuthContext> {
@@ -29,7 +30,7 @@ export async function authenticate(req: { headers: Record<string, string | strin
   if (!clerkConfigured()) {
     // Development mode: accept the client-declared org for local multi-org testing.
     const devOrg = typeof req.headers["x-org-id"] === "string" ? req.headers["x-org-id"] : null;
-    return { userId: null, orgId: devOrg || defaultOrg, mode: "development" };
+    return { userId: null, orgId: devOrg || defaultOrg, mode: "development", role: null };
   }
 
   if (!token) {
@@ -42,7 +43,9 @@ export async function authenticate(req: { headers: Record<string, string | strin
       ...(CLERK_AUDIENCE ? { audience: CLERK_AUDIENCE } : {}),
     });
     const orgId = (payload.org_id as string) || defaultOrg;
-    return { userId: (payload.sub as string) || null, orgId, mode: "clerk" };
+    // org_role from Clerk's session token (e.g. org:admin / org:member).
+    const orgRole = typeof payload.org_role === "string" ? payload.org_role : null;
+    return { userId: (payload.sub as string) || null, orgId, mode: "clerk", role: orgRole };
   } catch (err) {
     throw Object.assign(new Error("Invalid or expired token"), {
       statusCode: 401,
@@ -50,3 +53,21 @@ export async function authenticate(req: { headers: Record<string, string | strin
     });
   }
 }
+
+/**
+ * RBAC (F38): admin-only mutations — org memory purge, lead list access.
+ * In development mode everything is allowed (clearly labeled); under Clerk the
+ * token's org_role must be `org:admin` (or an env-listed admin user id).
+ */
+export function requireAdmin(req: VeryaRequestLike): void {
+  if (req.auth.mode === "development") return;
+  const adminIds = (process.env.CLERK_ADMIN_USER_IDS || "").split(",").map((s) => s.trim()).filter(Boolean);
+  const isAdmin = req.auth.role === "org:admin" || (req.auth.userId ? adminIds.includes(req.auth.userId) : false);
+  if (!isAdmin) {
+    throw Object.assign(new Error("Admin role required"), { statusCode: 403 });
+  }
+}
+
+type VeryaRequestLike = {
+  auth: AuthContext;
+};

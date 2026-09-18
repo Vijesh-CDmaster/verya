@@ -1,6 +1,7 @@
 // Ledger REST routes — queryable audit trail + integrity verification + export (F10).
 import type { FastifyInstance } from "fastify";
 import { listLedger, verifyLedger } from "../services/ledger";
+import { requireAdmin } from "../middleware/auth";
 import type { VeryaRequest } from "../app";
 
 export default async function ledgerRoutes(app: FastifyInstance): Promise<void> {
@@ -23,8 +24,9 @@ export default async function ledgerRoutes(app: FastifyInstance): Promise<void> 
     return verifyLedger(req.auth.orgId);
   });
 
-  // One-click compliance/audit export (CSV).
+  // One-click compliance/audit export (CSV) — admin only (F38 RBAC).
   app.get("/ledger/export", async (req: VeryaRequest, reply) => {
+    requireAdmin(req);
     const records = await listLedger({ orgId: req.auth.orgId, limit: 500 });
     const header = "seq,timestamp,gate,event,actor,model,task,summary,passed,chain_hash";
     const rows = records.map((r) => {

@@ -7,10 +7,13 @@ import { getSession, saveSession } from "../repositories/sessions";
 import { geminiAdapters } from "../lib/ai/provider";
 import { stackTextOf } from "../lib/pipeline/gates";
 import { recordToLedger } from "../services/ledger";
+import { checkExternalReferences } from "../lib/verification/external";
+import { escalationFloorFor } from "../lib/thresholds";
+import { updateFromOutcome } from "../services/reputation";
+import { modelCostOf } from "../schemas/pipeline";
 import type { ExecutionResult, PipelineSession } from "../schemas/pipeline";
 
 const ORG_ID = process.env.VERYA_ORG_ID || "default-org";
-const ESCALATION_FLOOR = Number(process.env.VERYA_ESCALATION_FLOOR || 0.55);
 
 async function executeSession(sessionId: string): Promise<void> {
   const session: PipelineSession | null = await getSession(ORG_ID, sessionId);
@@ -48,9 +51,21 @@ async function executeSession(sessionId: string): Promise<void> {
       const verification = needsSecondModel
         ? await geminiAdapters.verifyOutput({ task, algorithm, output: exec.output, model })
         : await geminiAdapters.verifyRulesOnly({ task, output: exec.output });
+
+      const external = await checkExternalReferences(exec.output);
+      if (!external.passed) {
+        verification.passed = false;
+        verification.issues = [
+          ...verification.issues,
+          ...external.unsupported.map((p) => `References non-existent npm package "${p}" (registry check).`),
+        ].slice(0, 12);
+        verification.checkedBy = `${verification.checkedBy} + npm_registry`;
+      }
+
+      const floor = escalationFloorFor(task.risk);
       const confidence = verification.passed ? 0.82 : 0.4;
       const status: ExecutionResult["status"] = verification.passed
-        ? confidence >= ESCALATION_FLOOR ? "verified" : "escalated"
+        ? confidence >= floor ? "verified" : "escalated"
         : "flagged";
       const result: ExecutionResult = {
         taskId: task.id,
@@ -68,6 +83,11 @@ async function executeSession(sessionId: string): Promise<void> {
         tokens: exec.tokens,
       };
       session.executions.push(result);
+
+      const outcome: "verified" | "flagged" | "escalated" | "rejected" =
+        status === "verified" ? "verified" : status === "flagged" ? "flagged" : status === "escalated" ? "escalated" : "rejected";
+      await updateFromOutcome({ orgId: ORG_ID, model, taskCategory: task.category, outcome }).catch(() => undefined);
+
       await recordToLedger({
         orgId: ORG_ID,
         sessionId,
@@ -75,7 +95,16 @@ async function executeSession(sessionId: string): Promise<void> {
         eventType: "task_execution",
         taskId: task.id,
         model,
-        detail: { summary: `${task.title} executed by ${exec.servedBy ?? model} — ${status}`, latencyMs: exec.latencyMs, tokens: exec.tokens, servedBy: exec.servedBy ?? model },
+        detail: {
+          summary: `${task.title} executed by ${exec.servedBy ?? model} — ${status}`,
+          latencyMs: exec.latencyMs,
+          tokens: exec.tokens,
+          servedBy: exec.servedBy ?? model,
+          costUnits: modelCostOf(model),
+          externalChecked: external.checked.length,
+          externalUnsupported: external.unsupported,
+          escalationFloor: floor,
+        },
         verification: { passed: verification.passed, issues: verification.issues },
       });
     } catch (err) {
@@ -91,6 +120,7 @@ async function executeSession(sessionId: string): Promise<void> {
         tokens: { input: 0, output: 0 },
       };
       session.executions.push(failed);
+      await updateFromOutcome({ orgId: ORG_ID, model, taskCategory: task.category, outcome: "rejected" }).catch(() => undefined);
       await recordToLedger({
         orgId: ORG_ID,
         sessionId,
@@ -98,7 +128,7 @@ async function executeSession(sessionId: string): Promise<void> {
         eventType: "task_failed",
         taskId: task.id,
         model,
-        detail: { summary: `${task.title} failed: ${message}` },
+        detail: { summary: `${task.title} failed: ${message}`, latencyMs: Date.now() - started },
         verification: { passed: false, issues: [message] },
       });
     }

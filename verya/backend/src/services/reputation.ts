@@ -2,6 +2,7 @@
 import {
   updateReputation as repoUpdate,
   getReputation as repoGet,
+  getReputationFor as repoGetFor,
   type ReputationEntry,
 } from "../repositories/reputation";
 import { getSkillMap } from "./memory";
@@ -11,12 +12,19 @@ export async function updateFromOutcome(input: {
   model: string;
   taskCategory: string;
   outcome: "accepted" | "edited" | "rejected" | "escalated" | "verified" | "flagged";
+  latencyMs?: number;
+  costUnits?: number;
 }): Promise<ReputationEntry> {
   return repoUpdate(input);
 }
 
 export async function leaderboard(orgId: string): Promise<ReputationEntry[]> {
   return repoGet(orgId);
+}
+
+/** Inline badge lookup: trust for one model × category (F22). */
+export async function badgeFor(orgId: string, model: string, taskCategory: string) {
+  return repoGetFor(orgId, model, taskCategory);
 }
 
 /** Skill-map heatmap merged with reputation scores (F22 dashboard). */

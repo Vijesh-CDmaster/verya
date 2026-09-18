@@ -8,6 +8,8 @@ import pipelineRoutes from "./routes/pipeline";
 import ledgerRoutes from "./routes/ledger";
 import dashboardRoutes from "./routes/dashboard";
 import leadRoutes from "./routes/leads";
+import reputationRoutes from "./routes/reputation";
+import explainRoutes from "./routes/explain";
 
 // Every request carries the auth context (org scoping) after the onRequest hook.
 declare module "fastify" {
@@ -56,6 +58,8 @@ export async function buildApp(): Promise<FastifyInstance> {
   await app.register(ledgerRoutes, { prefix: "/api" });
   await app.register(dashboardRoutes, { prefix: "/api" });
   await app.register(leadRoutes, { prefix: "/api" });
+  await app.register(reputationRoutes, { prefix: "/api" });
+  await app.register(explainRoutes, { prefix: "/api" });
 
   app.setErrorHandler((err, req, reply) => {
     const e = err as Error & { statusCode?: number; validation?: unknown };
