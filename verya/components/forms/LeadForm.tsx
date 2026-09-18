@@ -14,7 +14,7 @@ export function LeadForm() {
 
   const form = useForm<LeadInput>({
     resolver: zodResolver(LeadSchema),
-    defaultValues: { name: "", email: "", phone: "" },
+    defaultValues: { name: "", email: "", phone: "", acceptTerms: false as unknown as true },
   });
 
   const submit = form.handleSubmit(async (values) => {
@@ -78,6 +78,29 @@ export function LeadForm() {
             {...form.register("phone")}
           />
         </div>
+        {/* F49: ToS/Privacy consent — required before submit */}
+        <div className="mb-5 flex items-start gap-2.5">
+          <input
+            id="lead-terms"
+            type="checkbox"
+            className="mt-0.5 h-4 w-4 shrink-0 accent-indigo-500"
+            {...form.register("acceptTerms")}
+          />
+          <label htmlFor="lead-terms" className="text-[12px] leading-relaxed text-muted">
+            I agree to the{" "}
+            <a href="/legal/terms" target="_blank" className="text-fg underline hover:opacity-80">
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a href="/legal/privacy" target="_blank" className="text-fg underline hover:opacity-80">
+              Privacy Policy
+            </a>
+            .
+          </label>
+        </div>
+        {form.formState.errors.acceptTerms && (
+          <p className="-mt-3 mb-4 text-xs text-danger">{form.formState.errors.acceptTerms.message}</p>
+        )}
         <button
           type="submit"
           disabled={status === "sending"}

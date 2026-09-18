@@ -14,8 +14,61 @@ import type { AlgorithmPlan, RoutingPlan, TaskModelRoute } from "../../schemas/p
 import { needsTieBreak, CHEAP_MODEL_ID, STRONG_MODEL_ID, MODEL_IDS, modelCostOf } from "../../schemas/pipeline";
 import type { StageAdapters } from "../ai/provider";
 import { recordToLedger } from "../../services/ledger";
+import { findSimilar } from "../../services/memory";
 
 const ORG_ID = process.env.VERYA_ORG_ID || "default-org";
+
+// ---------- F9: org memory → decision prompts ----------
+/** Retrieve similar past tasks for a task title and format them as prompt context. */
+async function memoryContextOf(taskTitle: string, category: string): Promise<string | undefined> {
+  try {
+    const similar = await findSimilar({
+      orgId: ORG_ID,
+      taskCategory: category || "other",
+      query: taskTitle,
+      limit: 4,
+    });
+    if (similar.length === 0) return undefined;
+    return similar
+      .map(
+        (m) =>
+          `- "${m.title}" [${m.taskCategory}] with ${m.model} → ${m.outcome}${m.similarity != null ? ` (similarity ${(m.similarity * 100).toFixed(0)}%)` : ""}`
+      )
+      .join("\n");
+  } catch {
+    return undefined; // memory retrieval must never break a gate
+  }
+}
+
+/** Compact org outcome history per model×category, injected into routing prompts. */
+async function memoryOutcomes(): Promise<string | undefined> {
+  try {
+    const rows = await queryOrgOutcomeHistory();
+    if (rows.length === 0) return undefined;
+    return rows
+      .map(
+        (r) =>
+          `- ${r.model} × [${r.taskCategory}]: ${r.samples} past outcome(s), avg quality ${r.avgQuality}/100 → prefer/route ${r.outcome}`
+      )
+      .join("\n");
+  } catch {
+    return undefined;
+  }
+}
+
+async function queryOrgOutcomeHistory(): Promise<
+  Array<{ model: string; taskCategory: string; samples: number; avgQuality: number; outcome: string }>
+> {
+  const { getSkillMap } = await import("../../services/memory.js");
+  const skill = await getSkillMap(ORG_ID);
+  return skill.slice(0, 20).map((s) => ({
+    model: s.model,
+    taskCategory: s.taskCategory,
+    samples: s.samples,
+    avgQuality: s.trustScore,
+    outcome: s.trustScore >= 65 ? "this model has EARNED TRUST here" : "this model has STRUGGLED here",
+  }));
+}
 
 /**
  * Kick off AI processing for the current gate. Called in the background after the
@@ -254,9 +307,19 @@ async function runAlgorithms(
   session: PipelineSession,
   adapters: StageAdapters
 ): Promise<PipelineSession> {
+  const categories = Array.from(new Set(session.workflow!.tasks.map((t) => t.category)));
+  const memoryChunks = await Promise.all(
+    categories.slice(0, 4).map(async (cat) => {
+      const ctx = await memoryContextOf(session.workflow!.summary.slice(0, 400), cat);
+      return ctx ? `[${cat}]\n${ctx}` : null;
+    })
+  );
+  const memoryContext = memoryChunks.filter(Boolean).join("\n\n") || undefined;
+
   const plan = await adapters.recommendAlgorithms({
     workflow: session.workflow!,
     stack: stackTextOf(session),
+    memoryContext,
   });
   repairAlgorithmPlan(plan, session.workflow!.tasks);
   session.algorithms = plan;
@@ -283,10 +346,13 @@ async function runRouting(
   session: PipelineSession,
   adapters: StageAdapters
 ): Promise<PipelineSession> {
+  // F9: inject the org's recorded model×category outcomes so history biases routing.
+  const routingMemory = await memoryOutcomes();
   const plan = await adapters.routeModels({
     workflow: session.workflow!,
     algorithmPlan: session.algorithms!,
     stack: stackTextOf(session),
+    memoryContext: routingMemory,
   });
   repairRoutingPlan(plan, session.algorithms!.tasks);
 
@@ -578,28 +644,19 @@ export async function applyGateAction(
       });
       break;
     }
+
+    // F22 AI Battle Mode: run one task on two models side-by-side; the human verdict
+    // feeds reputation (winner accepted, loser rejected) so routing learns from it.
+    case "battle_run": {
+      const { runBattle } = await import("../../services/battle.js");
+      await runBattle({ session, taskId: action.taskId, modelA: action.modelA, modelB: action.modelB });
+      break;
+    }
+    case "battle_pick": {
+      const { pickBattleWinner } = await import("../../services/battle.js");
+      await pickBattleWinner({ session, taskId: action.taskId, winner: action.winner });
+      break;
+    }
   }
   return session;
-}
-
-/** Resolve remaining tie-breaks automatically (user clicked "keep suggestions"). */
-export function autoSelectRemaining(session: PipelineSession): void {
-  if (session.algorithms) {
-    for (const t of session.algorithms.tasks) {
-      if (t.tieBreakRequired && !t.humanChoice) {
-        const top = [...t.options].sort((a, b) => b.confidence - a.confidence)[0];
-        t.selected = top.name;
-        t.tieBreakRequired = false;
-      }
-    }
-  }
-  if (session.routing) {
-    for (const r of session.routing.routes) {
-      if (r.tieBreakRequired && !r.humanChoice) {
-        const top = [...r.options].sort((a, b) => b.confidence - a.confidence)[0];
-        r.selectedModel = top.model;
-        r.tieBreakRequired = false;
-      }
-    }
-  }
 }

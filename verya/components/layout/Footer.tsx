@@ -65,12 +65,16 @@ export function Footer() {
         <div className="flex flex-col items-center gap-4 border-t border-line pt-6 text-xs sm:flex-row sm:justify-between">
           <div>
             © {new Date().getFullYear()} Verya. All rights reserved. •{" "}
-            <Link href="/#faq" className="hover:text-fg">
+            <Link href="/legal/terms" className="hover:text-fg">
+              Terms
+            </Link>{" "}
+            •{" "}
+            <Link href="/legal/privacy" className="hover:text-fg">
               Privacy
             </Link>{" "}
             •{" "}
-            <Link href="/#faq" className="hover:text-fg">
-              Terms
+            <Link href="/legal/refunds" className="hover:text-fg">
+              Refunds
             </Link>
           </div>
           <div className="flex gap-6">

@@ -1,0 +1,74 @@
+[10:29:06] [32mINFO[39m: [36mServer listening at http://127.0.0.1:4000[39m
+[10:29:06] [32mINFO[39m: [36mServer listening at http://10.255.154.3:4000[39m
+[10:29:06] [32mINFO[39m: [36mVerya backend listening on http://localhost:4000[39m
+[10:29:06] [32mINFO[39m: [36mDatabase: NOT configured — set DATABASE_URL in backend/.env[39m
+[10:29:06] [32mINFO[39m: [36mAuth: development mode (set CLERK_* env vars for production)[39m
+[10:29:23] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-1"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 62030
+    }
+[10:29:23] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-1"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 6.5129999999990105
+[10:29:29] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-2"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 62036
+    }
+[10:29:29] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-2"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.8311000000030617
+[10:29:53] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-3"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 58819
+    }
+[10:29:53] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-3"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.45209999999497086
+[10:30:23] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-4"
+    [35mreq[39m: {
+      "method": "GET",
+      "url": "/health",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 51711
+    }
+[10:30:23] [32mINFO[39m: [36mrequest completed[39m
+    [35mreqId[39m: "req-4"
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 0.6546999999991385
+[10:32:04] [32mINFO[39m: [36mincoming request[39m
+    [35mreqId[39m: "req-5"
+    [35mreq[39m: {
+      "method": "POST",
+      "url": "/api/pipeline",
+      "host": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 56717
+    }

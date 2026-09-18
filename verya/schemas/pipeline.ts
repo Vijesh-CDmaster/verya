@@ -104,7 +104,44 @@ export const SessionSchema = z.object({
   stackGate: z.unknown().nullish(),
   algorithms: z.unknown().nullish(),
   routing: z.unknown().nullish(),
-  executions: z.array(z.unknown()).default([]),
+  executions: z
+    .array(
+      z.object({
+        taskId: z.string(),
+        model: z.string(),
+        output: z.string(),
+        humanRating: z.number().min(1).max(5).optional(),
+        humanNote: z.string().max(400).optional(),
+        battleA: z
+          .object({
+            model: z.string(),
+            output: z.string(),
+            latencyMs: z.number(),
+            tokens: z.object({ input: z.number(), output: z.number() }),
+          })
+          .optional(),
+        battleB: z
+          .object({
+            model: z.string(),
+            output: z.string(),
+            latencyMs: z.number(),
+            tokens: z.object({ input: z.number(), output: z.number() }),
+          })
+          .optional(),
+        battleWinner: z.enum(["a", "b"]).optional(),
+        verification: z.object({
+          method: z.string(),
+          passed: z.boolean(),
+          issues: z.array(z.string()).default([]),
+          checkedBy: z.string(),
+        }),
+        status: z.enum(["pending", "running", "verified", "flagged", "failed", "escalated"]),
+        confidence: z.number(),
+        latencyMs: z.number(),
+        tokens: z.object({ input: z.number(), output: z.number() }),
+      })
+    )
+    .default([]),
   humanFeedback: z.object({ ratings: z.record(z.string(), z.unknown()) }).default({ ratings: {} }),
 });
 export type Session = z.infer<typeof SessionSchema>;

@@ -2,6 +2,7 @@
 
 import { useDashboard } from "@/hooks/use-session";
 import { MemorySearchCard } from "@/components/dashboard/MemorySearchCard";
+import { ExplainPanel } from "@/components/dashboard/ExplainPanel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
@@ -104,6 +105,9 @@ export function DashboardView() {
 
       {/* Org memory semantic search (pgvector) */}
       <MemorySearchCard />
+
+      {/* F22 Explain My Decision — ledger-grounded Q&A */}
+      <ExplainPanel />
 
       {/* Reputation leaderboard */}
       <Card>

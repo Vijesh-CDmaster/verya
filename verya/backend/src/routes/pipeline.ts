@@ -59,6 +59,8 @@ export default async function pipelineRoutes(app: FastifyInstance): Promise<void
   });
 
   // File upload intake (F1.3): text-like files appended into the project input.
+  // File upload intake (F1.3): server-side text extraction for text formats, PDF,
+  // and DOCX. Extraction failures are reported clearly — never a silent empty analysis.
   app.post("/pipeline/upload", async (req, reply) => {
     const rl = rateLimitKey(`upload:${req.ip}`, 10, 60_000);
     if (!rl.ok) return reply.status(429).send({ error: "Rate limit exceeded." });
@@ -66,18 +68,41 @@ export default async function pipelineRoutes(app: FastifyInstance): Promise<void
     const data = await (req as unknown as { file: () => Promise<UploadedFile | undefined> }).file?.();
     if (!data) return reply.status(400).send({ error: "multipart/form-data with a file field required" });
 
-    const allowed = /\.(txt|md|csv|json|ya?ml|log)$/i;
+    const allowed = /\.(txt|md|csv|json|ya?ml|log|pdf|docx?|rtf)$/i;
     if (!allowed.test(data.filename)) {
-      return reply.status(415).send({ error: "Only text formats (txt, md, csv, json, yaml, log) are supported." });
+      return reply
+        .status(415)
+        .send({ error: "Supported formats: txt, md, csv, json, yaml, log, pdf, doc, docx, rtf." });
     }
     const buf = await data.toBuffer();
-    if (buf.length > 2 * 1024 * 1024) {
-      return reply.status(413).send({ error: "File exceeds the 2MB limit." });
+    if (buf.length > 10 * 1024 * 1024) {
+      return reply.status(413).send({ error: "File exceeds the 10MB limit." });
     }
-    const text = sanitizeInput(buf.toString("utf8"));
+
+    let text: string;
+    try {
+      text = await extractText(buf, data.filename);
+    } catch (err) {
+      req.log.warn({ err, filename: data.filename }, "extraction failed");
+      return reply.status(422).send({
+        error: `Could not extract text from "${data.filename}". If it is a scanned PDF it may contain no selectable text — try pasting the content directly.`,
+      });
+    }
+    const trimmed = text.trim();
+    if (trimmed.length < 20) {
+      return reply.status(422).send({
+        error: `"${data.filename}" contained no usable text (scanned documents are not supported yet). Please paste your description instead.`,
+      });
+    }
+
+    // Optional typed description accompanies the document (F1: one input, many forms).
+    const description = sanitizeInput((data.fields?.description as string) ?? "").slice(0, 20000);
+    const combined = description
+      ? `${description}\n\n--- ATTACHED DOCUMENT: ${data.filename} ---\n${trimmed.slice(0, 100000)}`
+      : trimmed;
     const session = await startPipeline({
-      input: text,
-      statedStack: (data.fields?.statedStack as string) ?? "",
+      input: combined.slice(0, 20000),
+      statedStack: sanitizeInput((data.fields?.statedStack as string) ?? ""),
       policy: "balanced",
     });
     await recordToLedger({
@@ -85,10 +110,40 @@ export default async function pipelineRoutes(app: FastifyInstance): Promise<void
       sessionId: session.id,
       gate: "intake",
       eventType: "file_uploaded",
-      detail: { summary: `Intake via file upload: ${data.filename} (${buf.length} bytes)` },
+      detail: { summary: `Intake via file upload: ${data.filename} (${buf.length} bytes, ${trimmed.length} chars extracted)` },
     });
     return { session };
   });
+}
+
+/** Server-side text extraction per file type (F1.3). */
+async function extractText(buf: Buffer, filename: string): Promise<string> {
+  if (/\.pdf$/i.test(filename)) {
+    const pdfParse = (await import("pdf-parse")).default;
+    const doc = await pdfParse(buf);
+    return doc.text;
+  }
+  if (/\.docx$/i.test(filename)) {
+    const mammoth = await import("mammoth");
+    const res = await mammoth.extractRawText({ buffer: buf });
+    return res.value;
+  }
+  if (/\.doc$/i.test(filename)) {
+    // Legacy binary .doc: best-effort UTF-16LE / latin1 salvage.
+    const utf16 = buf.toString("utf16le").replace(/[^\x20-\x7E\n\r\t\u00A0-\u024F]/g, " ");
+    if (utf16.replace(/\s/g, "").length > 200) return utf16;
+    return buf.toString("latin1").replace(/[^\x20-\x7E\n\r\t]/g, " ");
+  }
+  if (/\.rtf$/i.test(filename)) {
+    // Minimal RTF strip: remove control words and braces.
+    return buf
+      .toString("latin1")
+      .replace(/\\'([0-9a-fA-F]{2})/g, " ")
+      .replace(/\\[a-zA-Z]+-?\d* ?/g, "")
+      .replace(/[{}]/g, "")
+      .replace(/\\/g, "");
+  }
+  return buf.toString("utf8");
 }
 
 type UploadedFile = {

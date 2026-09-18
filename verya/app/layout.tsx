@@ -1,3 +1,4 @@
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -29,12 +30,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans min-h-screen bg-bg text-fg`}
       >
-        <script
+        <ClerkProvider>
+          <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('verya-ui');if(t){var s=JSON.parse(t);var th=(s&&s.state&&s.state.theme)||'dark';if(th==='dark'){document.documentElement.classList.add('dark')}}else if(window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark')}}catch(e){}`,
+          __html: `try{var t=localStorage.getItem('verya-ui');if(t){var s=JSON.parse(t);var th=(s&&s.state&&s.state.theme)||'dark';if(th==='dark'){document.documentElement.classList.add('dark')}}else if(window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark')}}catch(e){}`,
           }}
-        />
-        <Providers>{children}</Providers>
+          />
+          <Providers>{children}</Providers>
+        </ClerkProvider>
       </body>
     </html>
   );

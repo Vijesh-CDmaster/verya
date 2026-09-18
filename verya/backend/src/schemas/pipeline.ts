@@ -318,6 +318,25 @@ export const ExecutionResultSchema = z.object({
   taskId: z.string().min(1),
   model: z.enum(MODEL_IDS),
   output: z.string().max(60000),
+  humanRating: z.number().min(1).max(5).optional(),
+  humanNote: z.string().max(400).optional(),
+  battleA: z
+    .object({
+      model: z.enum(MODEL_IDS),
+      output: z.string(),
+      latencyMs: z.number().min(0),
+      tokens: z.object({ input: z.number(), output: z.number() }),
+    })
+    .optional(),
+  battleB: z
+    .object({
+      model: z.enum(MODEL_IDS),
+      output: z.string(),
+      latencyMs: z.number().min(0),
+      tokens: z.object({ input: z.number(), output: z.number() }),
+    })
+    .optional(),
+  battleWinner: z.enum(["a", "b"]).optional(),
   verification: z.object({
     method: z.enum(["rules", "second_model"]),
     passed: z.boolean(),
@@ -446,6 +465,18 @@ export const GateActionSchema = z.discriminatedUnion("action", [
     accepted: z.boolean(),
     rating: z.number().min(1).max(5).optional(),
     note: z.string().max(400).optional(),
+    editedOutput: z.string().max(60000).optional(),
+  }),
+  z.object({
+    action: z.literal("battle_run"),
+    taskId: z.string().min(1),
+    modelA: z.enum(MODEL_IDS),
+    modelB: z.enum(MODEL_IDS),
+  }),
+  z.object({
+    action: z.literal("battle_pick"),
+    taskId: z.string().min(1),
+    winner: z.enum(["a", "b"]),
   }),
 ]);
 export type GateAction = z.infer<typeof GateActionSchema>;

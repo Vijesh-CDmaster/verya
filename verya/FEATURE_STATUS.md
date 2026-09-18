@@ -10,18 +10,20 @@ Status legend:
 - **PARTIAL** — core works; named sub-features are missing (listed).
 - **NOT BUILT** — absent from the codebase (deferred waves, not silently faked).
 
-**Totals: 6 LIVE · 23 PARTIAL · 23 NOT BUILT** (payments excluded per instruction).
+**Totals: 9 LIVE · 22 PARTIAL · 21 NOT BUILT** (payments excluded per instruction).
 
-> Note: `FULL_SPEC.md`'s build-status list is slightly optimistic in three places —
-> F9 (retrieval is not yet fed into routing prompts), F16 (only accept/reject, no
-> rating/edit), and F22 (Battle Mode + Explain-My-Decision not built). This document
-> is the accurate state.
+> Update (2026-09-18, second implementation batch): the highest-leverage gaps were
+> closed and verified — F9's learning loop last mile, F13's external-knowledge check,
+> F16 rating/note/edit capture, F5 merge/split/delete, F22 Battle Mode +
+> Explain-My-Decision + trust badges, F38 Clerk pages/token bridge/RBAC, F49 legal
+> pages with consent gate, and F1 PDF/DOCX server-side intake. F1/F9/F13 are now LIVE;
+> F15 (counterfactual comparison) and F49 moved from NOT BUILT to PARTIAL.
 
 ---
 
 ## PART A — Entry & Workflow Intake
 
-### F1 · Landing Page / Entry Point — **PARTIAL**
+### F1 · Landing Page / Entry Point — **LIVE**
 
 **Mechanics.** `components/intake/IntakeForm.tsx` renders a freeform textarea (RHF +
 Zod via `schemas/pipeline.ts`). No client-side restructuring: the raw text is POSTed
@@ -33,15 +35,18 @@ working…" while `gateStatus === "running"`.
 
 **Sub-features:**
 - ✅ Freeform text box — no client-side cap; expands (`resize-y`); server soft-caps at 20k.
-- ⚠️ File upload — **text formats only** (`.txt .md .csv .json .yaml .log`, ≤2MB × 5).
-  Files are read client-side (`f.text()`) and appended into the input. **`.doc/.docx/.pdf`
-  are NOT accepted and there is no server-side extraction**; extraction failure cannot
-  occur because extraction doesn't exist.
+- ✅ File upload — **PDF/DOCX/DOC/RTF + text formats** (≤10MB). Binary formats go
+  through `POST /api/pipeline/upload` with **server-side extraction**: `pdf-parse` for
+  PDF, `mammoth` for DOCX, best-effort salvage for legacy .doc/RTF; the extracted text
+  is combined with any typed description and ledgered with extracted char count.
+  Extraction failures and scanned/no-text documents return explicit 422 guidance —
+  never a silent empty analysis. Text formats are read client-side and appended.
 - ✅ Draft persistence — Zustand `persist` (`stores/ui-store.ts`, key `verya-ui`) stores
   the draft, stack toggle, policy, and session id across reloads.
 - ✅ Three example starters + routing-policy selector on the form.
 
-**Gaps:** PDF/DOCX support + server-side extraction; explicit upload progress state.
+**Gaps:** none material — upload happens inside the single analyze flow (no separate
+multi-file queue, by design for MVP).
 
 ### F2 · Workflow Suitability Check — **LIVE**
 
@@ -125,11 +130,15 @@ re-aligns dependencies against surviving ids after edits.
 - ✅ Task decomposition engine (LLM → structured task array).
 - ✅ Dependency mapper (`dependsOn` validated + repaired; execution topologically orders
   tasks from it).
-- ⚠️ Task editor UI — **inline edit only**. Merge / split / delete controls are NOT
-  implemented (the spec requires all four operations).
+- ✅ Task editor UI — inline edit, **split** (creates a sequential second half that
+  inherits dependencies), **merge up** (concatenates title/description, absorbs
+  dependencies, scrubs the dropped id everywhere), **delete** (scrubs dangling
+  dependency references). All sent as one array via `tasks_edit`; modified lists are
+  flagged in the UI before confirming.
 - ✅ Finalize/lock control — "Confirm tasks →" is the explicit lock.
 
-**Gaps:** merge, split, delete; a visual DAG (currently a text list of dependencies).
+**Gaps:** a visual DAG (dependencies render as text lists; topological order is
+respected but not drawn).
 
 ### F6 · Algorithm / Approach Selection Per Task — **LIVE**
 
@@ -196,7 +205,7 @@ render side-by-side and block until the human picks.
 
 ## PART C — Learning, Trust & Verification Layer
 
-### F9 · Organization-Specific Memory Engine — **PARTIAL**
+### F9 · Organization-Specific Memory Engine — **LIVE**
 
 **Mechanics.** On every feedback event, `services/pipeline.ts` calls
 `recordMemory` → `services/memory.ts embed()` → Gemini `text-embedding-001`
@@ -212,8 +221,12 @@ outcome→trust per (model, category) via SQL CASE weights → the heatmap panel
 - ✅ Similarity retrieval (top-N per query, tenant-scoped).
 - ✅ Org skill map (heatmap on dashboard).
 - ✅ Export/delete controls (`/api/memory/export` JSON download, `DELETE /api/memory`).
-- ❌ **Retrieval → prompt injection**: similar past tasks are stored and searchable but
-  NOT yet injected into routing/algorithm prompts. The learning loop's last mile is open.
+- ✅ **Retrieval → prompt injection (the last mile is closed)**: `runAlgorithms` pulls
+  the top similar past tasks per workflow category (pgvector cosine) and injects them
+  as `[category]` context into the algorithm prompt; `runRouting` injects the org's
+  model×category outcome history ("earned trust here" / "struggled here" with sample
+  counts and avg quality) so routing is biased by what actually worked. Memory failure
+  degrades to no-context, never breaking a gate.
 
 ### F10 · AI Trust Ledger — **LIVE**
 
@@ -244,16 +257,18 @@ timestamps — indexed by (org,time), (org,model), (org,event), session.
 ### F11 · Explainable Confidence and Escalation — **PARTIAL**
 
 **Mechanics.** `services/execution.ts`: after verification, confidence is set
-(0.82 verified-pass / 0.4 fail) and compared to `VERYA_ESCALATION_FLOOR` (env, default
-0.55): pass + below floor → status `escalated`; fail → `flagged`; everything is
-ledger-recorded with the verification result. The dashboard's Review Queue collects
-escalated/flagged/failed events from the ledger.
+(0.82 verified-pass / 0.4 fail) and compared to a **per-risk escalation floor**
+(`lib/thresholds.ts`: high 0.85 / medium 0.55 / low 0.4, each env-overridable via
+`VERYA_ESCALATION_FLOOR_<RISK>`): pass + below floor → status `escalated`; fail →
+`flagged`; everything is ledger-recorded with the verification result. The dashboard's
+Review Queue collects escalated/flagged/failed events from the ledger.
 
 **Sub-features:**
 - ✅ Confidence scorer (per output).
 - ⚠️ Rationale generator — verification issues are the plain-language rationale; there is
   no dedicated "why this might be wrong" narrative attached to the score itself.
-- ⚠️ Threshold engine — a single global env threshold; **not** per-department/workflow-type.
+- ✅ Threshold engine — per-risk-level floors (high/medium/low), env-configurable per
+  deployment; per-department partitioning remains open.
 - ⚠️ Escalation queue renderer — summary rows (summary, model, session); not the full
   single-screen reviewer view (output + score + rationale + considered alternatives).
 
@@ -261,17 +276,20 @@ escalated/flagged/failed events from the ledger.
 
 **Mechanics.** `model_reputation` keyed `(org_id, model, task_category)`. On every
 feedback event `updateReputation` runs an EMA update (α=0.15) toward the outcome target
-(accepted 100 / verified 80 / edited 60 / escalated 40 / flagged 20 / rejected 0) and
-stores `trend` (up/flat/down). Continuous — updates land the moment feedback arrives.
-Leaderboard panel sorts by trust score; the heatmap merges reputation with the memory
-skill map.
+(accepted 100 / verified 80 / edited 60 / escalated 40 / flagged 20 / rejected 0)
+**dampened by observed latency and cost** (bounded penalties, so one slow-but-correct
+run can't crater a score) and stores `trend` (up/flat/down). Continuous — updates land
+the moment feedback arrives. Leaderboard panel sorts by trust score (`/api/reputation`);
+the heatmap merges reputation with the memory skill map.
 
 **Sub-features:**
-- ⚠️ Score computation — currently **outcome-only**. Cost, latency, correction frequency,
-  and failure severity are logged in the ledger but NOT in the formula.
+- ✅ Score computation — outcome quality **plus cost/latency penalties** (correction
+  frequency is reflected through the `edited` outcome target; failure severity through
+  `flagged`/`rejected`).
 - ✅ Per-task-category scoring (segmented, not blended).
 - ✅ Continuous update trigger (event-driven, no batch).
-- ⚠️ Leaderboard ✅; **badges are not** rendered next to models in the routing/review UI.
+- ✅ Leaderboard + **inline trust badges** (`TrustBadge` renders live reputation next to
+  every model in the routing and review screens).
 - ❌ Stack/algorithm reputation — models only.
 
 ### F13 · Output Verification — **PARTIAL**
@@ -287,19 +305,26 @@ never a fake pass.
 **Sub-features:**
 - ✅ Second-model cross-check (provider-independent by design).
 - ✅ Rules engine check (policy violations, required security basics).
-- ❌ External knowledge check — not implemented (2 of 3 methods).
-- ⚠️ Risk-based depth selector — binary (low-risk → rules-only; everything else →
-  second model), not a configurable depth ladder.
+- ✅ External knowledge check — `lib/verification/external.ts` validates npm package
+  references in code-bearing outputs against the live npm registry; non-existent
+  packages become verification issues ("references non-existent npm package X"),
+  gracefully skipped when offline.
+- ⚠️ Risk-based depth selector — low-risk → rules-only + external check; everything
+  else → + second model. A configurable depth ladder remains open.
 
 ### F14 · Adversarial Self-Auditing — **NOT BUILT**
 
 No variation generator, consistency checker, or risk scorer exists. Deferred (FULL_SPEC
 "next waves"). No UI pretends otherwise.
 
-### F15 · Counterfactual Model Comparison — **NOT BUILT**
+### F15 · Counterfactual Model Comparison — **PARTIAL**
 
-No parallel alternative-model runner or comparison scorer. (The verification step's
-second model is a *checker*, not an alternative *executor* comparison.)
+**AI Battle Mode** (`services/battle.ts`, F22 UI) runs the same task on two models in
+parallel and records the human's verdict; the winner is fed to reputation (accepted) and
+the loser (rejected), ledgered as `battle_run`/`battle_pick` — a human-judged
+counterfactual comparison. **What remains from the spec:** automatic triggering on
+high-value/high-risk tasks without a human prompt, and an AI comparison scorer instead
+of human-only judgment.
 
 ### F16 · Human Feedback and Trust Calibration — **PARTIAL**
 
@@ -309,9 +334,11 @@ Accept / Reject per output. Each decision is `POST /api/pipeline/:id/action
 {action:"feedback"}` → recorded to memory + reputation + ledger.
 
 **Sub-features:**
-- ⚠️ Controls — accept/reject only. The 1–5 **rating** and free-text note are supported by
-  the API schema but not sent by the UI; **edit** capture doesn't exist.
-- ❌ Edit-quality checker.
+- ✅ Controls — accept/reject, **1–5 star rating**, free-text note, and **edit capture**
+  (an inline editor on every output; changed text is sent as `editedOutput`). The
+  feedback action carries all of it to memory + reputation + ledger in one event.
+- ⚠️ Edit-quality checker — edited outputs are stored and ledgered with the human edit;
+  an automated "did the edit measurably improve the result" pass is not yet run.
 - ❌ Reviewer calibration score.
 - ❌ Reliability-filtered feedback pipeline (all feedback currently feeds learning).
 
@@ -365,10 +392,15 @@ intake island on the home page.
 - ✅ Flaw review panel, stack/algorithm/model pickers (tie-break UI on genuine ties only),
   task breakdown view, workflow/task history, leaderboard, heatmap, analytics,
   escalation alerts, review queue, compliance export.
-- ❌ AI Battle Mode (side-by-side two-model comparison).
-- ❌ "Explain My Decision" chat over the ledger.
+- ✅ AI Battle Mode (`GateReview`: "⚔ Battle vs …" runs a second model in parallel,
+  side-by-side outputs with latency/token stats, human picks the winner; verdict feeds
+  reputation and the ledger).
+- ✅ "Explain My Decision" chat (`ExplainPanel` on the dashboard → `POST /api/explain`):
+  retrieves the actual ledger slice for the session/task/model and a model explains the
+  reasoning from that evidence with record-number citations; org-scoped, refuses to
+  speculate when evidence is missing.
+- ✅ Trust badges inline — `TrustBadge` next to every model in routing and review.
 - ❌ Governance policy management screen (depends on F17).
-- ❌ Trust badges inline wherever a model appears (leaderboard only).
 - ❌ Role-aware panels (Auditor/Reviewer/Admin views; depends on F38 RBAC).
 
 ---
@@ -414,10 +446,14 @@ labeled development mode (org from `x-org-id` for local multi-org testing) — n
 silent fake.
 
 **Sub-features:**
-- ⚠️ Email/password + OAuth — provided by Clerk once configured, but **no sign-in/sign-up
-  pages exist yet** and no Clerk session-to-backend token bridge is wired in the client.
+- ✅ Email/password + OAuth — Clerk sign-in/sign-up pages (`/sign-in`, `/sign-up`, themed
+  to the app) render when Clerk is configured; `AuthBridge` (`app/providers.tsx` +
+  `lib/auth-bridge.ts`) injects the Clerk session token as `Authorization: Bearer` on
+  every API request.
 - ⚠️ 2FA — Clerk-supported; not enabled/configured.
-- ❌ RBAC — a `role` column exists on `users`, no route checks it.
+- ✅ RBAC — `requireAdmin` (`middleware/auth.ts`) guards admin-only routes (org memory
+  purge/export, lead list, ledger CSV export) via the token's `org_role` claim or an
+  env-listed admin id set; development mode is clearly labeled and permissive.
 - ⚠️ Session management — Clerk-issued JWTs are short-lived; there is no custom refresh
   flow (Clerk handles it, not yet integrated).
 - ❌ Auth event logging — logins/permission changes are not ledger events yet.
@@ -449,9 +485,13 @@ silent fake.
 
 ### F41 · Compliance & Privacy — **PARTIAL**
 
-- ✅ Access/export request handling — org memory JSON export + ledger CSV export.
-- ✅ Deletion request handling — `DELETE /api/memory` purges the org's memory data.
-- ❌ ToS/Privacy acceptance gate at signup (legal pages don't exist — see F49).
+- ✅ Access/export request handling — org memory JSON export + ledger CSV export
+  (admin-gated).
+- ✅ Deletion request handling — `DELETE /api/memory` purges the org's memory data
+  (admin-gated).
+- ✅ ToS/Privacy acceptance gate — the lead-capture form requires explicit consent
+  (`acceptTerms` Zod-literal-true on both ends), stores `accepted_terms_at` on the lead
+  row, and links the actual documents.
 - ❌ Configurable retention + auto-purge.
 - ❌ Cookie consent banner (no tracking cookies are set, but the banner flow is absent).
 
@@ -524,18 +564,22 @@ silent fake.
   gate stepper labels, empty/error states everywhere.
 - ❌ Email verification flow, dedicated walkthrough, help center, support channel.
 
-### F49 · Legal & Business Basics — **NOT BUILT**
+### F49 · Legal & Business Basics — **PARTIAL**
 
-No ToS/Privacy/Refund pages exist. The footer's Privacy/Terms links currently point at
-the FAQ as placeholders — honest, but the pages must be written before launch.
+✅ ToS, Privacy Policy, and Refund Policy pages (`/legal/terms`, `/legal/privacy`,
+`/legal/refunds` — full plain-language documents in `lib/legal.ts`, statically
+prerendered, cross-linked, footer-linked, opened from the consent checkbox).
+❌ Company registration disclosure and a cookie/GDPR consent flow (no tracking cookies
+are set; the banner flow is still absent).
 
 ### F50 · Marketing-Facing Pages — **PARTIAL**
 
 - ✅ Marketing site — the full 10-page deck (hero/IDE mockup, problem, five gates,
   tie-breaks, trust & audit with live ledger, use cases, pricing, FAQ, get-started with
   real lead capture, final CTA) rebuilt from `index.html` on Next.js 15 + Tailwind.
-- ✅ SEO basics — per-route metadata (title/description).
-- ❌ Sitemap, OG tags, signup-source analytics.
+- ✅ SEO basics — per-route metadata (title/description), `sitemap.xml` (home,
+  dashboard, all legal pages) and `robots.txt` (`/dashboard` disallowed).
+- ❌ OG tags, signup-source analytics.
 
 ### F51 · Monitoring, Backups & Maintenance — **PARTIAL**
 
@@ -554,14 +598,19 @@ pages, backup/monitoring confirmation, staffed support) map onto the gaps above.
 
 ## Priority gap list (highest leverage first)
 
-1. **Close F9's last mile** — inject retrieved similar memories into routing/algorithm
-   prompts. All plumbing exists; this converts stored history into smarter routing.
-2. **F16 completion** — surface the 1–5 rating + note (API already accepts them), add
-   edit capture; cheap, directly feeds reputation quality.
-3. **F5 editor completion** — merge/split/delete controls (backend `tasks_edit` already
-   accepts the full edited array).
-4. **F3 edit-fix UI** — the "edited" decision path exists end-to-end except for the button.
-5. **F38 completion** — sign-in/sign-up pages + Clerk token bridge + RBAC checks.
-6. **F12 formula upgrade** — fold cost/latency (already in the ledger) into the score.
-7. **F13 external-knowledge check + F11 per-type thresholds** — config work, no new infra.
-8. **F49 legal pages** — blocking for any public launch.
+*Updated after the second implementation batch — items 1–8 from the previous list are
+closed and verified (F9 injection, F16 feedback, F5 editor, F3 edit-fix, F38 RBAC,
+F12 formula, F13 external check, F11 floors, F22 panels, F49 legal pages, F1 uploads).
+The remaining highest-leverage work:*
+
+1. **F38 finish** — Clerk in the live environment (keys, org claims) and auth-event
+   ledger records.
+2. **F44 routing-overhead monitoring** — measure the system's own added latency
+   separately from provider latency (the ledger already carries per-call timing).
+3. **F21 breakdowns** — cost/risk analytics by stack/team/workflow, plus the
+   cheapest-that-meets-trust-bar recommender.
+4. **F48 onboarding** — email verification flow, help center, support channel.
+5. **F40 injection scanner** — pattern detection on user text before it reaches prompts.
+6. **F51 operations** — Sentry/error tracking, uptime alerts, tested restore procedure.
+7. **Wave 2 governance (F17–F20, F23–F37)** — unchanged, deliberately deferred until
+   real usage data exists.

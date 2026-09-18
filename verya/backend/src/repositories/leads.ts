@@ -20,8 +20,8 @@ export async function insertLead(input: {
 }): Promise<LeadRecord> {
   requireDb();
   const rows = await query<Record<string, unknown>>(
-    `INSERT INTO leads (org_id, name, email, phone, source)
-     VALUES ($1, $2, $3, $4, $5)
+    `INSERT INTO leads (org_id, name, email, phone, source, accepted_terms_at)
+     VALUES ($1, $2, $3, $4, $5, now())
      RETURNING id, org_id, name, email, phone, source, created_at`,
     [input.orgId, input.name, input.email, input.phone || null, input.source || "website"]
   );

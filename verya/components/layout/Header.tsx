@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useUiStore } from "@/stores/ui-store";
 import { useBackendHealth } from "@/hooks/use-session";
+import { AuthControls, UserMenu } from "@/components/layout/AuthControls";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -58,18 +59,8 @@ export function Header() {
           >
             {theme === "dark" ? "☀" : "☾"}
           </button>
-          <Link
-            href="/#get-started"
-            className="hidden rounded-md border border-line bg-bg px-4 py-1.5 text-sm transition-all hover:-translate-y-0.5 hover:bg-surface sm:block"
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/#get-started"
-            className="rounded-md bg-accent px-4 py-1.5 text-sm text-accent-fg transition-all hover:-translate-y-0.5 hover:opacity-90"
-          >
-            Get Started
-          </Link>
+          <AuthControls />
+          <UserMenu />
         </div>
       </div>
       <MobileNav />

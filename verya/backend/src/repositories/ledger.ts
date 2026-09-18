@@ -99,6 +99,7 @@ export type LedgerQuery = {
   model?: string;
   eventType?: string;
   gate?: string;
+  taskId?: string;
   from?: string;
   to?: string;
   limit?: number;
@@ -117,6 +118,7 @@ export async function listLedger(q: LedgerQuery): Promise<LedgerEntry[]> {
   if (q.model) add("model = $?", q.model);
   if (q.eventType) add("event_type = $?", q.eventType);
   if (q.gate) add("gate = $?", q.gate);
+  if (q.taskId) add("task_id = $?", q.taskId);
   if (q.from) add("created_at >= $?", q.from);
   if (q.to) add("created_at <= $?", q.to);
 

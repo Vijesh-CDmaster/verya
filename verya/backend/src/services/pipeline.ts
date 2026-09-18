@@ -2,6 +2,7 @@
 // Preserves the exact gate semantics from the monolith: suitability → flaws → stack →
 // tasks → algorithms → models → execution → review, with F8 tie-breaks enforced.
 import type { GateAction, PipelineSession } from "../schemas/pipeline";
+import { modelCostOf } from "../schemas/pipeline";
 import { processGate, applyGateAction } from "../lib/pipeline/gates";
 import { geminiAdapters, type StageAdapters } from "../lib/ai/provider";
 import { createSession as repoCreate, saveSession as repoSave, getSession as repoGet, listSessions as repoList } from "../repositories/sessions";
@@ -64,12 +65,28 @@ export async function actOnPipeline(id: string, action: GateAction): Promise<Pip
   updated.updatedAt = new Date().toISOString();
   await repoSave(ORG_ID, updated);
 
-  // Feedback (F16): every accept/reject feeds memory + reputation.
+  // Feedback (F16): every accept/reject/rate/edit feeds memory + reputation + ledger.
   if (action.action === "feedback") {
     const exec = updated.executions.find((e) => e.taskId === action.taskId);
     if (exec) {
       const task = updated.workflow?.tasks.find((t) => t.id === action.taskId);
-      const outcome = action.accepted ? (action.rating && action.rating >= 4 ? "accepted" : "edited") : "rejected";
+      const edited = typeof action.editedOutput === "string" && action.editedOutput.trim().length > 0;
+      const outcome: "accepted" | "edited" | "rejected" = !action.accepted
+        ? "rejected"
+        : edited || (action.rating != null && action.rating < 4)
+          ? "edited"
+          : "accepted";
+
+      if (edited) {
+        exec.output = action.editedOutput!; // human edit becomes the canonical output
+        exec.verification.issues = [
+          ...exec.verification.issues,
+          "Output edited by human after verification.",
+        ].slice(0, 12);
+      }
+      if (action.rating != null) exec.humanRating = action.rating;
+      if (action.note) exec.humanNote = action.note;
+
       await recordMemory({
         orgId: ORG_ID,
         sessionId: updated.id,
@@ -78,13 +95,31 @@ export async function actOnPipeline(id: string, action: GateAction): Promise<Pip
         outcome,
         title: task?.title ?? exec.taskId,
         content: exec.output.slice(0, 2000),
-        meta: { rating: action.rating ?? null, note: action.note ?? null },
+        meta: { rating: action.rating ?? null, note: action.note ?? null, edited },
       });
       await updateFromOutcome({
         orgId: ORG_ID,
         model: exec.model,
         taskCategory: task?.category ?? "other",
         outcome,
+        latencyMs: exec.latencyMs,
+        costUnits: modelCostOf(exec.model),
+      });
+      await recordToLedger({
+        orgId: ORG_ID,
+        sessionId: updated.id,
+        gate: "review",
+        eventType: "human_feedback",
+        actor: "human",
+        taskId: action.taskId,
+        model: exec.model,
+        detail: {
+          summary: `${task?.title ?? action.taskId}: ${outcome}${action.rating != null ? ` (rated ${action.rating}/5)` : ""}`,
+          rating: action.rating ?? null,
+          note: action.note ?? null,
+          edited,
+        },
+        humanEdit: edited ? { editedOutputChars: action.editedOutput!.length } : undefined,
       });
     }
   }

@@ -1,5 +1,7 @@
 // Model reputation repository (F12) — living trust scores per model x task category.
 // Continuous updates (not scheduled): every verification/feedback event nudges the score.
+// The score blends outcome quality with observed cost/latency so the leaderboard
+// reflects real operating economics, not just acceptance.
 import { query, requireDb, isDbConfigured } from "../db/pool";
 import * as dev from "../db/devstore";
 
@@ -13,7 +15,7 @@ export type ReputationEntry = {
   lastUpdated: string;
 };
 
-const OUTCOME_TARGET: Record<ReputationEntry["trend"] | string, number> = {
+const OUTCOME_TARGET: Record<string, number> = {
   accepted: 100,
   verified: 80,
   edited: 60,
@@ -27,11 +29,24 @@ export async function updateReputation(input: {
   model: string;
   taskCategory: string;
   outcome: "accepted" | "edited" | "rejected" | "escalated" | "verified" | "flagged";
+  latencyMs?: number;
+  costUnits?: number;
 }): Promise<ReputationEntry> {
   if (!isDbConfigured()) return dev.devUpdateReputation(input);
   requireDb();
   const alpha = 0.15;
   const target = OUTCOME_TARGET[input.outcome] ?? 50;
+
+  // F12 formula: outcome dominates; slow or expensive executions dampen the target.
+  // Penalties are bounded so one slow-but-correct run can't crater a model's score.
+  const latencyPenalty =
+    input.latencyMs != null && input.latencyMs > 30_000
+      ? Math.min(10, Math.log10(input.latencyMs / 30_000 + 1) * 10)
+      : 0;
+  const costPenalty =
+    input.costUnits != null && input.costUnits >= 4 ? 5 : input.costUnits != null && input.costUnits >= 2 ? 2 : 0;
+  const adjustedTarget = Math.max(0, target - latencyPenalty - costPenalty);
+
   const rows = await query<{ trust_score: number; samples: number }>(
     `SELECT trust_score, samples FROM model_reputation
       WHERE org_id = $1 AND model = $2 AND task_category = $3`,
@@ -43,7 +58,7 @@ export async function updateReputation(input: {
     score = rows[0].trust_score;
     samples = rows[0].samples;
   }
-  const next = Math.round((score + alpha * (target - score)) * 10) / 10;
+  const next = Math.round((score + alpha * (adjustedTarget - score)) * 10) / 10;
   const trend = next > score ? "up" : next < score ? "down" : "flat";
   await query(
     `INSERT INTO model_reputation (org_id, model, task_category, trust_score, samples, trend, last_updated)
@@ -81,4 +96,30 @@ export async function getReputation(orgId: string): Promise<ReputationEntry[]> {
     trend: String(r.trend) as ReputationEntry["trend"],
     lastUpdated: new Date(r.last_updated as string).toISOString(),
   }));
+}
+
+/** Lookup used for inline trust badges (F22). */
+export async function getReputationFor(
+  orgId: string,
+  model: string,
+  taskCategory: string
+): Promise<ReputationEntry | null> {
+  requireDb();
+  const rows = await query<Record<string, unknown>>(
+    `SELECT org_id, model, task_category, trust_score, samples, trend, last_updated
+       FROM model_reputation
+      WHERE org_id = $1 AND model = $2 AND task_category = $3`,
+    [orgId, model, taskCategory]
+  );
+  const r = rows[0];
+  if (!r) return null;
+  return {
+    orgId: String(r.org_id),
+    model: String(r.model),
+    taskCategory: String(r.task_category),
+    trustScore: Number(r.trust_score),
+    samples: Number(r.samples),
+    trend: String(r.trend) as ReputationEntry["trend"],
+    lastUpdated: new Date(r.last_updated as string).toISOString(),
+  };
 }
