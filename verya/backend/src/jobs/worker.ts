@@ -11,7 +11,7 @@ import { checkExternalReferences } from "../lib/verification/external";
 import { escalationFloorFor } from "../lib/thresholds";
 import { updateFromOutcome } from "../services/reputation";
 import { modelCostOf } from "../schemas/pipeline";
-import type { ExecutionResult, PipelineSession } from "../schemas/pipeline";
+import { codeArtifactOf, type ExecutionResult, type PipelineSession } from "../schemas/pipeline";
 
 const ORG_ID = process.env.VERYA_ORG_ID || "default-org";
 
@@ -71,6 +71,7 @@ async function executeSession(sessionId: string): Promise<void> {
         taskId: task.id,
         model,
         output: exec.output,
+        code: codeArtifactOf(exec.output, task.title),
         verification: {
           method: needsSecondModel ? "second_model" : "rules",
           passed: verification.passed,

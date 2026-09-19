@@ -31,6 +31,7 @@ export type Severity = z.infer<typeof SeveritySchema>;
 export const GateIdSchema = z.enum([
   "intake",
   "suitability",
+  "platform",
   "flaws",
   "stack",
   "tasks",
@@ -40,6 +41,8 @@ export const GateIdSchema = z.enum([
   "review",
 ]);
 export type GateId = z.infer<typeof GateIdSchema>;
+export const TargetPlatformSchema = z.enum(["android", "ios", "both"]);
+export type TargetPlatform = z.infer<typeof TargetPlatformSchema>;
 
 export const GateStatusSchema = z.enum(["pending", "running", "awaiting_user", "cleared", "failed"]);
 export type GateStatus = z.infer<typeof GateStatusSchema>;
@@ -54,6 +57,7 @@ export const SessionSchema = z.object({
   uploads: z.array(z.object({ name: z.string(), chars: z.number() })).default([]),
   gate: GateIdSchema,
   gateStatus: GateStatusSchema,
+  error: z.string().optional(),
   suitability: z
     .object({
       suitable: z.boolean(),
@@ -108,6 +112,16 @@ export const SessionSchema = z.object({
     .array(
       z.object({
         taskId: z.string(),
+        code: z
+          .object({
+            language: z.string(),
+            fileName: z.string(),
+            original: z.string(),
+            current: z.string(),
+            version: z.number(),
+            updatedAt: z.string(),
+          })
+          .optional(),
         model: z.string(),
         output: z.string(),
         humanRating: z.number().min(1).max(5).optional(),
@@ -142,6 +156,7 @@ export const SessionSchema = z.object({
       })
     )
     .default([]),
+  targetPlatform: TargetPlatformSchema.optional(),
   humanFeedback: z.object({ ratings: z.record(z.string(), z.unknown()) }).default({ ratings: {} }),
 });
 export type Session = z.infer<typeof SessionSchema>;

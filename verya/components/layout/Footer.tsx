@@ -4,8 +4,8 @@ const COLUMNS: Array<{ title: string; links: Array<{ label: string; href: string
   {
     title: "Product",
     links: [
-      { label: "Workbench", href: "/#product" },
-      { label: "Audit Ledger", href: "/#audit" },
+    { label: "New analysis", href: "/workspace" },
+      { label: "Audit Ledger", href: "/#trust" },
       { label: "Pricing", href: "/#pricing" },
       { label: "Dashboard", href: "/dashboard" },
     ],
@@ -14,9 +14,9 @@ const COLUMNS: Array<{ title: string; links: Array<{ label: string; href: string
     title: "Engineering",
     links: [
       { label: "How it works", href: "/#how-it-works" },
-      { label: "Tie-breaks", href: "/#tie-breaks" },
+      { label: "Decision process", href: "/#how-it-works" },
       { label: "FAQ", href: "/#faq" },
-      { label: "Get started", href: "/#get-started" },
+      { label: "New analysis", href: "/workspace" },
     ],
   },
   {
@@ -24,8 +24,7 @@ const COLUMNS: Array<{ title: string; links: Array<{ label: string; href: string
     links: [
       { label: "Trust & audit", href: "/#trust" },
       { label: "Use cases", href: "/#use-cases" },
-      { label: "Sign up", href: "/#get-started" },
-      { label: "Final word", href: "/#final-cta" },
+      { label: "Start analysis", href: "/workspace" },
     ],
   },
 ];

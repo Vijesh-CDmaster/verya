@@ -13,7 +13,7 @@ export function FinalCta() {
           is caught, every line of code is verified before it runs.
         </p>
         <Link
-          href="/#get-started"
+          href="/workspace"
           className="inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 text-base font-semibold text-accent-fg transition-all hover:-translate-y-0.5 hover:opacity-90"
         >
           Start Your Free Tier →

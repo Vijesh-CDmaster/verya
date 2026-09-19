@@ -21,7 +21,7 @@ import {
   EXECUTION_SYSTEM,
   VERIFICATION_SYSTEM,
 } from "./prompts";
-import type { PipelineStageId, ProviderName } from "../../schemas/pipeline";
+import type { PipelineStageId, ProviderName, TargetPlatform } from "../../schemas/pipeline";
 import { MODEL_POOL, poolModelOf } from "../../schemas/pipeline";
 import {
   WorkflowSchema,
@@ -97,7 +97,7 @@ function getProviderConfigs(): ProviderConfig[] {
   );
   if (configured.length === 0) {
     throw new ProviderError(
-      "No AI provider is configured. Set at least one provider API key (GEMINI_API_KEY, GROQ_API_KEY, MISTRAL_API_KEY, OPENROUTER_API_KEY) in verya/.env.local.",
+      "No AI provider is configured. Set at least one provider API key (GEMINI_API_KEY, GROQ_API_KEY, MISTRAL_API_KEY, OPENROUTER_API_KEY) in .env.local or backend/.env.",
       "understanding"
     );
   }
@@ -611,7 +611,7 @@ export async function runModelText(
 export interface StageAdapters {
   understand(raw: string): Promise<Workflow>;
   checkSuitability(input: { raw: string; workflow: Workflow }): Promise<Suitability>;
-  detectFlaws(input: { raw: string; workflow: Workflow }): Promise<FlawReport>;
+  detectFlaws(input: { raw: string; workflow: Workflow; targetPlatform?: TargetPlatform }): Promise<FlawReport>;
   validateStack(input: {
     raw: string;
     workflow: Workflow;
@@ -655,11 +655,14 @@ export const geminiAdapters: StageAdapters = {
       SuitabilitySchema
     ),
 
-  detectFlaws: async ({ raw, workflow }) => {
+  detectFlaws: async ({ raw, workflow, targetPlatform }) => {
+    const platformContext = targetPlatform
+      ? `\nTARGET PLATFORM: ${targetPlatform === "both" ? "Android and iOS" : targetPlatform === "android" ? "Android only" : "iOS only"}`
+      : "";
     const first = await runStructuredStage(
       "flaws",
       FLAW_SYSTEM,
-      `PROJECT DESCRIPTION:\n${raw}\n\nWORKFLOW:\n${JSON.stringify(workflow)}`,
+      `PROJECT DESCRIPTION:\n${raw}\n\nWORKFLOW:\n${JSON.stringify(workflow)}${platformContext}`,
       FlawReportSchema
     );
     // Self-consistency retry: if the summary claims gaps but flaws is empty, the model
@@ -669,7 +672,7 @@ export const geminiAdapters: StageAdapters = {
       return runStructuredStage(
         "flaws",
         FLAW_SYSTEM,
-        `PROJECT DESCRIPTION:\n${raw}\n\nWORKFLOW:\n${JSON.stringify(workflow)}\n\nNOTE: Your previous attempt returned an empty flaws array while its own summary claimed real gaps ("${first.summary.slice(0, 300)}"). Re-analyze and return EVERY flaw in the flaws array — each as a full object with id, title, category, severity, description, suggestedFix, relatedTaskIds. Empty is only valid if the plan is truly clean.`,
+        `PROJECT DESCRIPTION:\n${raw}\n\nWORKFLOW:\n${JSON.stringify(workflow)}${platformContext}\n\nNOTE: Your previous attempt returned an empty flaws array while its own summary claimed real gaps ("${first.summary.slice(0, 300)}"). Re-analyze and return EVERY flaw in the flaws array — each as a full object with id, title, category, severity, description, suggestedFix, relatedTaskIds. Empty is only valid if the plan is truly clean.`,
         FlawReportSchema
       );
     }

@@ -1,8 +1,12 @@
   // Verya backend entrypoint.
-import "dotenv/config";
+import dotenv from "dotenv";
+import path from "node:path";
 import { buildApp } from "./app";
 import { isDbConfigured } from "./db/pool";
 import { clerkConfigured } from "./middleware/auth";
+
+dotenv.config();
+dotenv.config({ path: path.resolve(process.cwd(), "../.env.local") });
 
 const PORT = Number(process.env.PORT) > 0 ? Number(process.env.PORT) : 4000;
 const HOST = process.env.HOST || "0.0.0.0";

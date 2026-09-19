@@ -82,6 +82,8 @@ export async function processGate(
   switch (session.gate) {
     case "suitability":
       return runSuitability(session, adapters);
+    case "platform":
+      return session;
     case "flaws":
       return runFlaws(session, adapters);
     case "stack":
@@ -113,6 +115,7 @@ async function runFlaws(
   const flawReport = await adapters.detectFlaws({
     raw: session.input,
     workflow: finalWorkflow,
+    targetPlatform: session.targetPlatform,
   });
   session.flawReport = flawReport;
   session.gateStatus = "awaiting_user";
@@ -173,8 +176,8 @@ async function runSuitability(
       eventType: "suggested_workflow_adopted",
       detail: { summary: "Re-extracted workflow from the suggested improvement" },
     });
-    session.gate = "flaws";
-    session.gateStatus = "running";
+    session.gate = "platform";
+    session.gateStatus = "awaiting_user";
     return session;
   }
   const workflow: Workflow = await adapters.understand(session.input);
@@ -200,9 +203,9 @@ async function runSuitability(
     await recordToLedger({
       orgId: ORG_ID,
       sessionId: session.id,
-      gate: "flaws",
-      eventType: "flaw_report",
-      detail: { summary: "Flaw scan queued for approval" },
+      gate: "platform",
+      eventType: "platform_selection_required",
+      detail: { summary: "Choose the target mobile platform before flaw detection" },
     });
   } else {
     // Not suitable: keep the extraction as the baseline the user keeps or replaces.
@@ -578,9 +581,28 @@ export async function applyGateAction(
       // back into runSuitability, whose populated-suitability re-entry branch
       // performs the re-extraction and THEN advances to flaws.
       if (action.choice !== "suggested") {
-        session.gate = "flaws";
-        session.gateStatus = "running";
+        session.gate = "platform";
+        session.gateStatus = "awaiting_user";
       }
+      break;
+    }
+
+    case "platform_choose": {
+      if (session.gate !== "platform") break;
+      session.targetPlatform = action.targetPlatform;
+      session.gate = "flaws";
+      session.gateStatus = "running";
+      await recordToLedger({
+        orgId: ORG_ID,
+        sessionId: session.id,
+        gate: "platform",
+        eventType: "platform_selected",
+        actor: "human",
+        detail: {
+          summary: `Target platform: ${action.targetPlatform === "both" ? "Android and iOS" : action.targetPlatform}`,
+          targetPlatform: action.targetPlatform,
+        },
+      });
       break;
     }
 
@@ -703,6 +725,31 @@ export async function applyGateAction(
         taskId: action.taskId,
         model: action.choice,
         detail: { summary: `User routed ${route.taskTitle} to ${action.choice}` },
+      });
+      break;
+    }
+
+    case "code_edit": {
+      if (session.gate !== "review") break;
+      const execution = session.executions.find((e) => e.taskId === action.taskId);
+      if (!execution?.code) {
+        throw Object.assign(new Error("This task has no editable code artifact"), { statusCode: 409 });
+      }
+      if (execution.code.version !== action.expectedVersion) {
+        throw Object.assign(new Error("This code changed in another session. Reload before saving."), { statusCode: 409 });
+      }
+      execution.code.current = action.code;
+      execution.code.version += 1;
+      execution.code.updatedAt = new Date().toISOString();
+      await recordToLedger({
+        orgId: ORG_ID,
+        sessionId: session.id,
+        gate: "review",
+        eventType: "code_edited",
+        actor: "human",
+        taskId: action.taskId,
+        detail: { summary: `Saved manual code edit for ${execution.code.fileName}`, version: execution.code.version },
+        humanEdit: { codeVersion: execution.code.version, codeChars: action.code.length },
       });
       break;
     }

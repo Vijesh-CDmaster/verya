@@ -2,23 +2,18 @@
 
 import Link from "next/link";
 import { useUiStore } from "@/stores/ui-store";
-import { useBackendHealth } from "@/hooks/use-session";
 import { AuthControls, UserMenu } from "@/components/layout/AuthControls";
-import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { href: "/#product", label: "Product" },
-  { href: "/#how-it-works", label: "How It Works" },
+  { href: "/#how-it-works", label: "How it works" },
   { href: "/#trust", label: "Trust" },
-  { href: "/#faq", label: "FAQ" },
-  { href: "/#about", label: "About" },
+  { href: "/#use-cases", label: "Use cases" },
+  { href: "/#pricing", label: "Pricing" },
 ];
 
 export function Header() {
   const theme = useUiStore((s) => s.theme);
   const toggleTheme = useUiStore((s) => s.toggleTheme);
-  const health = useBackendHealth();
-
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-header-bg backdrop-blur">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
@@ -38,19 +33,6 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <span
-            title={
-              health.data
-                ? `Backend: ${health.data.auth} mode`
-                : health.isError
-                  ? "Backend unreachable"
-                  : "Checking backend"
-            }
-            className={cn(
-              "h-2 w-2 rounded-full",
-              health.data ? "bg-success" : health.isError ? "bg-danger" : "bg-warn animate-pulse"
-            )}
-          />
           <button
             onClick={toggleTheme}
             aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
@@ -59,6 +41,12 @@ export function Header() {
           >
             {theme === "dark" ? "☀" : "☾"}
           </button>
+          <Link
+            href="/workspace"
+            className="hidden rounded-md bg-accent px-4 py-1.5 text-sm font-semibold text-accent-fg transition-opacity hover:opacity-90 sm:block"
+          >
+            Start analysis
+          </Link>
           <AuthControls />
           <UserMenu />
         </div>
@@ -76,8 +64,8 @@ function MobileNav() {
           {l.label}
         </a>
       ))}
-      <a href="/dashboard" className="hover:text-fg">
-        Dashboard
+      <a href="/workspace" className="font-semibold text-fg hover:text-accent">
+        Start analysis
       </a>
     </nav>
   );

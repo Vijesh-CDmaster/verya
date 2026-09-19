@@ -2,7 +2,7 @@
 
 // App providers: TanStack Query (server state), Clerk (auth), theme hydration.
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ClerkProvider, useAuth } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { useUiStore } from "@/stores/ui-store";
 import { setTokenGetter } from "@/lib/auth-bridge";
@@ -46,15 +46,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
   // Clerk is optional at runtime: without a publishable key the app renders without
   // auth UI (backend stays in development mode) instead of crashing. Routes point at
   // the dedicated sign-in/sign-up pages (F38).
-  if (CLERK_KEY) {
-    return (
-      <ClerkProvider signInUrl="/sign-in" signUpUrl="/sign-up" appearance={{ variables: { colorPrimary: "#6366f1" } }}>
-        <QueryClientProvider client={queryClient}>
-          <AuthBridge />
-          {app}
-        </QueryClientProvider>
-      </ClerkProvider>
-    );
-  }
-  return <QueryClientProvider client={queryClient}>{app}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>
+      {CLERK_KEY && <AuthBridge />}
+      {app}
+    </QueryClientProvider>
+  );
 }

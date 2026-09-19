@@ -12,7 +12,7 @@ export function Pricing() {
             Ever.
           </p>
           <Link
-            href="/#get-started"
+            href="/workspace"
             className="inline-flex items-center gap-1 font-semibold transition-all hover:translate-x-1 hover:text-blue-600 dark:hover:text-blue-400"
           >
             View Pricing →

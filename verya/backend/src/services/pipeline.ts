@@ -79,6 +79,10 @@ function kickGateProcessing(sessionId: string): void {
         const fresh = await repoGet(ORG_ID, sessionId);
         if (fresh) {
           fresh.gateStatus = "failed";
+          fresh.error =
+            err instanceof Error
+              ? err.message
+              : "The analysis could not be completed. Check the backend configuration and try again.";
           fresh.updatedAt = new Date().toISOString();
           await repoSave(ORG_ID, fresh);
         }

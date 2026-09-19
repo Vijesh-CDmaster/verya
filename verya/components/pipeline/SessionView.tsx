@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useGateAction, useExecute } from "@/hooks/use-session";
 import { GateSuitability } from "./GateSuitability";
+import { GatePlatform } from "./GatePlatform";
 import { GateFlaws } from "./GateFlaws";
 import { GateStack } from "./GateStack";
 import { GateTasks } from "./GateTasks";
@@ -16,6 +17,7 @@ import { GateReview } from "./GateReview";
 
 const GATES: { id: GateId; label: string }[] = [
   { id: "suitability", label: "Suitability" },
+  { id: "platform", label: "Target" },
   { id: "flaws", label: "Flaws" },
   { id: "stack", label: "Stack" },
   { id: "tasks", label: "Tasks" },
@@ -75,8 +77,19 @@ export function SessionView({ session, onReset }: { session: Session; onReset: (
         <p className="pulse-soft mb-3 text-[12px] text-muted">Verya is working…</p>
       )}
 
+      {session.gateStatus === "failed" && (
+        <Alert variant="error" className="mb-4">
+          <AlertTitle>Analysis could not continue</AlertTitle>
+          <AlertDescription>
+            {session.error ??
+              "The analysis failed before the first review step. Check your backend configuration and try again."}
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div className="rounded-xl border border-line bg-card p-5 shadow-sm">
         {session.gate === "suitability" && <GateSuitability session={session} call={call} busy={busy} />}
+        {session.gate === "platform" && <GatePlatform session={session} call={call} busy={busy} />}
         {session.gate === "flaws" && <GateFlaws session={session} call={call} busy={busy} />}
         {session.gate === "stack" && <GateStack session={session} call={call} busy={busy} />}
         {session.gate === "tasks" && <GateTasks session={session} call={call} busy={busy} />}

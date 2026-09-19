@@ -6,6 +6,8 @@ import { z } from "zod";
 
 export type Severity = "critical" | "high" | "medium" | "low";
 export const SeveritySchema = z.enum(["critical", "high", "medium", "low"]);
+export const TargetPlatformSchema = z.enum(["android", "ios", "both"]);
+export type TargetPlatform = z.infer<typeof TargetPlatformSchema>;
 
 // Gemini 3.x quirks: explicit null for absent optionals, and arrays sometimes arrive as
 // comma-joined strings (or a single bare string). These preprocessors absorb all of it.
@@ -317,10 +319,53 @@ export type ExecutionStatus =
   | "failed"
   | "escalated";
 
+export type CodeArtifact = {
+  language: string;
+  fileName: string;
+  original: string;
+  current: string;
+  version: number;
+  updatedAt: string;
+};
+
+export function codeArtifactOf(output: string, taskTitle: string): CodeArtifact {
+  const fenced = output.match(/```([a-zA-Z0-9+#.-]*)\s*\n([\s\S]*?)```/);
+  const language = (fenced?.[1] || "text").toLowerCase();
+  const source = (fenced?.[2] ?? output).trim();
+  const extension =
+    language.includes("typescript") || language === "tsx" ? "tsx" :
+    language === "javascript" || language === "jsx" ? "jsx" :
+    language === "python" ? "py" :
+    language === "kotlin" ? "kt" :
+    language === "swift" ? "swift" :
+    language === "java" ? "java" :
+    language === "json" ? "json" :
+    language === "sql" ? "sql" : "txt";
+  const safeTitle = taskTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "generated-code";
+  return {
+    language,
+    fileName: `${safeTitle}.${extension}`,
+    original: source.slice(0, 60000),
+    current: source.slice(0, 60000),
+    version: 1,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
 export const ExecutionResultSchema = z.object({
   taskId: z.string().min(1),
   model: z.enum(MODEL_IDS),
   output: z.string().max(60000),
+  code: z
+    .object({
+      language: z.string().max(40),
+      fileName: z.string().max(160),
+      original: z.string().max(60000),
+      current: z.string().max(60000),
+      version: z.number().int().min(1),
+      updatedAt: z.string(),
+    })
+    .optional(),
   humanRating: z.number().min(1).max(5).optional(),
   humanNote: z.string().max(400).optional(),
   battleA: z
@@ -364,6 +409,7 @@ export type ExecutionResult = z.infer<typeof ExecutionResultSchema>;
 export type GateId =
   | "intake"
   | "suitability"
+  | "platform"
   | "flaws"
   | "stack"
   | "tasks"
@@ -384,6 +430,8 @@ export type PipelineSession = {
   uploads: { name: string; chars: number }[];
   gate: GateId; // current gate
   gateStatus: GateStatus;
+  targetPlatform?: TargetPlatform;
+  error?: string;
   suitability: Suitability | null;
   suggestedWorkflow: Workflow | null;
   workflow: Workflow | null; // final workflow (user-approved)
@@ -430,6 +478,10 @@ export const GateActionSchema = z.discriminatedUnion("action", [
     choice: z.enum(["original", "suggested"]),
   }),
   z.object({
+    action: z.literal("platform_choose"),
+    targetPlatform: TargetPlatformSchema,
+  }),
+  z.object({
     action: z.literal("flaw_resolve"),
     resolutions: z
       .array(
@@ -469,6 +521,12 @@ export const GateActionSchema = z.discriminatedUnion("action", [
     rating: z.number().min(1).max(5).optional(),
     note: z.string().max(400).optional(),
     editedOutput: z.string().max(60000).optional(),
+  }),
+  z.object({
+    action: z.literal("code_edit"),
+    taskId: z.string().min(1),
+    code: z.string().max(60000),
+    expectedVersion: z.number().int().min(1),
   }),
   z.object({
     action: z.literal("battle_run"),

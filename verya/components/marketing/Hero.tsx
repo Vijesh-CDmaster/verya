@@ -45,7 +45,7 @@ export function Hero() {
 
         <div className="mb-16 flex flex-wrap justify-center gap-4">
           <Link
-            href="/#get-started"
+            href="/workspace"
             className="inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 text-base font-semibold text-accent-fg transition-all hover:-translate-y-0.5 hover:opacity-90"
           >
             Start Building →
@@ -54,7 +54,7 @@ export function Hero() {
             href="/#how-it-works"
             className="inline-flex items-center gap-2 rounded-lg border border-line bg-bg px-6 py-3 text-base font-semibold text-fg transition-all hover:-translate-y-0.5 hover:bg-surface"
           >
-            Read Docs ↓
+            See how it works ↓
           </Link>
         </div>
 

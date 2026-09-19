@@ -10,6 +10,14 @@ export type ExecutionView = {
   taskId: string;
   model: string;
   output: string;
+  code?: {
+    language: string;
+    fileName: string;
+    original: string;
+    current: string;
+    version: number;
+    updatedAt: string;
+  };
   status: string;
   confidence: number;
   latencyMs: number;
@@ -40,6 +48,7 @@ export function GateReview({
   const verified = execs.filter((e) => e.status === "verified").length;
   const flagged = execs.filter((e) => e.status === "flagged").length;
   const failed = execs.filter((e) => e.status === "failed").length;
+  const pendingReview = execs.filter((e) => !given[e.taskId] && e.humanRating === undefined).length;
 
   // F16: the feedback action now carries rating, note, and the edited output so the
   // backend can measure whether human edits actually improved the result.
@@ -64,28 +73,45 @@ export function GateReview({
 
   return (
     <div>
-      <p className="text-[13px]">
-        <span className="font-semibold text-emerald-400">{verified} verified</span>
-        {flagged > 0 && <span className="text-amber-400"> · {flagged} flagged</span>}
-        {failed > 0 && <span className="text-red-400"> · {failed} failed</span>}
-        <span className="text-muted"> — every output was cross-checked before reaching you.</span>
-      </p>
-      <ul className="mt-3 space-y-3">
-        {execs.map((e) => {
+      <div className="rounded-lg border border-line bg-elev p-4">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+          <div>
+            <p className="text-2xl font-semibold">{execs.length}</p>
+            <p className="text-[11px] uppercase tracking-wide text-muted">outputs reviewed</p>
+          </div>
+          <div className="h-8 w-px bg-line" />
+          <div>
+            <p className="font-semibold text-emerald-400">{verified} verified</p>
+            <p className="text-[11px] text-muted">cross-checked by Verya</p>
+          </div>
+          {flagged > 0 && <p className="text-sm text-amber-400">{flagged} flagged</p>}
+          {failed > 0 && <p className="text-sm text-red-400">{failed} failed</p>}
+          <p className="ml-auto text-xs text-muted">
+            {pendingReview > 0 ? `${pendingReview} waiting for your decision` : "All decisions recorded"}
+          </p>
+        </div>
+      </div>
+      <ul className="mt-4 space-y-3">
+        {execs.map((e, index) => {
           const task = session.workflow?.tasks.find((t) => t.id === e.taskId);
           const decided = given[e.taskId] || e.humanRating !== undefined;
           return (
-            <li key={e.taskId} className="rounded-lg border border-line bg-elev p-4 text-[13px]">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-medium">{task?.title ?? e.taskId}</span>
-                <span className="rounded border border-line bg-card px-2 py-0.5 font-mono text-[11px]">{e.model}</span>
-                <TrustBadge model={e.model} />
+            <li key={e.taskId} className="rounded-lg border border-line bg-elev text-[13px]">
+              <div className="flex flex-wrap items-center gap-2 px-4 py-3">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-card text-[11px] font-semibold text-muted">
+                  {index + 1}
+                </span>
+                <span className="min-w-0 flex-1 font-semibold">{task?.title ?? `Task ${index + 1}`}</span>
                 <Badge variant={e.status === "verified" ? "success" : e.status === "flagged" ? "warn" : "danger"}>
                   {e.status}
                 </Badge>
-                <span className="ml-auto text-[11px] text-muted">
-                  {e.tokens.input + e.tokens.output} tok · {(e.latencyMs / 1000).toFixed(1)}s
-                </span>
+                <span className="text-[11px] text-muted">{e.tokens.input + e.tokens.output} tokens · {(e.latencyMs / 1000).toFixed(1)}s</span>
+              </div>
+              <div className="border-t border-line px-4 py-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded border border-line bg-card px-2 py-0.5 font-mono text-[11px]">{e.model}</span>
+                <TrustBadge model={e.model} />
+                {decided && <Badge variant="muted">decision recorded</Badge>}
               </div>
               {e.verification.issues.length > 0 && (
                 <ul className="mt-2 text-[12px] text-amber-400">
@@ -139,10 +165,12 @@ export function GateReview({
                 </div>
               )}
 
-              <details className="mt-2">
-                <summary className="cursor-pointer text-[12px] text-muted">View output</summary>
+              <details className="mt-3" open={index === 0}>
+                <summary className="cursor-pointer text-xs font-medium text-fg">View output</summary>
                 <pre className="mt-2 max-h-72 overflow-auto whitespace-pre-wrap rounded border border-line bg-card p-3 font-mono text-[11px] leading-relaxed">
-                  {editing[e.taskId] ? edits[e.taskId] ?? e.output : e.output}
+                  {editing[e.taskId]
+                    ? edits[e.taskId] ?? e.output
+                    : e.output?.trim() || "No output was returned for this task."}
                 </pre>
                 {editing[e.taskId] && (
                   <textarea
@@ -154,6 +182,10 @@ export function GateReview({
                   />
                 )}
               </details>
+
+              {e.code && (
+                <CodeWorkspace execution={e} call={call} busy={busy} />
+              )}
 
               {/* F16 rating stars */}
               <div className="mt-2 flex items-center gap-1.5">
@@ -226,6 +258,7 @@ export function GateReview({
                   </button>
                 )}
               </div>
+              </div>
             </li>
           );
         })}
@@ -235,6 +268,58 @@ export function GateReview({
         Accept/reject/rate/edit feeds the org memory and model reputation scores — including whether your
         edits actually improved the result. Every step above is recorded in the Trust Ledger.
       </p>
+    </div>
+  );
+}
+
+function CodeWorkspace({
+  execution,
+  call,
+  busy,
+}: {
+  execution: ExecutionView;
+  call: (body: unknown) => void;
+  busy: boolean;
+}) {
+  const [value, setValue] = useState(execution.code?.current ?? "");
+  const [saved, setSaved] = useState(true);
+  const [showOriginal, setShowOriginal] = useState(false);
+  const code = execution.code!;
+
+  const save = () => {
+    call({ action: "code_edit", taskId: execution.taskId, code: value, expectedVersion: code.version });
+    setSaved(true);
+  };
+
+  return (
+    <div className="mt-4 overflow-hidden rounded-lg border border-line bg-[#111318]">
+      <div className="flex flex-wrap items-center gap-2 border-b border-white/10 bg-[#191c22] px-3 py-2 text-xs">
+        <span className="font-mono text-slate-200">{code.fileName}</span>
+        <span className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] uppercase text-slate-400">{code.language}</span>
+        <span className="ml-auto text-[10px] text-slate-500">v{code.version}</span>
+        <button type="button" onClick={() => setShowOriginal((current) => !current)} className="rounded border border-white/10 px-2 py-1 text-slate-300 hover:bg-white/10">
+          {showOriginal ? "Your version" : "View original"}
+        </button>
+        <button type="button" disabled={busy || saved} onClick={save} className="rounded bg-accent px-2.5 py-1 font-medium text-white disabled:opacity-40">
+          {saved ? "Saved" : "Save code"}
+        </button>
+      </div>
+      <div className="flex min-h-[260px]">
+        <div className="select-none border-r border-white/10 bg-[#0c0e12] px-3 py-3 text-right font-mono text-[11px] leading-5 text-slate-600">
+          {Array.from({ length: Math.max(1, (showOriginal ? code.original : value).split("\n").length) }, (_, index) => <div key={index}>{index + 1}</div>)}
+        </div>
+        <textarea
+          value={showOriginal ? code.original : value}
+          readOnly={showOriginal}
+          onChange={(event) => { setValue(event.target.value); setSaved(false); }}
+          spellCheck={false}
+          aria-label={`${code.fileName} editor`}
+          className="min-h-[260px] flex-1 resize-y bg-[#111318] p-3 font-mono text-[12px] leading-5 text-slate-200 outline-none"
+        />
+      </div>
+      <div className="border-t border-white/10 px-3 py-2 text-[11px] text-slate-500">
+        Edit the generated code directly. Your saved versions are recorded in the Trust Ledger.
+      </div>
     </div>
   );
 }

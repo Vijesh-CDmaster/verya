@@ -6,6 +6,8 @@
 import { SignInButton, SignUpButton, Show, UserButton } from "@clerk/nextjs";
 
 export function AuthControls() {
+  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) return null;
+
   return (
     <Show when="signed-out">
       <SignInButton mode="modal" fallbackRedirectUrl="/dashboard">
@@ -29,6 +31,8 @@ export function AuthControls() {
 }
 
 export function UserMenu() {
+  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) return null;
+
   return (
     <Show when="signed-in">
       <UserButton />

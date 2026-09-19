@@ -41,9 +41,13 @@ async function readJson<T>(file: string, fallback: T): Promise<T> {
 async function writeJson<T>(file: string, data: T): Promise<void> {
   await fs.mkdir(DIR, { recursive: true });
   const target = path.join(DIR, file);
-  const tmp = `${target}.tmp`;
-  await fs.writeFile(tmp, JSON.stringify(data, null, 1), "utf8");
-  await fs.rename(tmp, target);
+  const tmp = `${target}.${process.pid}.${Date.now()}.tmp`;
+  try {
+    await fs.writeFile(tmp, JSON.stringify(data, null, 1), "utf8");
+    await fs.rename(tmp, target);
+  } finally {
+    await fs.rm(tmp, { force: true }).catch(() => undefined);
+  }
 }
 
 const locks = new Map<string, Promise<unknown>>();

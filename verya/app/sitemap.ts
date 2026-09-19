@@ -6,6 +6,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   return [
     { url: `${base}/`, lastModified: now, changeFrequency: "weekly", priority: 1 },
+    { url: `${base}/workspace`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
     { url: `${base}/dashboard`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
     ...Object.values(LEGAL_DOCS).map((doc) => ({
       url: `${base}/legal/${doc.slug}`,

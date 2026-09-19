@@ -25,6 +25,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
   return (
     <html lang="en" suppressHydrationWarning>
       {/* suppressHydrationWarning: browser extensions (e.g. text-selection
@@ -34,14 +36,23 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans min-h-screen bg-bg text-fg`}
       >
-        <ClerkProvider>
-          <script
+        <script
           dangerouslySetInnerHTML={{
-          __html: `try{var t=localStorage.getItem('verya-ui');if(t){var s=JSON.parse(t);var th=(s&&s.state&&s.state.theme)||'dark';if(th==='dark'){document.documentElement.classList.add('dark')}}else if(window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark')}}catch(e){}`,
+            __html: `try{var t=localStorage.getItem('verya-ui');if(t){var s=JSON.parse(t);var th=(s&&s.state&&s.state.theme)||'dark';if(th==='dark'){document.documentElement.classList.add('dark')}}else if(window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark')}}catch(e){}`,
           }}
-          />
+        />
+        {clerkKey ? (
+          <ClerkProvider
+            publishableKey={clerkKey}
+            signInUrl="/sign-in"
+            signUpUrl="/sign-up"
+            appearance={{ variables: { colorPrimary: "#6366f1" } }}
+          >
+            <Providers>{children}</Providers>
+          </ClerkProvider>
+        ) : (
           <Providers>{children}</Providers>
-        </ClerkProvider>
+        )}
       </body>
     </html>
   );
