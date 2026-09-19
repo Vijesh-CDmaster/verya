@@ -7,8 +7,10 @@
     "node": ">=22"
   },
   "scripts": {
+    "predev": "npm run migrate",
     "dev": "tsx watch src/server.ts",
     "build": "tsc -p tsconfig.json",
+    "prestart": "npm run migrate",
     "start": "node dist/server.js",
     "migrate": "tsx src/db/migrate.ts",
     "worker": "tsx src/jobs/worker.ts",

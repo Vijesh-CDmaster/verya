@@ -9,6 +9,9 @@ CREATE TABLE IF NOT EXISTS organizations (
   name        TEXT NOT NULL,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+INSERT INTO organizations (id, name)
+VALUES ('default-org', 'Default Organization')
+ON CONFLICT (id) DO NOTHING;
 
 -- ---------- Users (Clerk identity mirror; auth lives in Clerk) ----------
 CREATE TABLE IF NOT EXISTS users (
@@ -20,6 +23,9 @@ CREATE TABLE IF NOT EXISTS users (
   created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
   last_seen_at TIMESTAMPTZ
 );
+-- Keep the migration compatible with older local schemas that already had a
+-- users table without organization scoping.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS org_id TEXT;
 CREATE INDEX IF NOT EXISTS users_org_idx ON users(org_id);
 
 -- ---------- Pipeline sessions (the whole gated pipeline state as JSONB) ----------

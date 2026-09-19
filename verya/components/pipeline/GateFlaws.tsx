@@ -40,6 +40,7 @@ export function GateFlaws({
   if (!report) return <p className="text-sm text-muted">Loading…</p>;
 
   const sorted = [...report.flaws].sort((a, b) => SEV_ORDER[a.severity] - SEV_ORDER[b.severity]);
+  const consensus = session.flawConsensus;
   const unresolvedCritical = report.flaws.filter(
     (f) => f.severity === "critical" && decisions[f.id] !== "accepted" && decisions[f.id] !== "edited"
   );
@@ -51,6 +52,24 @@ export function GateFlaws({
         Risk level: <span className="font-semibold">{report.overallRisk}</span>. Accept or reject each
         fix — critical flaws must be resolved before the pipeline moves on.
       </p>
+      {consensus && (
+        <div className="mt-3 rounded-lg border border-line bg-card px-3 py-2 text-[12px]">
+          <p className="font-medium">Independent model consensus</p>
+          <p className="mt-1 text-muted">{consensus.consensusSummary}</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {consensus.opinions.map((opinion) => (
+              <span key={opinion.provider} className="rounded border border-line px-2 py-1 text-[11px]">
+                {opinion.provider}: {opinion.status === "completed" ? "analyzed" : "unavailable"}
+              </span>
+            ))}
+          </div>
+          {consensus.issues.length > 0 && (
+            <p className="mt-2 text-muted">
+              Agreement is shown per issue below; lower agreement is a recommendation, not a mandatory flaw.
+            </p>
+          )}
+        </div>
+      )}
       <ul className="mt-4 space-y-2">
         {sorted.map((flaw) => (
           <li key={flaw.id} className="rounded-lg border border-line bg-elev px-4 py-3 text-[13px]">
@@ -64,6 +83,14 @@ export function GateFlaws({
             <p className="mt-1.5 text-[12px]">
               <span className="font-medium">Fix:</span> <span className="text-muted">{flaw.suggestedFix}</span>
             </p>
+            {consensus?.issues.find((issue) => issue.key === flaw.id) && (
+              <p className="mt-1 text-[11px] text-muted">
+                Model agreement:{" "}
+                {Math.round((consensus.issues.find((issue) => issue.key === flaw.id)?.agreement ?? 0) * 100)}%
+                {" · "}
+                {consensus.issues.find((issue) => issue.key === flaw.id)?.confidence} confidence
+              </p>
+            )}
             <div className="mt-2 flex flex-wrap gap-2">
               {(["accepted", "rejected"] as const).map((d) => (
                 <button

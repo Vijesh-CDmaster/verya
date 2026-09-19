@@ -36,6 +36,7 @@ export async function startPipeline(input: {
     suggestedWorkflow: null,
     workflow: null,
     flawReport: null,
+    flawConsensus: null,
     flawResolutions: [],
     stackGate: null,
     algorithms: null,

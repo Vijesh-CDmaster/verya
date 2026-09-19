@@ -102,6 +102,34 @@ export const SessionSchema = z.object({
       ),
     })
     .nullish(),
+  flawConsensus: z
+    .object({
+      opinions: z.array(
+        z.object({
+          provider: z.enum(["gemini", "groq", "mistral"]),
+          status: z.enum(["completed", "failed"]),
+          report: z.unknown().optional(),
+          error: z.string().optional(),
+        })
+      ),
+      issues: z.array(
+        z.object({
+          key: z.string(),
+          title: z.string(),
+          category: z.string(),
+          severity: SeveritySchema,
+          description: z.string(),
+          suggestedFix: z.string(),
+          relatedTaskIds: z.array(z.string()),
+          votes: z.object({ gemini: z.boolean(), groq: z.boolean(), mistral: z.boolean() }),
+          agreement: z.number(),
+          confidence: z.enum(["high", "medium", "low"]),
+        })
+      ),
+      completedProviders: z.number(),
+      consensusSummary: z.string(),
+    })
+    .nullish(),
   flawResolutions: z
     .array(z.object({ flawId: z.string(), decision: z.enum(["accepted", "rejected", "edited"]), editedFix: z.string().optional() }))
     .default([]),

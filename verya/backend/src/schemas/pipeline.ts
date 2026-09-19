@@ -124,6 +124,32 @@ export const FlawReportSchema = z.object({
 export type Flaw = z.infer<typeof FlawSchema>;
 export type FlawReport = z.infer<typeof FlawReportSchema>;
 
+export const ModelOpinionSchema = z.object({
+  provider: z.enum(["gemini", "groq", "mistral"]),
+  status: z.enum(["completed", "failed"]),
+  report: FlawReportSchema.optional(),
+  error: z.string().optional(),
+});
+export const ConsensusIssueSchema = z.object({
+  key: z.string(),
+  title: z.string(),
+  category: z.string(),
+  severity: z.enum(["critical", "high", "medium", "low"]),
+  description: z.string(),
+  suggestedFix: z.string(),
+  relatedTaskIds: z.array(z.string()),
+  votes: z.object({ gemini: z.boolean(), groq: z.boolean(), mistral: z.boolean() }),
+  agreement: z.number().min(0).max(1),
+  confidence: z.enum(["high", "medium", "low"]),
+});
+export const FlawConsensusSchema = z.object({
+  opinions: z.array(ModelOpinionSchema),
+  issues: z.array(ConsensusIssueSchema),
+  completedProviders: z.number().int().min(0).max(3),
+  consensusSummary: z.string(),
+});
+export type FlawConsensus = z.infer<typeof FlawConsensusSchema>;
+
 export type FlawDecision = "accepted" | "rejected" | "edited";
 export type FlawResolution = {
   flawId: string;
@@ -436,6 +462,7 @@ export type PipelineSession = {
   suggestedWorkflow: Workflow | null;
   workflow: Workflow | null; // final workflow (user-approved)
   flawReport: FlawReport | null;
+  flawConsensus?: FlawConsensus | null;
   flawResolutions: FlawResolution[];
   stackGate: StackGate | null;
   algorithms: AlgorithmPlan | null;

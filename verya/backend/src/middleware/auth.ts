@@ -7,6 +7,7 @@
 // CLERK_ISSUER / CLERK_AUDIENCE overrides still win when provided.
 // Without any Clerk configuration, the API runs in clearly-labeled development
 // mode bound to the default org — production must set Clerk.
+import "../config/env";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 
 const CLERK_JWKS_URL = process.env.CLERK_JWKS_URL || "";

@@ -31,7 +31,14 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     cache: "no-store",
   });
   const text = await res.text();
-  const body: unknown = text ? JSON.parse(text) : {};
+  let body: unknown = {};
+  if (text) {
+    try {
+      body = JSON.parse(text);
+    } catch {
+      body = { error: text.trim() || `Request failed (${res.status})` };
+    }
+  }
   if (!res.ok) {
     const err = body as { error?: string; issues?: string[] };
     throw new ApiError(err.error ?? `Request failed (${res.status})`, res.status, err.issues);

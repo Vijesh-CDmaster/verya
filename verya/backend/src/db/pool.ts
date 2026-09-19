@@ -1,10 +1,10 @@
 // Verya — Neon Postgres pool. The single database access point for all repositories.
 import { Pool } from "pg";
-import dotenv from "dotenv";
+import "../config/env";
 
-dotenv.config();
+const databaseUrl = process.env.DATABASE_URL || process.env.neon_db;
 
-if (!process.env.DATABASE_URL) {
+if (!databaseUrl) {
   console.warn(
     "[db] DATABASE_URL is not set. The API will start but every database-backed " +
       "route will fail with a clear error until Neon Postgres is configured."
@@ -12,7 +12,7 @@ if (!process.env.DATABASE_URL) {
 }
 
 export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: databaseUrl,
   max: Number(process.env.PG_POOL_MAX || 10),
   ssl: process.env.PGSSL_DISABLE === "1" ? undefined : { rejectUnauthorized: false },
 });
@@ -24,7 +24,7 @@ export async function query<T = unknown>(text: string, params?: unknown[]): Prom
 
 /** Throws a clean error when the database is not configured. */
 export function requireDb(): void {
-  if (!process.env.DATABASE_URL) {
+  if (!databaseUrl) {
     const err = new Error(
       "DATABASE_URL is not configured. Add your Neon connection string to backend/.env and restart."
     );
@@ -34,5 +34,5 @@ export function requireDb(): void {
 }
 
 export function isDbConfigured(): boolean {
-  return Boolean(process.env.DATABASE_URL);
+  return Boolean(databaseUrl);
 }

@@ -15,6 +15,7 @@ import { needsTieBreak, CHEAP_MODEL_ID, STRONG_MODEL_ID, MODEL_IDS, modelCostOf 
 import type { StageAdapters } from "../ai/provider";
 import { recordToLedger } from "../../services/ledger";
 import { findSimilar } from "../../services/memory";
+import { analyzeFlawsByConsensus } from "../../services/consensus";
 
 const ORG_ID = process.env.VERYA_ORG_ID || "default-org";
 
@@ -112,11 +113,30 @@ async function runFlaws(
     session.gateStatus = "failed";
     return session;
   }
-  const flawReport = await adapters.detectFlaws({
+  const consensus = await analyzeFlawsByConsensus({
     raw: session.input,
     workflow: finalWorkflow,
     targetPlatform: session.targetPlatform,
   });
+  session.flawConsensus = consensus;
+  const flaws = consensus.issues.map((issue) => ({
+    id: issue.key,
+    title: issue.title,
+    category: issue.category,
+    severity: issue.severity,
+    description: issue.description,
+    suggestedFix: issue.suggestedFix,
+    relatedTaskIds: issue.relatedTaskIds,
+  }));
+  const overallRisk = flaws.reduce<"low" | "medium" | "high">(
+    (risk, flaw) => (flaw.severity === "critical" || flaw.severity === "high" ? "high" : flaw.severity === "medium" || risk === "medium" ? "medium" : risk),
+    "low"
+  );
+  const flawReport = {
+    flaws,
+    overallRisk,
+    summary: consensus.consensusSummary,
+  };
   session.flawReport = flawReport;
   session.gateStatus = "awaiting_user";
   await recordToLedger({
@@ -126,6 +146,18 @@ async function runFlaws(
     eventType: "flaw_report",
     detail: {
       summary: `${flawReport.flaws.length} flaws found (${flawReport.overallRisk} risk)`,
+      consensus: {
+        providers: consensus.opinions.map((opinion) => ({
+          provider: opinion.provider,
+          status: opinion.status,
+        })),
+        completedProviders: consensus.completedProviders,
+        issues: consensus.issues.map((issue) => ({
+          key: issue.key,
+          agreement: issue.agreement,
+          confidence: issue.confidence,
+        })),
+      },
     },
   });
   return session;

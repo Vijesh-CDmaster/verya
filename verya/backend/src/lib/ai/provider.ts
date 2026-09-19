@@ -454,6 +454,7 @@ async function runStructuredStage<S extends z.ZodType>(
         if (attemptModel.structured) {
           return await geminiStructured(stage, system, user, zodSchema, attemptModel.model);
         }
+
         const res = await chatCompatible(provider, attemptModel.model, system, user, {
           json: true,
           jsonHint: hint,
@@ -508,6 +509,27 @@ async function runStructuredStage<S extends z.ZodType>(
   }
   const detail = lastErr instanceof Error ? lastErr.message : String(lastErr);
   throw new ProviderError(`All providers failed for ${stage}: ${detail}`, stage, lastErr);
+}
+
+/** Run one structured stage against exactly one provider for independent consensus. */
+export async function runStructuredStageForProvider<S extends z.ZodType>(
+  stage: PipelineStageId,
+  system: string,
+  user: string,
+  zodSchema: S,
+  providerName: ProviderName
+): Promise<z.output<S>> {
+  const provider = providerConfigOf(providerName);
+  if (!provider) {
+    throw new ProviderError(`Provider "${providerName}" is not configured`, stage);
+  }
+  const model = providerName === "gemini" ? process.env.GEMINI_MODEL || "gemini-3.6-flash" : provider.stageModel;
+  const hint = JSON.stringify(zodToGeminiSchema(zodSchema)).slice(0, 4000);
+  if (providerName === "gemini") {
+    return geminiStructured(stage, system, user, zodSchema, model);
+  }
+  const res = await chatCompatible(provider, model, system, user, { json: true, jsonHint: hint });
+  return validateCoerced(zodSchema, extractJson(res.text));
 }
 
 // ---------- Free-text execution with cross-provider failover ----------
