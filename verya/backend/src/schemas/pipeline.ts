@@ -328,11 +328,11 @@ export const TaskModelRouteSchema = z.object({
 export const RoutingPlanSchema = z.object({
   // min 0: repairRoutingPlan synthesizes default routes for any missing tasks.
   routes: objArr(TaskModelRouteSchema, 0, 40),
-  policy: z.enum(["lowest_cost", "highest_accuracy", "balanced"]).default("balanced"),
+  policy: z.enum(["lowest_cost", "highest_accuracy", "balanced", "org_approved"]).default("balanced"),
   estimatedCostUsd: z.number().min(0),
   notes: z.string().max(400).default(""),
 });
-export type RoutingPolicy = "lowest_cost" | "highest_accuracy" | "balanced";
+export type RoutingPolicy = "lowest_cost" | "highest_accuracy" | "balanced" | "org_approved";
 export type TaskModelRoute = z.infer<typeof TaskModelRouteSchema>;
 export type RoutingPlan = z.infer<typeof RoutingPlanSchema>;
 
@@ -417,6 +417,12 @@ export const ExecutionResultSchema = z.object({
     issues: z.array(z.string().max(300)).default([]),
     checkedBy: z.string().max(60),
   }),
+  selfAudit: z.object({
+    riskScore: z.number().min(0).max(1),
+    issues: z.array(z.string().max(300)).max(8),
+    checks: z.array(z.string().max(180)).max(6),
+    checkedBy: z.string().max(80),
+  }).optional(),
   status: z.enum([
     "pending",
     "running",
@@ -497,7 +503,7 @@ export function needsTieBreak(options: { confidence: number }[]): boolean {
 export const StartRequestSchema = z.object({
   input: z.string().min(20).max(20000),
   statedStack: z.string().max(2000).default(""),
-  policy: z.enum(["lowest_cost", "highest_accuracy", "balanced"]).default("balanced"),
+  policy: z.enum(["lowest_cost", "highest_accuracy", "balanced", "org_approved"]).default("balanced"),
 });
 export const GateActionSchema = z.discriminatedUnion("action", [
   z.object({

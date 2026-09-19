@@ -20,7 +20,7 @@ export function defaultOrg(): string {
 export async function startPipeline(input: {
   input: string;
   statedStack: string;
-  policy: "lowest_cost" | "highest_accuracy" | "balanced";
+  policy: "lowest_cost" | "highest_accuracy" | "balanced" | "org_approved";
 }): Promise<PipelineSession> {
   const session: PipelineSession = {
     id: crypto.randomUUID(),

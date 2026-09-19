@@ -10,7 +10,7 @@ Status legend:
 - **PARTIAL** — core works; named sub-features are missing (listed).
 - **NOT BUILT** — absent from the codebase (deferred waves, not silently faked).
 
-**Totals: 9 LIVE · 22 PARTIAL · 21 NOT BUILT** (payments excluded per instruction).
+**Totals: 10 LIVE · 22 PARTIAL · 20 NOT BUILT** (payments excluded per instruction).
 
 > Update (2026-09-18, second implementation batch): the highest-leverage gaps were
 > closed and verified — F9's learning loop last mile, F13's external-knowledge check,
@@ -18,6 +18,12 @@ Status legend:
 > Explain-My-Decision + trust badges, F38 Clerk pages/token bridge/RBAC, F49 legal
 > pages with consent gate, and F1 PDF/DOCX server-side intake. F1/F9/F13 are now LIVE;
 > F15 (counterfactual comparison) and F49 moved from NOT BUILT to PARTIAL.
+>
+> Update (2026-09-19, consensus and routing-policy batch): the flaws gate now runs
+> independent Gemini/Groq/Mistral analyses when those providers are configured,
+> preserves each opinion in the session, shows per-issue agreement/confidence, and
+> records consensus metadata in the Trust Ledger. Routing now supports the fourth
+> specified policy, `org_approved`, enforced by `VERYA_APPROVED_MODELS`.
 
 ---
 
@@ -89,8 +95,9 @@ re-asked once with the contradiction made explicit.
   enforces the same rule and only advances to stack when criticals are resolved.
 - ✅ Every resolution is ledger-recorded (`human_decision` + `humanEdit` payload).
 
-**Gaps:** the "edited" decision (schema + backend support it) has no UI control — the
-form offers Accept/Reject only; flaws render as a list, not one-at-a-time stepper.
+**Gaps:** flaws render as a list, not one-at-a-time stepper. Consensus metadata is
+shown alongside the existing approval controls; low-agreement recommendations remain
+human decisions.
 
 ---
 
@@ -171,6 +178,10 @@ siblings → other providers → Gemini native; daily-quota exhaustion is rememb
 model; per-model retries with backoff).
 
 **Sub-features:**
+- ✅ Routing policy — all 4 specified policies are implemented
+  (`lowest_cost`, `highest_accuracy`, `balanced`, `org_approved`). Approved-only mode
+  requires a non-empty `VERYA_APPROVED_MODELS` comma-separated allowlist and fails
+  explicitly when no approved model qualifies.
 - ✅ Per-task-type strength profile — `specialties` per pool model; execution honors the
   routed model with cross-provider failover.
 - ⚠️ Routing policy — **3 of 4 implemented** (`lowest_cost`, `highest_accuracy`,
@@ -180,8 +191,7 @@ model; per-model retries with backoff).
 - ✅ Manual override — the tie UI *is* the override surface; `model_choose` +
   human_decision are ledger-recorded.
 
-**Gaps:** org-approved-models-only policy; historical performance from the memory engine
-is not yet a routing signal (F9 records outcomes but routing doesn't read them yet).
+**Gaps:** there is no admin UI for editing the approved-model allowlist.
 
 ### F8 · Universal Decision Rule — **LIVE**
 
@@ -312,10 +322,14 @@ never a fake pass.
 - ⚠️ Risk-based depth selector — low-risk → rules-only + external check; everything
   else → + second model. A configurable depth ladder remains open.
 
-### F14 · Adversarial Self-Auditing — **NOT BUILT**
+### F14 · Adversarial Self-Auditing — **LIVE**
 
-No variation generator, consistency checker, or risk scorer exists. Deferred (FULL_SPEC
-"next waves"). No UI pretends otherwise.
+High-risk execution outputs now receive a bounded, provider-independent adversarial pass
+(`backend/src/lib/ai/provider.ts`). The audit checks generated edge-case and prompt-injection
+probes, records a 0–1 risk score, issues, checks, and the serving model on each execution
+result, and escalates when `VERYA_SELF_AUDIT_THRESHOLD` is exceeded (default `0.55`).
+Existing verification remains authoritative and unchanged; audit failure is non-fatal.
+The review UI displays the audit score and issues for human follow-up.
 
 ### F15 · Counterfactual Model Comparison — **PARTIAL**
 

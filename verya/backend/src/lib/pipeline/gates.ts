@@ -454,6 +454,17 @@ async function runRouting(
   plan.policy = session.policy ?? "balanced";
   const cheap = CHEAP_MODEL_ID;
   const strong = STRONG_MODEL_ID;
+  const approvedModels = new Set(
+    (process.env.VERYA_APPROVED_MODELS || "")
+      .split(",")
+      .map((model) => model.trim())
+      .filter(Boolean)
+  );
+  if (plan.policy === "org_approved" && approvedModels.size === 0) {
+    throw new Error(
+      "Organization-approved routing is selected, but VERYA_APPROVED_MODELS is not configured."
+    );
+  }
   for (const route of plan.routes) {
     if (plan.policy === "lowest_cost" && route.selectedModel !== cheap) {
       const cheapConf = route.options.find((o) => o.model === cheap)?.confidence ?? 0.6;
@@ -469,6 +480,20 @@ async function runRouting(
         route.selectedModel = strong;
         route.reason = `Policy highest_accuracy: upgraded to ${strong}. ${route.reason}`;
       }
+    }
+    if (plan.policy === "org_approved") {
+      const approved = route.options
+        .filter((option) => approvedModels.has(option.model))
+        .sort((a, b) => b.confidence - a.confidence);
+      if (approved.length === 0) {
+        throw new Error(
+          `No organization-approved model qualifies for task ${route.taskId}. Configure a matching model in VERYA_APPROVED_MODELS.`
+        );
+      }
+      const selected = approved[0];
+      route.selectedModel = selected.model;
+      route.confidence = selected.confidence;
+      route.reason = `Policy org_approved: selected ${selected.model} from the configured allowlist. ${route.reason}`;
     }
   }
   plan.estimatedCostUsd =

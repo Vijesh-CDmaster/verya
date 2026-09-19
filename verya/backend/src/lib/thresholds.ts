@@ -14,3 +14,9 @@ export function escalationFloorFor(risk: string | undefined): number {
   if (env && Number.isFinite(Number(env))) return Number(env);
   return DEFAULT_FLOORS[key] ?? DEFAULT_FLOORS.medium;
 }
+
+/** Risk score at which the F14 adversarial audit escalates a high-risk output. */
+export function selfAuditThreshold(): number {
+  const value = Number(process.env.VERYA_SELF_AUDIT_THRESHOLD || 0.55);
+  return Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : 0.55;
+}

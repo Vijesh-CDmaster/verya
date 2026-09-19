@@ -4,7 +4,7 @@ import { geminiAdapters } from "../lib/ai/provider";
 import { stackTextOf } from "../lib/pipeline/gates";
 import { recordToLedger } from "./ledger";
 import { checkExternalReferences } from "../lib/verification/external";
-import { escalationFloorFor } from "../lib/thresholds";
+import { escalationFloorFor, selfAuditThreshold } from "../lib/thresholds";
 import { updateFromOutcome } from "./reputation";
 import { modelCostOf } from "../schemas/pipeline";
 import { codeArtifactOf, type ExecutionResult, type PipelineSession } from "../schemas/pipeline";
@@ -95,6 +95,12 @@ export async function runExecution(sessionId: string): Promise<{ session: Pipeli
       const verification = needsSecondModel
         ? await geminiAdapters.verifyOutput({ task, algorithm, output: exec.output, model })
         : await geminiAdapters.verifyRulesOnly({ task, output: exec.output });
+      // F14: high-risk outputs get a bounded, provider-independent adversarial pass.
+      // This is additive to verification: an audit can escalate, but never silently
+      // changes the existing verification verdict.
+      const selfAudit = task.risk === "high"
+        ? await geminiAdapters.selfAudit({ task, output: exec.output, executorModel: model })
+        : undefined;
 
       // F13 third method: external-knowledge check (npm registry) for code-bearing outputs.
       const external = await checkExternalReferences(exec.output);
@@ -110,7 +116,10 @@ export async function runExecution(sessionId: string): Promise<{ session: Pipeli
       // F11: per-risk escalation floor (env-tunable per department/workflow type).
       const floor = escalationFloorFor(task.risk);
       const confidence = verification.passed ? 0.82 : 0.4;
-      const status: ExecutionResult["status"] = verification.passed
+      const auditEscalated = selfAudit !== undefined && selfAudit.riskScore >= selfAuditThreshold();
+      const status: ExecutionResult["status"] = auditEscalated
+        ? "escalated"
+        : verification.passed
         ? confidence >= floor ? "verified" : "escalated"
         : "flagged";
       const result: ExecutionResult = {
@@ -124,6 +133,7 @@ export async function runExecution(sessionId: string): Promise<{ session: Pipeli
           issues: verification.issues,
           checkedBy: verification.checkedBy || "rules",
         },
+        selfAudit,
         status,
         confidence,
         latencyMs: exec.latencyMs,
@@ -153,6 +163,9 @@ export async function runExecution(sessionId: string): Promise<{ session: Pipeli
           externalChecked: external.checked.length,
           externalUnsupported: external.unsupported,
           escalationFloor: floor,
+          selfAudit: selfAudit
+            ? { riskScore: selfAudit.riskScore, issues: selfAudit.issues, checks: selfAudit.checks, threshold: selfAuditThreshold() }
+            : undefined,
         },
         verification: { passed: verification.passed, issues: verification.issues },
       });

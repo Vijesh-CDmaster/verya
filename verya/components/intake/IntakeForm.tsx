@@ -130,6 +130,7 @@ export function IntakeForm({ onStarted }: { onStarted?: (session: Session) => vo
           <option value="balanced">Balanced cost vs risk (default)</option>
           <option value="lowest_cost">Lowest cost</option>
           <option value="highest_accuracy">Highest accuracy</option>
+          <option value="org_approved">Organization-approved models only</option>
         </Select>
       </div>
 

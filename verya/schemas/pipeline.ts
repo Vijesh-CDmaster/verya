@@ -6,7 +6,7 @@ import { z } from "zod";
  * these power React Hook Form + client-side validation without importing server code.
  */
 
-export const RoutingPolicySchema = z.enum(["lowest_cost", "highest_accuracy", "balanced"]);
+export const RoutingPolicySchema = z.enum(["lowest_cost", "highest_accuracy", "balanced", "org_approved"]);
 export type RoutingPolicy = z.infer<typeof RoutingPolicySchema>;
 
 export const StartRequestSchema = z.object({
@@ -177,6 +177,12 @@ export const SessionSchema = z.object({
           issues: z.array(z.string()).default([]),
           checkedBy: z.string(),
         }),
+        selfAudit: z.object({
+          riskScore: z.number().min(0).max(1),
+          issues: z.array(z.string()).default([]),
+          checks: z.array(z.string()).default([]),
+          checkedBy: z.string(),
+        }).optional(),
         status: z.enum(["pending", "running", "verified", "flagged", "failed", "escalated"]),
         confidence: z.number(),
         latencyMs: z.number(),

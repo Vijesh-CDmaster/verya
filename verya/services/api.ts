@@ -41,7 +41,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   }
   if (!res.ok) {
     const err = body as { error?: string; issues?: string[] };
-    throw new ApiError(err.error ?? `Request failed (${res.status})`, res.status, err.issues);
+    const message =
+      res.status === 500 && err.error === "Internal Server Error"
+        ? "The Verya backend is unavailable. Start it with `npm run dev` from the backend folder."
+        : err.error ?? `Request failed (${res.status})`;
+    throw new ApiError(message, res.status, err.issues);
   }
   return body as T;
 }

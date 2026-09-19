@@ -23,6 +23,7 @@ export type ExecutionView = {
   latencyMs: number;
   tokens: { input: number; output: number };
   verification: { method: string; passed: boolean; issues: string[]; checkedBy: string };
+  selfAudit?: { riskScore: number; issues: string[]; checks: string[]; checkedBy: string };
   humanRating?: number;
   humanNote?: string;
   battleA?: { model: string; output: string; latencyMs: number; tokens: { input: number; output: number } };
@@ -119,6 +120,18 @@ export function GateReview({
                     <li key={issue}>⚠ {issue}</li>
                   ))}
                 </ul>
+              )}
+              {e.selfAudit && (
+                <div className="mt-3 rounded border border-orange-500/30 bg-orange-500/5 p-2 text-[12px]">
+                  <p className="font-medium text-orange-300">
+                    Adversarial self-audit: {(e.selfAudit.riskScore * 100).toFixed(0)}% risk · {e.selfAudit.checkedBy}
+                  </p>
+                  {e.selfAudit.issues.length > 0 && (
+                    <ul className="mt-1 text-orange-200">
+                      {e.selfAudit.issues.map((issue) => <li key={issue}>⚠ {issue}</li>)}
+                    </ul>
+                  )}
+                </div>
               )}
 
               {/* F22 AI Battle Mode: alternative model side-by-side */}
