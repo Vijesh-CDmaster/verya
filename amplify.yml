@@ -1,0 +1,25 @@
+version: 1
+
+env:
+  variables:
+    NODE_VERSION: "22"
+
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - cd verya
+        - npm ci
+
+    build:
+      commands:
+        - npm run build
+
+  artifacts:
+    baseDirectory: verya/.next
+    files:
+      - "**/*"
+
+  cache:
+    paths:
+      - verya/node_modules/**/*
