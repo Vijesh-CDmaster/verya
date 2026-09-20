@@ -10,7 +10,7 @@ Status legend:
 - **PARTIAL** — core works; named sub-features are missing (listed).
 - **NOT BUILT** — absent from the codebase (deferred waves, not silently faked).
 
-**Totals: 10 LIVE · 22 PARTIAL · 20 NOT BUILT** (payments excluded per instruction).
+**Totals: 13 LIVE · 20 PARTIAL · 19 NOT BUILT** (payments excluded per instruction).
 
 > Update (2026-09-18, second implementation batch): the highest-leverage gaps were
 > closed and verified — F9's learning loop last mile, F13's external-knowledge check,
@@ -24,6 +24,21 @@ Status legend:
 > preserves each opinion in the session, shows per-issue agreement/confidence, and
 > records consensus metadata in the Trust Ledger. Routing now supports the fourth
 > specified policy, `org_approved`, enforced by `VERYA_APPROVED_MODELS`.
+>
+> Update (2026-09-19, Task DNA batch): F19 now derives a versioned deterministic
+> fingerprint from task/workflow/algorithm data, persists it in session JSON,
+> supplies it to routing, and displays it in task and review surfaces.
+>
+> Update (2026-09-20, security & latency-integrity batch): F40 now has a real
+> prompt-injection defence (`lib/security/injection.ts`): every user-supplied string is
+> scanned deterministically, manipulation phrases are neutralized before prompting, raw
+> text is wrapped in an explicit untrusted-data envelope, uploaded/external documents
+> are validated before they reach a model, and every scan is a Trust Ledger record.
+> F44 now measures Verya's OWN added latency: each AI stage writes a `stage_timing`
+> ledger row splitting wall-clock time into provider time vs Verya overhead, aggregated
+> into `routingOverhead` in the analytics payload. A regression suite now exists:
+> `cd backend && npm test` (node's runner + tsx) — 16 tests covering F40, F19 and the
+> timing aggregation, all passing, plus backend/frontend `tsc --noEmit` clean.
 
 ---
 
@@ -362,7 +377,24 @@ Accept / Reject per output. Each decision is `POST /api/pipeline/:id/action
 
 ### F17 · Autonomous Policy Suggestions — **NOT BUILT**
 ### F18 · Living Constitution Document — **NOT BUILT**
-### F19 · Task DNA Fingerprinting — **NOT BUILT**
+### F19 · Task DNA Fingerprinting — **LIVE**
+
+**Mechanics.** `backend/src/lib/pipeline/fingerprint.ts` computes a stable SHA-256
+signature and structured dimensions for every task: complexity, category/domain, risk,
+context size, output format, reasoning requirement, and sorted required capabilities.
+It uses existing workflow, dependency, and algorithm-plan fields only (no additional AI
+call). Fingerprints are embedded on tasks and mirrored in the optional
+`PipelineSession.taskFingerprints` map. The gate engine refreshes them on every
+processed gate and after task edits, so sessions created before F19 are safely
+backfilled while retaining compatibility with older persisted JSON.
+
+**Sub-features:**
+- ✅ Deterministic versioned fingerprint with stable signature.
+- ✅ Routing prompt receives task DNA as structured context for future model selection.
+- ✅ Fingerprint shown in task confirmation and execution review UI.
+- ✅ Optional schema fields preserve older sessions without migration.
+
+**Gaps:** no cross-session DNA analytics or historical fingerprint comparison UI yet.
 ### F20 · Cross-Organization Failure Intelligence — **NOT BUILT**
 
 None of the Part D self-governance features exist. This is the documented Phase 6 wave
@@ -487,15 +519,38 @@ silent fake.
 - ✅ Rate limiting — `@fastify/rate-limit` globally (60/min) + per-route buckets
   (uploads 10/min, leads 5/min).
 
-### F40 · Prompt Injection & AI-Specific Security — **PARTIAL**
+### F40 · Prompt Injection & AI-Specific Security — **LIVE**
 
-- ✅ Content/instruction separation — user text is always passed in the user message of a
-  fixed system-prompt contract; the pipeline never rewrites its own instructions from
-  user content.
-- ❌ Injection pattern detector — no scanner for manipulation phrases
-  ("ignore previous instructions…").
-- ⚠️ External content sanitizer — uploaded file text gets `sanitizeInput` but no
-  injection-specific validation.
+**Mechanics.** `backend/src/lib/security/injection.ts` is the single gate every
+untrusted string passes through. `scanInjection` runs 10 deterministic rules across six
+categories (instruction-override, policy-bypass, system-prompt exfiltration,
+role-manipulation, tool-manipulation, data-exfiltration, delimiter/chat-token breaks),
+returning findings with severity plus a 0–1 risk. `hardenUntrusted` neutralizes detected
+imperative phrases (replacing the phrase with `[blocked-instruction:<category>]`) when
+the risk crosses `VERYA_INJECTION_RISK_THRESHOLD` (default 0.3), and `wrapUntrusted`
+envelops the text in an explicit “this is data, not instructions” block. The original
+text stays on the session verbatim for display and audit; only the hardened copy is
+prompted.
+
+**Sub-features:**
+- ✅ Content/instruction separation — dual defence: the data envelope **and** phrase
+  neutralization, on top of the fixed system-prompt contract.
+- ✅ Injection pattern detector — deterministic, offline, zero extra AI cost; runs on
+  project intake (`POST /api/pipeline`), on every uploaded document, and at the prompt
+  boundary in `provider.ts` (understanding, suitability, flaws, stack) and in the
+  multi-model consensus prompt.
+- ✅ External content sanitizer — uploaded PDF/DOCX/RTF/text is scanned as external
+  untrusted content before any model sees it; the ledger distinguishes
+  `external_content_flagged` from `external_content_scanned`.
+- ✅ Audit trail — `injection_scan_clean` / `injection_scan_flagged` ledger rows carry
+  risk and per-finding category/severity; the scan is persisted on the session as
+  `inputSecurity` (optional field, older sessions unaffected).
+- ✅ Tested — `src/lib/security/injection.test.ts` (7 cases) plus an end-to-end intake
+  test proving the session record and ledger rows are written through the real service
+  layer.
+
+**Gaps:** the rule set is code-level (not admin-editable) and detection is
+English-pattern based; non-English or novel phrasings rely on the data envelope.
 
 ### F41 · Compliance & Privacy — **PARTIAL**
 
@@ -530,14 +585,21 @@ silent fake.
 - ❌ Load balancer / auto-scaling — deployment-level, not in code (stateless Fastify +
   Next.js make it straightforward).
 
-### F44 · Speed Targets — **PARTIAL**
+### F44 · Speed Targets — **LIVE**
 
 - ✅ Frontend load — both routes prerender static (build output `○ Static`), Turbopack
   build, Geist via `next/font`, minimal JS (home 134kB route size).
 - ✅ Progress-indicator rule — every long operation shows state (pulse/counter), never a
   frozen blank screen.
-- ❌ Routing-overhead monitoring — the system's own latency isn't measured separately
-  from provider latency yet.
+- ✅ Routing-overhead monitoring — `lib/metrics.ts` wraps every AI gate
+  (`suitability/flaws/stack/algorithms/models`) in `timeStage`, which snapshots the
+  cumulative provider-call clock (`providerCallStats()` in `provider.ts`) before and
+  after, then writes one `stage_timing` ledger row per stage with `stageMs`,
+  `providerMs`, `providerCalls` and `overheadMs`. `ledgerAnalytics` aggregates these
+  into `routingOverhead` (averages per gate, overall overhead share), which the
+  dashboard payload already carries — so Verya's own added latency is measured
+  separately from provider latency. Timing is best-effort: a failed stage still
+  records its timing and observability never breaks the pipeline.
 
 ### F45 · Database & Caching — **PARTIAL**
 
@@ -617,14 +679,18 @@ closed and verified (F9 injection, F16 feedback, F5 editor, F3 edit-fix, F38 RBA
 F12 formula, F13 external check, F11 floors, F22 panels, F49 legal pages, F1 uploads).
 The remaining highest-leverage work:*
 
-1. **F38 finish** — Clerk in the live environment (keys, org claims) and auth-event
+*Verified in the security & latency batch:* F40 (injection defence) and F44
+(routing-overhead monitoring) are closed — both were PARTIAL and are now LIVE, covered
+by the new regression suite.
+
+1. **F10 correction-by-reference** — add the dedicated `correction_of` link column (the
+   SQL comment promises one) so corrections are queryable, not only embedded in JSONB.
+2. **F38 finish** — Clerk in the live environment (keys, org claims) and auth-event
    ledger records.
-2. **F44 routing-overhead monitoring** — measure the system's own added latency
-   separately from provider latency (the ledger already carries per-call timing).
 3. **F21 breakdowns** — cost/risk analytics by stack/team/workflow, plus the
-   cheapest-that-meets-trust-bar recommender.
+   cheapest-that-meets-trust-bar recommender (routing overhead is now measurable, which
+   is the input that recommender needs).
 4. **F48 onboarding** — email verification flow, help center, support channel.
-5. **F40 injection scanner** — pattern detection on user text before it reaches prompts.
-6. **F51 operations** — Sentry/error tracking, uptime alerts, tested restore procedure.
-7. **Wave 2 governance (F17–F20, F23–F37)** — unchanged, deliberately deferred until
+5. **F51 operations** — Sentry/error tracking, uptime alerts, tested restore procedure.
+6. **Wave 2 governance (F17–F20, F23–F37)** — unchanged, deliberately deferred until
    real usage data exists.

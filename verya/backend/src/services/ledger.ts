@@ -30,9 +30,12 @@ export async function verifyLedger(orgId: string) {
   return repoVerify(orgId);
 }
 
-/** Aggregate cost/latency/token analytics per model (F21). */
+/** Aggregate cost/latency/token analytics per model (F21) + routing overhead (F44). */
 export async function ledgerAnalytics(orgId: string) {
-  const entries = await repoList({ orgId, limit: 500 });
+  const [entries, timings] = await Promise.all([
+    repoList({ orgId, limit: 500 }),
+    repoList({ orgId, eventType: "stage_timing", limit: 500 }),
+  ]);
   const execs = entries.filter((e) => e.gate === "execution" && e.detail?.latencyMs != null);
   const byModel = new Map<string, { tasks: number; latencyMs: number; tokens: number }>();
   for (const e of execs) {
@@ -52,6 +55,46 @@ export async function ledgerAnalytics(orgId: string) {
       tasks: v.tasks,
       avgLatencyMs: v.tasks ? Math.round(v.latencyMs / v.tasks) : 0,
       tokens: v.tokens,
+    })),
+    routingOverhead: aggregateStageTimings(timings),
+  };
+}
+
+/**
+ * F44: split the time Verya itself adds (workflow repair, tie-breaks, memory lookup,
+ * DNA refresh, consensus merge) from time spent waiting on providers.
+ */
+export function aggregateStageTimings(entries: LedgerEntry[]) {
+  const stages = entries.filter((e) => e.detail && (e.detail as { stageMs?: number }).stageMs != null);
+  const byGateMap = new Map<string, { runs: number; stageMs: number; providerMs: number; overheadMs: number }>();
+  let stageMs = 0;
+  let providerMs = 0;
+  let overheadMs = 0;
+  for (const entry of stages) {
+    const detail = entry.detail as { stageMs: number; providerMs?: number; overheadMs?: number };
+    stageMs += detail.stageMs;
+    providerMs += detail.providerMs ?? 0;
+    overheadMs += detail.overheadMs ?? 0;
+    const agg = byGateMap.get(entry.gate) ?? { runs: 0, stageMs: 0, providerMs: 0, overheadMs: 0 };
+    agg.runs += 1;
+    agg.stageMs += detail.stageMs;
+    agg.providerMs += detail.providerMs ?? 0;
+    agg.overheadMs += detail.overheadMs ?? 0;
+    byGateMap.set(entry.gate, agg);
+  }
+  const avg = (total: number) => (stages.length ? Math.round(total / stages.length) : 0);
+  return {
+    stages: stages.length,
+    avgStageMs: avg(stageMs),
+    avgProviderMs: avg(providerMs),
+    avgOverheadMs: avg(overheadMs),
+    overheadShare: stageMs > 0 ? Number((overheadMs / stageMs).toFixed(3)) : 0,
+    byGate: Array.from(byGateMap.entries()).map(([gate, v]) => ({
+      gate,
+      runs: v.runs,
+      avgStageMs: Math.round(v.stageMs / v.runs),
+      avgProviderMs: Math.round(v.providerMs / v.runs),
+      avgOverheadMs: Math.round(v.overheadMs / v.runs),
     })),
   };
 }

@@ -16,6 +16,8 @@ import type { StageAdapters } from "../ai/provider";
 import { recordToLedger } from "../../services/ledger";
 import { findSimilar } from "../../services/memory";
 import { analyzeFlawsByConsensus } from "../../services/consensus";
+import { refreshTaskFingerprints } from "./fingerprint";
+import { timeStage } from "../metrics";
 
 const ORG_ID = process.env.VERYA_ORG_ID || "default-org";
 
@@ -80,7 +82,19 @@ export async function processGate(
   session: PipelineSession,
   adapters: StageAdapters
 ): Promise<PipelineSession> {
-  switch (session.gate) {
+  // F19 is deterministic and backfills old sessions without changing their gate semantics.
+  refreshTaskFingerprints(session);
+  // F44: time the stage and record provider-vs-overhead split to the ledger.
+  const gate = session.gate;
+  return timeStage(gate, { orgId: ORG_ID, sessionId: session.id }, () => runGate(gate, session, adapters));
+}
+
+async function runGate(
+  gate: PipelineSession["gate"],
+  session: PipelineSession,
+  adapters: StageAdapters
+): Promise<PipelineSession> {
+  switch (gate) {
     case "suitability":
       return runSuitability(session, adapters);
     case "platform":
@@ -445,6 +459,7 @@ async function runRouting(
     algorithmPlan: session.algorithms!,
     stack: stackTextOf(session),
     memoryContext: routingMemory,
+    taskFingerprints: session.taskFingerprints,
   });
   repairRoutingPlan(plan, session.algorithms!.tasks);
 
@@ -722,6 +737,7 @@ export async function applyGateAction(
         t.dependsOn = (t.dependsOn ?? []).filter((d: string) => ids.has(d));
       }
       session.workflow.tasks = action.tasks;
+      refreshTaskFingerprints(session);
       // Algorithm recommendation (AI) runs in the background via processGate.
       session.gate = "algorithms";
       session.gateStatus = "running";

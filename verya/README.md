@@ -84,7 +84,15 @@ In development Next.js proxies `/api/*` and `/health` to the backend
 Frontend (`verya/`): `npm run dev` · `npm run build` · `npm start` · `npm run lint`
 
 Backend (`verya/backend/`): `npm run dev` · `npm run build` · `npm start` ·
-`npm run migrate` · `npm run worker` · `npm run typecheck` · `npm run lint`
+`npm run migrate` · `npm run worker` · `npm run typecheck` · `npm run lint` ·
+`npm test`
+
+`npm test` runs the backend regression suite on Node's built-in runner via `tsx`
+(no extra test dependency). It covers the F40 prompt-injection defence (rule
+coverage, neutralization, an end-to-end intake pass that writes real ledger rows to
+an isolated scratch store), the F19 task-DNA fingerprints, and the F44 stage-timing
+aggregation. The suite is fully offline — provider keys are cleared before the
+modules load, so it never spends API credits.
 
 ## Data model
 

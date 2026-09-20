@@ -16,6 +16,7 @@
     "worker": "tsx src/jobs/worker.ts",
     "worker:build": "tsc -p tsconfig.json && node dist/jobs/worker.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --import tsx --test \"src/**/*.test.ts\"",
     "lint": "eslint src --ext .ts"
   },
   "dependencies": {

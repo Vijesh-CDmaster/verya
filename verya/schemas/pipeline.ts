@@ -81,10 +81,32 @@ export const SessionSchema = z.object({
           dependsOn: z.array(z.string()).default([]),
           complexity: z.enum(["low", "medium", "high"]).default("medium"),
           risk: z.enum(["low", "medium", "high"]).default("medium"),
+          fingerprint: z.object({
+            version: z.literal(1),
+            complexity: z.enum(["low", "medium", "high"]),
+            domain: z.string(),
+            risk: z.enum(["low", "medium", "high"]),
+            contextSize: z.enum(["small", "medium", "large"]),
+            outputFormat: z.enum(["text", "structured-data", "code", "analysis"]),
+            reasoningRequirement: z.enum(["direct", "standard", "evaluative", "deep"]),
+            requiredCapabilities: z.array(z.string()),
+            signature: z.string().length(16),
+          }).optional(),
         })
       ),
     })
     .nullish(),
+  taskFingerprints: z.record(z.string(), z.object({
+    version: z.literal(1),
+    complexity: z.enum(["low", "medium", "high"]),
+    domain: z.string(),
+    risk: z.enum(["low", "medium", "high"]),
+    contextSize: z.enum(["small", "medium", "large"]),
+    outputFormat: z.enum(["text", "structured-data", "code", "analysis"]),
+    reasoningRequirement: z.enum(["direct", "standard", "evaluative", "deep"]),
+    requiredCapabilities: z.array(z.string()),
+    signature: z.string().length(16),
+  })).optional(),
   flawReport: z
     .object({
       summary: z.string(),

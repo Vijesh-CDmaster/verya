@@ -44,10 +44,29 @@ async function writeJson<T>(file: string, data: T): Promise<void> {
   const tmp = `${target}.${process.pid}.${Date.now()}.tmp`;
   try {
     await fs.writeFile(tmp, JSON.stringify(data, null, 1), "utf8");
-    await fs.rename(tmp, target);
+    await renameWithRetry(tmp, target);
   } finally {
     await fs.rm(tmp, { force: true }).catch(() => undefined);
   }
+}
+
+/**
+ * Windows can transiently reject a rename-over-existing-file while another handle
+ * (a concurrent reader, an antivirus scan) still holds the destination open. Retry
+ * briefly, then fall back to a direct copy so a dev-mode save never fails silently.
+ */
+async function renameWithRetry(from: string, to: string): Promise<void> {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      await fs.rename(from, to);
+      return;
+    } catch (err) {
+      const code = (err as NodeJS.ErrnoException).code;
+      if (code !== "EPERM" && code !== "EBUSY" && code !== "EACCES") throw err;
+      await new Promise((resolve) => setTimeout(resolve, 25 * (attempt + 1)));
+    }
+  }
+  await fs.copyFile(from, to);
 }
 
 const locks = new Map<string, Promise<unknown>>();

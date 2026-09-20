@@ -13,6 +13,13 @@ type Task = {
   dependsOn: string[];
   complexity: string;
   risk: string;
+  fingerprint?: {
+    signature: string;
+    contextSize: string;
+    reasoningRequirement: string;
+    outputFormat: string;
+    requiredCapabilities: string[];
+  };
 };
 
 let localSeq = 0;
@@ -117,6 +124,19 @@ export function GateTasks({
             </div>
             {t.dependsOn.length > 0 && (
               <p className="mt-1 text-[11px] text-muted">depends on: {t.dependsOn.join(", ")}</p>
+            )}
+            {t.fingerprint && (
+              <div className="mt-2 flex flex-wrap gap-1 text-[10px] text-muted">
+                <span className="rounded border border-violet-500/40 px-1.5 py-0.5 text-violet-300">
+                  DNA {t.fingerprint.signature}
+                </span>
+                <span className="rounded border border-line px-1.5 py-0.5">
+                  {t.fingerprint.contextSize} context · {t.fingerprint.reasoningRequirement} reasoning
+                </span>
+                <span className="rounded border border-line px-1.5 py-0.5">
+                  {t.fingerprint.outputFormat} · {t.fingerprint.requiredCapabilities.slice(0, 3).join(", ") || "general"}
+                </span>
+              </div>
             )}
             <div className="mt-2 flex flex-wrap gap-1.5">
               <button

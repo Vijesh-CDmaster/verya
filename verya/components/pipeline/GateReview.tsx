@@ -114,6 +114,13 @@ export function GateReview({
                 <TrustBadge model={e.model} />
                 {decided && <Badge variant="muted">decision recorded</Badge>}
               </div>
+              {task?.fingerprint && (
+                <p className="mt-2 text-[11px] text-muted">
+                  <span className="text-violet-300">DNA {task.fingerprint.signature}</span>
+                  {" · "}{task.fingerprint.reasoningRequirement} reasoning · {task.fingerprint.outputFormat} output ·{" "}
+                  {task.fingerprint.requiredCapabilities.slice(0, 4).join(", ") || "general capability"}
+                </p>
+              )}
               {e.verification.issues.length > 0 && (
                 <ul className="mt-2 text-[12px] text-amber-400">
                   {e.verification.issues.map((issue) => (

@@ -5,6 +5,7 @@ import { startPipeline, getPipeline, listPipelines, actOnPipeline } from "../ser
 import { recordToLedger } from "../services/ledger";
 import { startExecution } from "../services/execution";
 import { sanitizeInput, rateLimitKey } from "../lib/middleware";
+import { describeScan, scanInjection } from "../lib/security/injection";
 
 export default async function pipelineRoutes(app: FastifyInstance): Promise<void> {
   // Start a new pipeline session (runs the suitability gate).
@@ -101,6 +102,9 @@ export default async function pipelineRoutes(app: FastifyInstance): Promise<void
     const combined = description
       ? `${description}\n\n--- ATTACHED DOCUMENT: ${data.filename} ---\n${trimmed.slice(0, 100000)}`
       : trimmed;
+    // F40: uploaded documents are external, untrusted content — validate them before
+    // they are passed to any model, and record the verdict in the ledger.
+    const externalScan = scanInjection(trimmed);
     const session = await startPipeline({
       input: combined.slice(0, 20000),
       statedStack: sanitizeInput((data.fields?.statedStack as string) ?? ""),
@@ -110,8 +114,13 @@ export default async function pipelineRoutes(app: FastifyInstance): Promise<void
       orgId: req.auth.orgId,
       sessionId: session.id,
       gate: "intake",
-      eventType: "file_uploaded",
-      detail: { summary: `Intake via file upload: ${data.filename} (${buf.length} bytes, ${trimmed.length} chars extracted)` },
+      eventType: externalScan.findings.length > 0 ? "external_content_flagged" : "external_content_scanned",
+      actor: "system",
+      detail: {
+        summary: `Intake via file upload: ${data.filename} (${buf.length} bytes, ${trimmed.length} chars extracted). ${describeScan(externalScan)}`,
+        risk: externalScan.risk,
+        findings: externalScan.findings.map((f) => ({ rule: f.rule, category: f.category, severity: f.severity })),
+      },
     });
     return { session };
   });

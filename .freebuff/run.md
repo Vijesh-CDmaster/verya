@@ -1,37 +1,87 @@
-# Verya — Run Doc (dev server / preview)
+# Verya — Run Doc (dev servers / preview)
 
-App root: `verya/` (Next.js 15, App Router, Turbopack). Thread workspace root is this folder's parent.
+App root: `verya/` (Next.js 15 App Router + Turbopack, Tailwind 4, Clerk).
+API root: `verya/backend/` (Fastify 5 + TypeScript, `tsx` runtime in dev).
 
-## 1. Reproduce artifacts (fresh checkout)
+The frontend proxies `/api/*` and `/health` to the backend (`next.config.ts`,
+`BACKEND_ORIGIN`), so **the API half of the app only works while the backend runs**.
 
-1. **Node 22 required.** On this machine `nodejs` is missing from the PATH that spawned
-   children inherit, so always prepend it: `$env:PATH = 'C:\Program Files\nodejs;' + $env:PATH`
-   (PowerShell) or `export PATH="/c/Program Files/nodejs:$PATH"` (Git Bash) before any npm call.
-2. **Install dependencies** (already vendored in `verya/node_modules` here; rerun if missing):
+## 1. Reproduce the artifacts (fresh checkout)
+
+1. **Node 22 required.** Node lives at `C:\Program Files\nodejs`. In Git Bash prepend it
+   before any `npm` call (`export PATH="/c/Program Files/nodejs:$PATH"`); the PowerShell
+   recipe below already does the equivalent by invoking `node.exe` directly, which avoids
+   the npm-shim quirk where a spawned `node` lookup fails with `'"node"' is not recognized`.
+2. **Install dependencies** — already vendored, rerun only if missing:
    ```bash
    cd verya && npm install
+   cd verya/backend && npm install
    ```
-3. **Environment file** — none exists in the main checkout; the app runs without it and
-   shows a graceful "GEMINI_API_KEY is not set" error on AI calls (all other UI/flows work).
-   To enable AI: create `verya/.env.local` with `GEMINI_API_KEY=<key>` (never commit it),
-   template in `verya/.env.example`.
-4. **Data dirs** (`.data/` under `verya/` — sessions, ledger, memory, reputation) are
-   created lazily at runtime; nothing to reproduce.
+3. **Environment file** — `verya/.env.local` **exists in the main checkout** and must be
+   COPIED (never symlinked) into a fresh worktree. It holds the provider keys
+   (Gemini/Groq/Mistral/OpenRouter), the Clerk publishable + secret keys, `BACKEND_ORIGIN`,
+   `VERYA_APPROVED_MODELS`, and the database URL under the **lowercase key `neon_db`**
+   (the pool accepts `DATABASE_URL || neon_db`). Never record its values here and never
+   commit it.
+4. **Data backend selection** — the pool uses Neon whenever *either* `DATABASE_URL` or
+   `neon_db` is set; with both unset it falls back to the file-backed dev store
+   (`verya/backend/.devstore/{sessions,ledger,memory,reputation,leads}.json`, created
+   lazily, nothing to reproduce). `.next/` build cache is lazy too. Check the first
+   backend log line to see which one is live — a `DATABASE_URL`-only grep of `.env.local`
+   returns nothing and is misleading.
 
-## 2. Run the server (detached, survives the conversation)
+## 2. Run the servers (detached, they must outlive the conversation)
 
-Windows quirk: do NOT bind the default port 3000 — it collides with a Hyper-V dynamic
-excluded-port reservation on this machine (Next silently falls back to an ephemeral port).
-Use an explicit port like 3100:
+Use `node.exe` directly with the tool's own CLI entry point — no npm shim, no shell
+resolution issues. stdout and stderr must go to DIFFERENT files.
+
+### 2a. Backend (Fastify) — port 4000
+
+Caveat for `npm run dev`: its `predev` hook runs `npm run migrate`, which throws
+`DbNotConfigured` (exit 1) whenever *both* `DATABASE_URL` and `neon_db` are unset — the
+chain then never starts, which is easy to misread as a broken script. With a database
+configured `npm run dev` (and `npm run worker`) are fine and migrate first; running the
+entry point directly always works and skips the npm shim entirely:
 
 ```powershell
-powershell -NoProfile -Command "$env:PATH = 'C:\Program Files\nodejs;' + $env:PATH; (Start-Process -FilePath 'C:\Program Files\nodejs\npm.cmd' -ArgumentList 'run','dev','--','-p','3100' -WorkingDirectory 'C:\Users\Admin\Desktop\PROJECTS\verya\verya' -RedirectStandardOutput 'C:\Users\Admin\Desktop\PROJECTS\verya\.freebuff\preview.log' -RedirectStandardError 'C:\Users\Admin\Desktop\PROJECTS\verya\.freebuff\preview.log.err' -WindowStyle Hidden -PassThru).Id"
+powershell -NoProfile -Command "(Start-Process -FilePath 'C:\Program Files\nodejs\node.exe' -ArgumentList 'node_modules/tsx/dist/cli.mjs','src/server.ts' -WorkingDirectory 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend' -RedirectStandardOutput 'C:\Users\Admin\Desktop\PROJECTS\verya\.freebuff\backend-preview.log' -RedirectStandardError 'C:\Users\Admin\Desktop\PROJECTS\verya\.freebuff\backend-preview.log.err' -WindowStyle Hidden -PassThru).Id"
 ```
 
-(stdout and stderr must go to different files; npm.cmd must be the absolute path;
-PATH must be fixed first or the spawned `node` lookups fail.)
+- `npm run typecheck` in `backend/` fails under the npm shim even with node on PATH
+  (`'"node"' is not recognized`); use
+  `node ./node_modules/typescript/bin/tsc -p tsconfig.json --noEmit` instead.
+- `npm test` in `backend/` runs the offline regression suite (node's runner + `tsx`).
 
-- URL: http://localhost:3100 (app) · http://localhost:3100/dashboard (dashboard)
-- Health check: `curl -s -o /dev/null -w "%{http_code}" http://localhost:3100/` → 200
-- Stop: `powershell -NoProfile -Command "Get-Process node | Stop-Process -Force"`
-  (kills all node — only safe when nothing else node-based is running)
+- Health: `curl -s http://localhost:4000/health` → `{"ok":true,...}`
+- First log line shows the real posture: dev-store vs Neon, and `auth: clerk` vs dev mode.
+
+### 2b. Frontend (Next.js) — port 3100
+
+**Do not bind 3000**: a Hyper-V dynamic port-exclusion reservation on this machine claims
+it and Next silently falls back to an ephemeral port. 3100 is used and free.
+
+```powershell
+powershell -NoProfile -Command "(Start-Process -FilePath 'C:\Program Files\nodejs\node.exe' -ArgumentList 'node_modules/next/dist/bin/next','dev','-p','3100' -WorkingDirectory 'C:\Users\Admin\Desktop\PROJECTS\verya\verya' -RedirectStandardOutput 'C:\Users\Admin\Desktop\PROJECTS\verya\.freebuff\preview.log' -RedirectStandardError 'C:\Users\Admin\Desktop\PROJECTS\verya\.freebuff\preview.log.err' -WindowStyle Hidden -PassThru).Id"
+```
+
+- URL: <http://localhost:3100> · dashboard: <http://localhost:3100/dashboard>
+- Health: `curl -s -o /dev/null -w "%{http_code}" http://localhost:3100/` → 200
+  (the first request compiles the route and can take ~15s; later requests are fast)
+- `NEXT_PUBLIC_APP_URL` still says `http://localhost:3000`; that only affects generated
+  links, not the server binding.
+- The API requires a Clerk session (`CLERK_SECRET_KEY` is set), so `/api/*` answers 401
+  for anonymous callers — sign in through the UI, or expect `<SignIn>` on `/dashboard`.
+
+### 2c. Pids and stopping
+
+`Start-Process` returns the pid, but its stdout can be swallowed; recover the live pids
+from the listening sockets instead:
+
+```bash
+netstat -ano | grep LISTENING | grep -E ":3100|:4000"     # last column is the pid
+powershell -NoProfile -Command "Get-Process -Id <pid>"
+powershell -NoProfile -Command "Stop-Process -Id <pid> -Force"
+```
+
+Stop only the pids you started — `Get-Process node | Stop-Process -Force` kills unrelated
+node processes (other worktrees, the desktop app's own helpers).

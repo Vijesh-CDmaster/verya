@@ -10,6 +10,7 @@ import { recordToLedger } from "./ledger";
 import { recordMemory } from "./memory";
 import { updateFromOutcome } from "./reputation";
 import { enqueueExecution } from "../jobs/queues";
+import { describeScan, scanInjection } from "../lib/security/injection";
 
 const ORG_ID = process.env.VERYA_ORG_ID || "default-org";
 
@@ -44,7 +45,29 @@ export async function startPipeline(input: {
     executions: [],
     humanFeedback: { ratings: {} },
   };
+  // F40: intake text is untrusted input. Scan it once, keep the findings on the
+  // session as audit evidence, and ledger it. The original text is preserved (the
+  // user sees exactly what they submitted); hardening happens at the prompt boundary.
+  const scan = scanInjection(session.input);
+  session.inputSecurity = {
+    risk: scan.risk,
+    findings: scan.findings,
+    neutralized: scan.neutralized,
+    scannedAt: new Date().toISOString(),
+  };
   await repoCreate(ORG_ID, session);
+  await recordToLedger({
+    orgId: ORG_ID,
+    sessionId: session.id,
+    gate: "intake",
+    eventType: scan.findings.length > 0 ? "injection_scan_flagged" : "injection_scan_clean",
+    actor: "system",
+    detail: {
+      summary: describeScan(scan),
+      risk: scan.risk,
+      findings: scan.findings.map((f) => ({ rule: f.rule, category: f.category, severity: f.severity })),
+    },
+  });
   await repoSave(ORG_ID, session);
   kickGateProcessing(session.id);
   return session;

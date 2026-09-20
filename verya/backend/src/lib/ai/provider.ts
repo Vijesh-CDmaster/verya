@@ -22,6 +22,7 @@ import {
   VERIFICATION_SYSTEM,
   SELF_AUDIT_SYSTEM,
 } from "./prompts";
+import { hardenUntrusted, wrapUntrusted } from "../security/injection";
 import type { PipelineStageId, ProviderName, TargetPlatform } from "../../schemas/pipeline";
 import { MODEL_POOL, poolModelOf } from "../../schemas/pipeline";
 import {
@@ -58,6 +59,21 @@ const GEMINI_FAILOVER_MODELS = (process.env.GEMINI_FAILOVER_MODELS ||
 const RETRY_DELAYS_MS = [3000, 8000, 15000, 25000, 40000];
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+// ---------- F44: provider-time accounting ----------
+// Cumulative wall-clock time spent inside provider network calls, so the gate engine
+// can separate Verya's own routing/decision overhead from provider latency.
+const providerCalls = { count: 0, totalMs: 0 };
+
+function noteProviderCall(started: number): void {
+  providerCalls.count += 1;
+  providerCalls.totalMs += Math.max(0, Date.now() - started);
+}
+
+/** Snapshot of cumulative provider-call time for this process. */
+export function providerCallStats(): { count: number; totalMs: number } {
+  return { ...providerCalls };
+}
 
 type ProviderConfig = {
   name: ProviderName;
@@ -178,6 +194,7 @@ async function geminiStructured<S extends z.ZodType>(
   const ai = getClient();
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
+  const callStarted = Date.now();
   try {
     const response = await ai.models.generateContent({
       model,
@@ -195,6 +212,7 @@ async function geminiStructured<S extends z.ZodType>(
     const parsed: unknown = JSON.parse(text);
     return validateCoerced(zodSchema, parsed);
   } finally {
+    noteProviderCall(callStarted);
     clearTimeout(timer);
   }
 }
@@ -258,6 +276,7 @@ async function chatCompatible(
     }
     throw error;
   } finally {
+    noteProviderCall(started);
     clearTimeout(timer);
   }
 }
@@ -595,6 +614,7 @@ export async function runModelText(
   if (process.env.GEMINI_API_KEY) {
     for (const model of [process.env.GEMINI_MODEL || "gemini-3.6-flash", ...GEMINI_FAILOVER_MODELS]) {
       if (isExhausted("gemini", model)) continue;
+      const nativeStarted = Date.now();
       try {
         const ai = getClient();
         const controller = new AbortController();
@@ -618,9 +638,11 @@ export async function runModelText(
             };
           }
         } finally {
+          noteProviderCall(nativeStarted);
           clearTimeout(timer);
         }
       } catch (err) {
+        noteProviderCall(nativeStarted);
         lastErr = err;
         if (isDailyQuotaExhaustion(err)) markExhausted("gemini", model);
       }
@@ -647,6 +669,7 @@ export interface StageAdapters {
     algorithmPlan: AlgorithmPlan;
     stack: string;
     memoryContext?: string;
+    taskFingerprints?: Record<string, import("../../schemas/pipeline").TaskFingerprint>;
   }): Promise<RoutingPlan>;
   executeTask(input: {
     task: Task;
@@ -673,24 +696,36 @@ export interface StageAdapters {
 }
 
 export const geminiAdapters: StageAdapters = {
-  understand: (raw) => runStructuredStage("understanding", UNDERSTANDING_SYSTEM, raw, WorkflowSchema),
-
-  checkSuitability: ({ raw, workflow }) =>
+  // F40: every adapter that carries user text funnels it through hardenUntrusted
+  // (deterministic scan + neutralization) and an explicit untrusted-data envelope.
+  understand: (raw) =>
     runStructuredStage(
+      "understanding",
+      UNDERSTANDING_SYSTEM,
+      wrapUntrusted("PROJECT DESCRIPTION", hardenUntrusted(raw).text),
+      WorkflowSchema
+    ),
+
+  checkSuitability: ({ raw, workflow }) => {
+    const safeRaw = hardenUntrusted(raw).text;
+    return runStructuredStage(
       "suitability",
       SUITABILITY_SYSTEM,
-      `PROJECT DESCRIPTION:\n${raw}\n\nEXTRACTED WORKFLOW:\n${JSON.stringify(workflow)}`,
+      `${wrapUntrusted("PROJECT DESCRIPTION", safeRaw)}\n\nEXTRACTED WORKFLOW:\n${JSON.stringify(workflow)}`,
       SuitabilitySchema
-    ),
+    );
+  },
 
   detectFlaws: async ({ raw, workflow, targetPlatform }) => {
     const platformContext = targetPlatform
       ? `\nTARGET PLATFORM: ${targetPlatform === "both" ? "Android and iOS" : targetPlatform === "android" ? "Android only" : "iOS only"}`
       : "";
+    const safeRaw = hardenUntrusted(raw).text;
+    const descriptionBlock = wrapUntrusted("PROJECT DESCRIPTION", safeRaw);
     const first = await runStructuredStage(
       "flaws",
       FLAW_SYSTEM,
-      `PROJECT DESCRIPTION:\n${raw}\n\nWORKFLOW:\n${JSON.stringify(workflow)}${platformContext}`,
+      `${descriptionBlock}\n\nWORKFLOW:\n${JSON.stringify(workflow)}${platformContext}`,
       FlawReportSchema
     );
     // Self-consistency retry: if the summary claims gaps but flaws is empty, the model
@@ -700,27 +735,30 @@ export const geminiAdapters: StageAdapters = {
       return runStructuredStage(
         "flaws",
         FLAW_SYSTEM,
-        `PROJECT DESCRIPTION:\n${raw}\n\nWORKFLOW:\n${JSON.stringify(workflow)}${platformContext}\n\nNOTE: Your previous attempt returned an empty flaws array while its own summary claimed real gaps ("${first.summary.slice(0, 300)}"). Re-analyze and return EVERY flaw in the flaws array — each as a full object with id, title, category, severity, description, suggestedFix, relatedTaskIds. Empty is only valid if the plan is truly clean.`,
+        `${descriptionBlock}\n\nWORKFLOW:\n${JSON.stringify(workflow)}${platformContext}\n\nNOTE: Your previous attempt returned an empty flaws array while its own summary claimed real gaps ("${first.summary.slice(0, 300)}"). Re-analyze and return EVERY flaw in the flaws array — each as a full object with id, title, category, severity, description, suggestedFix, relatedTaskIds. Empty is only valid if the plan is truly clean.`,
         FlawReportSchema
       );
     }
     return first;
   },
 
-  validateStack: ({ raw, workflow, statedStack }) =>
-    runStructuredStage(
+  validateStack: ({ raw, workflow, statedStack }) => {
+    const safeRaw = hardenUntrusted(raw).text;
+    const safeStack = hardenUntrusted(statedStack).text;
+    return runStructuredStage(
       "stack",
       STACK_VALIDATE_SYSTEM,
-      `PROJECT DESCRIPTION:\n${raw}\n\nWORKFLOW:\n${JSON.stringify(workflow)}\n\nUSER'S STACK:\n${statedStack}`,
+      `${wrapUntrusted("PROJECT DESCRIPTION", safeRaw)}\n\nWORKFLOW:\n${JSON.stringify(workflow)}\n\n${wrapUntrusted("USER'S STACK", safeStack)}`,
       StackValidationSchema
-    ),
+    );
+  },
 
   proposeStacks: async ({ raw, workflow }) => {
     const ArraySchema = z.object({ candidates: z.array(StackProposalSchema).min(1).max(3) });
     const out = await runStructuredStage(
       "stack",
       STACK_RECOMMEND_SYSTEM,
-      `PROJECT DESCRIPTION:\n${raw}\n\nWORKFLOW:\n${JSON.stringify(workflow)}`,
+      `${wrapUntrusted("PROJECT DESCRIPTION", hardenUntrusted(raw).text)}\n\nWORKFLOW:\n${JSON.stringify(workflow)}`,
       ArraySchema
     );
     return out.candidates;
@@ -734,11 +772,11 @@ export const geminiAdapters: StageAdapters = {
       AlgorithmPlanSchema
     ),
 
-  routeModels: ({ workflow, algorithmPlan, stack, memoryContext }) =>
+  routeModels: ({ workflow, algorithmPlan, stack, memoryContext, taskFingerprints }) =>
     runStructuredStage(
       "routing",
       ROUTING_SYSTEM,
-      `WORKFLOW:\n${JSON.stringify(workflow)}\n\nCHOSEN STACK:\n${stack}\n\nALGORITHM PLAN:\n${JSON.stringify(algorithmPlan)}${memoryContext ? `\n\nORG MEMORY (this organization's recorded outcomes per model and task category — a model that repeatedly earned "accepted" for a category deserves a confidence bump for similar tasks; one with "rejected"/"flagged" history deserves caution):\n${memoryContext}` : ""}`,
+      `WORKFLOW:\n${JSON.stringify(workflow)}\n\nCHOSEN STACK:\n${stack}\n\nALGORITHM PLAN:\n${JSON.stringify(algorithmPlan)}${taskFingerprints ? `\n\nTASK DNA FINGERPRINTS (deterministic routing context; use complexity, risk, reasoning requirement, output format, and capabilities to select an appropriately reliable model):\n${JSON.stringify(taskFingerprints)}` : ""}${memoryContext ? `\n\nORG MEMORY (this organization's recorded outcomes per model and task category — a model that repeatedly earned "accepted" for a category deserves a confidence bump for similar tasks; one with "rejected"/"flagged" history deserves caution):\n${memoryContext}` : ""}`,
       RoutingPlanSchema
     ),
 

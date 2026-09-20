@@ -3,6 +3,7 @@ import type { Flaw, FlawReport, Workflow, TargetPlatform } from "../schemas/pipe
 import { FLAW_SYSTEM } from "../lib/ai/prompts";
 import { FlawReportSchema } from "../schemas/pipeline";
 import { runStructuredStageForProvider } from "../lib/ai/provider";
+import { hardenUntrusted } from "../lib/security/injection";
 
 export type ConsensusProvider = "gemini" | "groq" | "mistral";
 
@@ -54,7 +55,9 @@ export async function analyzeFlawsByConsensus(input: {
   const platformContext = input.targetPlatform
     ? `\nTARGET PLATFORM: ${input.targetPlatform === "both" ? "Android and iOS" : input.targetPlatform === "android" ? "Android only" : "iOS only"}`
     : "";
-  const user = `PROJECT DESCRIPTION:\n${input.raw}\n\nWORKFLOW:\n${JSON.stringify(input.workflow)}${platformContext}\n\nReturn an independent flaw analysis. Do not defer to other models.`;
+  // F40: user text is untrusted data — hardened once, then shared by every provider.
+  const safeRaw = hardenUntrusted(input.raw).text;
+  const user = `PROJECT DESCRIPTION:\n${safeRaw}\n\nWORKFLOW:\n${JSON.stringify(input.workflow)}${platformContext}\n\nReturn an independent flaw analysis. Do not defer to other models.`;
   const opinions = await Promise.all(
     PROVIDERS.map(async (provider): Promise<ModelOpinion> => {
       try {

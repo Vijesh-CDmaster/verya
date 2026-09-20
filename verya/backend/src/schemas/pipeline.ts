@@ -88,8 +88,20 @@ export const TaskSchema = z.object({
   dependsOn: arr(z.string()),
   complexity: nullTo("medium" as const, z.enum(["low", "medium", "high"])),
   risk: nullTo("medium" as const, z.enum(["low", "medium", "high"])),
+  fingerprint: z.object({
+    version: z.literal(1),
+    complexity: z.enum(["low", "medium", "high"]),
+    domain: z.string(),
+    risk: z.enum(["low", "medium", "high"]),
+    contextSize: z.enum(["small", "medium", "large"]),
+    outputFormat: z.enum(["text", "structured-data", "code", "analysis"]),
+    reasoningRequirement: z.enum(["direct", "standard", "evaluative", "deep"]),
+    requiredCapabilities: z.array(z.string()),
+    signature: z.string().length(16),
+  }).optional(),
 });
 export type Task = z.infer<typeof TaskSchema>;
+export type TaskFingerprint = NonNullable<Task["fingerprint"]>;
 
 export const WorkflowSchema = z.object({
   title: nullTo("", z.string().max(120)),
@@ -437,6 +449,8 @@ export const ExecutionResultSchema = z.object({
 });
 export type ExecutionResult = z.infer<typeof ExecutionResultSchema>;
 
+import type { InjectionFinding } from "../lib/security/injection";
+
 // ---------- Session state (the whole gated pipeline) ----------
 export type GateId =
   | "intake"
@@ -473,6 +487,15 @@ export type PipelineSession = {
   stackGate: StackGate | null;
   algorithms: AlgorithmPlan | null;
   routing: RoutingPlan | null;
+  /** Derived DNA, optional so sessions created before F19 remain valid. */
+  taskFingerprints?: Record<string, TaskFingerprint>;
+  /** F40 prompt-injection scan of the untrusted intake text (audit evidence). */
+  inputSecurity?: {
+    risk: number;
+    findings: InjectionFinding[];
+    neutralized: boolean;
+    scannedAt: string;
+  };
   executions: ExecutionResult[];
   humanFeedback: {
     ratings: Record<string, { accepted: boolean; rating?: number; note?: string }>;

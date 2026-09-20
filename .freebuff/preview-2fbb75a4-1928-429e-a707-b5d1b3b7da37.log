@@ -1,0 +1,32 @@
+   ▲ Next.js 15.5.25
+   - Local:        http://localhost:3100
+   - Network:      http://10.255.154.87:3100
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 5.7s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 1830ms (211 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 11s (1225 modules)
+Attention: Clerk collects telemetry data from its SDKs when connected to development instances.
+The data collected is used to inform Clerk's product roadmap.
+To learn more, including how to opt-out from the telemetry program, visit: https://clerk.com/docs/telemetry.
+
+ GET / 200 in 12538ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 6.8s (2197 modules)
+ GET /dashboard 200 in 7779ms
+ GET / 200 in 257ms
+ GET /dashboard 200 in 107ms
+ GET / 200 in 199ms
+ GET /dashboard 200 in 108ms
+ ○ Compiling /legal/[doc] ...
+ ✓ Compiled /legal/[doc] in 1128ms (2189 modules)
+ GET /legal/terms 200 in 2686ms
+ ○ Compiling /sign-in/[[...sign-in]] ...
+ ✓ Compiled /sign-in/[[...sign-in]] in 631ms (2194 modules)
+ GET /sign-in 200 in 1894ms
+ GET / 200 in 220ms
+ GET / 200 in 157ms
+ GET /dashboard 200 in 245ms
