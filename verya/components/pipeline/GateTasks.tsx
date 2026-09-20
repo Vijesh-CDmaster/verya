@@ -102,12 +102,49 @@ export function GateTasks({
   const changed =
     tasks.length !== original.length || removedIds.size > 0 || tasks.some((t, i) => t !== original[i]);
 
+  const byId = new Map(tasks.map((task) => [task.id, task]));
+  const depthOf = (task: Task, visiting = new Set<string>()): number => {
+    if (visiting.has(task.id)) return 0;
+    const dependencies = task.dependsOn.map((id) => byId.get(id)).filter((item): item is Task => Boolean(item));
+    if (dependencies.length === 0) return 0;
+    const next = new Set(visiting).add(task.id);
+    return 1 + Math.max(...dependencies.map((dependency) => depthOf(dependency, next)));
+  };
+  const levels = Array.from(
+    tasks.reduce((groups, task) => {
+      const level = depthOf(task);
+      const group = groups.get(level) ?? [];
+      group.push(task);
+      groups.set(level, group);
+      return groups;
+    }, new Map<number, Task[]>()).entries()
+  ).sort(([a], [b]) => a - b);
+
   return (
     <div>
       <p className="text-[13px] text-muted">
         {tasks.length} tasks. Edit titles, split, merge, delete, or confirm — dependencies follow your
         edits.
       </p>
+      <div className="mt-4 overflow-x-auto rounded-lg border border-line bg-bg p-3">
+        <p className="mb-3 text-[10px] font-semibold uppercase tracking-wide text-muted">Dependency map</p>
+        <div className="flex min-w-[620px] gap-3">
+          {levels.map(([level, levelTasks]) => (
+            <div key={level} className="min-w-[170px] flex-1">
+              <p className="mb-2 text-[10px] text-muted">Stage {level + 1}</p>
+              <div className="space-y-2">
+                {levelTasks.map((task) => (
+                  <div key={task.id} className="rounded border border-line bg-elev px-2 py-2 text-[11px]">
+                    <span className="font-mono text-muted">{task.id}</span>
+                    <p className="mt-1 font-medium">{task.title}</p>
+                    {task.dependsOn.length > 0 && <p className="mt-1 text-[10px] text-muted">← {task.dependsOn.join(", ")}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
       <ul className="mt-3 space-y-2">
         {tasks.map((t, idx) => (
           <li key={t.id} className="rounded-lg border border-line bg-elev px-4 py-3 text-[13px]">

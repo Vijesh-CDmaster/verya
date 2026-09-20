@@ -1,12 +1,14 @@
 // Dashboard REST routes — everything the /dashboard view renders (F22), all real data.
 import type { FastifyInstance } from "fastify";
 import { listLedger, ledgerAnalytics, verifyLedger } from "../services/ledger";
-import { leaderboard, skillHeatmap } from "../services/reputation";
+import { leaderboard, skillHeatmap, cheapestTrustedModels } from "../services/reputation";
 import { findSimilar, exportOrgMemory, deleteOrgMemory } from "../services/memory";
 import { listPipelines } from "../services/pipeline";
 import { isDbConfigured } from "../db/pool";
 import { queueHealth } from "../jobs/queues";
 import { requireAdmin } from "../middleware/auth";
+import { listPolicySuggestions } from "../services/policies";
+import { buildConstitution } from "../services/constitution";
 import type { VeryaRequest } from "../app";
 
 export default async function dashboardRoutes(app: FastifyInstance): Promise<void> {
@@ -15,13 +17,16 @@ export default async function dashboardRoutes(app: FastifyInstance): Promise<voi
     // every stat below is still real recorded data, flagged for the UI banner.
     const devStore = !isDbConfigured();
     const orgId = req.auth.orgId;
-    const [records, reputation, heatmap, analytics, sessions, chain] = await Promise.all([
+    const [records, reputation, heatmap, analytics, sessions, chain, trustBar, policySuggestions, constitution] = await Promise.all([
       listLedger({ orgId, limit: 60 }),
       leaderboard(orgId),
       skillHeatmap(orgId),
       ledgerAnalytics(orgId),
-      listPipelines(20),
+      listPipelines(orgId, 20),
       verifyLedger(orgId),
+      cheapestTrustedModels(orgId),
+      listPolicySuggestions(orgId),
+      buildConstitution(orgId),
     ]);
     const reviewQueue = records.filter(
       (r) =>
@@ -34,6 +39,9 @@ export default async function dashboardRoutes(app: FastifyInstance): Promise<voi
       devStore,
       queue: await queueHealth(),
       analytics,
+      trustBar,
+      policySuggestions,
+      constitution,
       reputation,
       heatmap,
       sessions,

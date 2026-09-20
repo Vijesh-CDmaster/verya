@@ -1,0 +1,3 @@
+Backend preview log lives at .freebuff/backend-preview.log (stdout) and
+.freebuff/backend-preview.log.err (stderr) — Start-Process requires separate
+files. Backend pid: see `netstat -ano | grep ":4000" | grep LISTENING`.

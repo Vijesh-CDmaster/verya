@@ -61,6 +61,7 @@ export const SessionSchema = z.object({
   suitability: z
     .object({
       suitable: z.boolean(),
+      verdict: z.enum(["suitable", "workable", "unsuitable"]).optional(),
       confidence: z.number(),
       reason: z.string(),
       suggestedWorkflow: z.string().nullish(),
@@ -158,6 +159,12 @@ export const SessionSchema = z.object({
   stackGate: z.unknown().nullish(),
   algorithms: z.unknown().nullish(),
   routing: z.unknown().nullish(),
+  trustBudget: z.object({
+    initial: z.number(),
+    remaining: z.number(),
+    consumed: z.number(),
+    status: z.enum(["active", "exhausted"]),
+  }).optional(),
   executions: z
     .array(
       z.object({

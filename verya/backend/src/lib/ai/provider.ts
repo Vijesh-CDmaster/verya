@@ -754,7 +754,7 @@ export const geminiAdapters: StageAdapters = {
   },
 
   proposeStacks: async ({ raw, workflow }) => {
-    const ArraySchema = z.object({ candidates: z.array(StackProposalSchema).min(1).max(3) });
+    const ArraySchema = z.object({ candidates: z.array(StackProposalSchema).min(1).max(5) });
     const out = await runStructuredStage(
       "stack",
       STACK_RECOMMEND_SYSTEM,

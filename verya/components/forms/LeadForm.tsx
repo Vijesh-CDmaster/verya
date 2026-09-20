@@ -21,7 +21,9 @@ export function LeadForm() {
     setStatus("sending");
     setMessage("");
     try {
-      const res = await api.createLead(values);
+      const params = new URLSearchParams(window.location.search);
+      const source = params.get("utm_source") || params.get("utm_campaign") || document.referrer || undefined;
+      const res = await api.createLead({ ...values, source });
       setStatus("success");
       setMessage(res.message ?? "✓ Thank you! We'll be in touch soon.");
       form.reset();

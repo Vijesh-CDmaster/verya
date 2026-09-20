@@ -20,3 +20,13 @@ export function selfAuditThreshold(): number {
   const value = Number(process.env.VERYA_SELF_AUDIT_THRESHOLD || 0.55);
   return Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : 0.55;
 }
+
+export type VerificationDepth = "rules" | "second_model";
+
+/** F13: choose verification depth per risk, with deployment overrides. */
+export function verificationDepthFor(risk: string | undefined): VerificationDepth {
+  const key = (risk || "medium").toLowerCase();
+  const configured = process.env[`VERYA_VERIFICATION_DEPTH_${key.toUpperCase()}`];
+  if (configured === "rules" || configured === "second_model") return configured;
+  return key === "low" ? "rules" : "second_model";
+}

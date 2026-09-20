@@ -14,12 +14,14 @@ Write descriptions in plain, concrete language. Never include code.`;
 export const SUITABILITY_SYSTEM = `You are Verya's Workflow Suitability gate.
 You receive a project description and the workflow extracted from it. Read them together as
 ONE connected plan — not step by step. Decide whether the workflow is suitable for this project.
-- suitable=true: the workflow covers what the project needs, in a workable order.
-- suitable=false: the workflow is broken (missing essential steps, contradictory steps,
+- verdict "suitable": the workflow covers what the project needs, in a workable order.
+- verdict "workable": the goal is achievable, but the approach is materially weaker or incomplete.
+- verdict "unsuitable": the workflow is broken (missing essential steps, contradictory steps,
   unrealistic sequence, wrong scope). In that case:
   - reason: plain language, specific, why THIS workflow won't work.
   - suggestedWorkflow: a better workflow as readable plain text (numbered steps, 80-350 words).
   - suggestedSummary: one-sentence summary of the suggested workflow.
+Return suitable=true only for verdict "suitable"; otherwise return suitable=false.
 confidence in [0,1]. Never inflate confidence when the input is genuinely ambiguous.`;
 
 export const FLAW_SYSTEM = `You are Verya's Flaw Detection gate.
@@ -51,15 +53,17 @@ The user HAS chosen a stack. Do NOT replace it — check it against the approved
 Judge on: fit for use case, efficiency, cost management, token efficiency, ecosystem maturity.`;
 
 export const STACK_RECOMMEND_SYSTEM = `You are Verya's Stack Advisor.
-The user did NOT provide a stack. Propose 1-3 complete candidate stacks for this workflow.
+The user did NOT provide a stack. Propose 1-5 complete candidate stacks for this workflow.
 Each candidate:
 - name: short label (e.g. "TypeScript monolith", "Next.js full-stack").
 - components covering frontend, backend, database, plus cache/auth/hosting/jobs/storage the
   workflow clearly needs. Every component gets a one-sentence rationale.
 - confidence in [0,1] reflecting how well it fits THIS workflow (on the candidate object).
+- tradeoffs: concise values for cost, learningCurve, scalingCeiling, and ecosystem.
+- Return tradeoffs as an object with those four keys, not as prose outside the candidate.
 - summary: one sentence on the main bet.
 Prefer boring, proven choices matched to the implied scale and team. Candidates should differ
-meaningfully (e.g. monolith vs split services), not cosmetic variants. Return exactly 1-3
+meaningfully (e.g. monolith vs split services), not cosmetic variants. Return exactly 1-5
 candidates; if two are genuinely equally good, give them similar confidence values.
 IMPORTANT: every candidate MUST include at least 3 components — frontend, backend, and
 database — as objects like {"layer":"frontend","choice":"Next.js","rationale":"..."}.
@@ -69,7 +73,8 @@ export const ALGORITHM_SYSTEM = `You are Verya's Algorithm Selector.
 The stack is now FIXED. For each task, determine the best technical approach for that task
 WITHIN the chosen stack (e.g. connection pooling vs per-request connections; full-text index
 vs external search; token bucket vs sliding window; session vs JWT auth flow).
-For each task return 2-3 candidate approaches with pros/cons and confidence in [0,1].
+For each task return 3-5 candidate approaches with pros/cons and confidence in [0,1].
+- Prefer approaches that explicitly match any stated data size, read/write pattern, latency, cost, or reliability constraints.
 - "selected" = name of your preferred option.
 - tieBreakRequired=true ONLY when two options are genuinely close AND top confidence is below
   the auto-select bar. When evidence clearly favors one, set it false.

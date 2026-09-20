@@ -102,15 +102,19 @@ export async function authenticate(
 }
 
 /**
- * RBAC (F38): admin-only mutations — org memory purge, lead list access.
- * In development mode everything is allowed (clearly labeled); under Clerk the
- * token's org_role must be `org:admin` (or an env-listed admin user id).
+ * RBAC (F38): admin-only mutations — org memory purge, lead list access, and
+ * delegated-authority grants/lifecycle (F23 Phase 4). In development mode everything
+ * is allowed (clearly labeled); under Clerk the token's org_role must be `org:admin`
+ * (or an env-listed admin user id).
  */
-export function requireAdmin(req: VeryaRequestLike): void {
-  if (req.auth.mode === "development") return;
+export function isAdminAuth(auth: AuthContext): boolean {
+  if (auth.mode === "development") return true;
   const adminIds = (process.env.CLERK_ADMIN_USER_IDS || "").split(",").map((s) => s.trim()).filter(Boolean);
-  const isAdmin = req.auth.role === "org:admin" || (req.auth.userId ? adminIds.includes(req.auth.userId) : false);
-  if (!isAdmin) {
+  return auth.role === "org:admin" || (auth.userId ? adminIds.includes(auth.userId) : false);
+}
+
+export function requireAdmin(req: VeryaRequestLike): void {
+  if (!isAdminAuth(req.auth)) {
     throw Object.assign(new Error("Admin role required"), { statusCode: 403 });
   }
 }

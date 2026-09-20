@@ -10,6 +10,7 @@ type Candidate = {
     summary: string;
     confidence?: number | null;
     components: { layer: string; choice: string; rationale: string }[];
+    tradeoffs?: { cost?: string; learningCurve?: string; scalingCeiling?: string; ecosystem?: string };
   };
   confidence: number;
   reason: string;
@@ -86,6 +87,32 @@ export function GateStack({
           );
         })}
       </div>
+      {gate.candidates.length > 1 && (
+        <div className="mt-5 overflow-x-auto rounded-lg border border-line">
+          <table className="w-full min-w-[620px] text-left text-xs">
+            <thead className="border-b border-line bg-elev text-muted">
+              <tr>
+                <th className="px-3 py-2">Stack</th>
+                <th className="px-3 py-2">Cost</th>
+                <th className="px-3 py-2">Learning curve</th>
+                <th className="px-3 py-2">Scaling ceiling</th>
+                <th className="px-3 py-2">Ecosystem</th>
+              </tr>
+            </thead>
+            <tbody>
+              {gate.candidates.map((candidate) => (
+                <tr key={candidate.proposal.name} className="border-b border-line last:border-0">
+                  <td className="px-3 py-2 font-medium text-fg">{candidate.proposal.name}</td>
+                  <td className="px-3 py-2">{candidate.proposal.tradeoffs?.cost || "Not stated"}</td>
+                  <td className="px-3 py-2">{candidate.proposal.tradeoffs?.learningCurve || "Not stated"}</td>
+                  <td className="px-3 py-2">{candidate.proposal.tradeoffs?.scalingCeiling || "Not stated"}</td>
+                  <td className="px-3 py-2">{candidate.proposal.tradeoffs?.ecosystem || "Not stated"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

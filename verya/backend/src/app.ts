@@ -10,6 +10,13 @@ import dashboardRoutes from "./routes/dashboard";
 import leadRoutes from "./routes/leads";
 import reputationRoutes from "./routes/reputation";
 import explainRoutes from "./routes/explain";
+import authEventRoutes from "./routes/auth-events";
+import policyRoutes from "./routes/policies";
+import certificateRoutes from "./routes/certificates";
+import agentRoutes from "./routes/agents";
+import delegationRoutes from "./routes/delegations";
+import { isDbConfigured } from "./db/pool";
+import { queueHealth } from "./jobs/queues";
 
 // Every request carries the auth context (org scoping) after the onRequest hook.
 declare module "fastify" {
@@ -50,12 +57,19 @@ export async function buildApp(): Promise<FastifyInstance> {
     (req as VeryaRequest).auth = await authenticate(req, { public: isPublic });
   });
 
-  app.get("/health", async () => ({
-    ok: true,
-    service: "verya-backend",
-    auth: clerkConfigured() ? "clerk" : "development",
-    time: new Date().toISOString(),
-  }));
+  app.get("/health", async () => {
+    const queue = await queueHealth();
+    const database = isDbConfigured() ? "postgres" : "devstore";
+    const queueHealthy = !queue.configured || queue.executionWaiting !== -1;
+    return {
+      ok: queueHealthy,
+      service: "verya-backend",
+      auth: clerkConfigured() ? "clerk" : "development",
+      database,
+      queue: { ...queue, healthy: queueHealthy },
+      time: new Date().toISOString(),
+    };
+  });
 
   await app.register(pipelineRoutes, { prefix: "/api" });
   await app.register(ledgerRoutes, { prefix: "/api" });
@@ -63,6 +77,11 @@ export async function buildApp(): Promise<FastifyInstance> {
   await app.register(leadRoutes, { prefix: "/api" });
   await app.register(reputationRoutes, { prefix: "/api" });
   await app.register(explainRoutes, { prefix: "/api" });
+  await app.register(authEventRoutes, { prefix: "/api" });
+  await app.register(policyRoutes, { prefix: "/api" });
+  await app.register(certificateRoutes, { prefix: "/api" });
+  await app.register(agentRoutes, { prefix: "/api" });
+  await app.register(delegationRoutes, { prefix: "/api" });
 
   app.setErrorHandler((err, req, reply) => {
     const e = err as Error & { statusCode?: number; validation?: unknown };

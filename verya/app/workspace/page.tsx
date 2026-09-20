@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { IntakeIsland } from "@/components/intake/IntakeIsland";
+import { OnboardingGuide } from "@/components/onboarding/OnboardingGuide";
 
 export const metadata: Metadata = {
   title: "New analysis — Verya",
@@ -31,6 +32,7 @@ export default function WorkspacePage() {
             </p>
           </div>
           <div className="max-w-3xl">
+            <OnboardingGuide />
             <IntakeIsland />
           </div>
         </div>

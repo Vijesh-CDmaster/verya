@@ -40,6 +40,33 @@ Status legend:
 > `cd backend && npm test` (node's runner + tsx) — 16 tests covering F40, F19 and the
 > timing aggregation, all passing, plus backend/frontend `tsc --noEmit` clean.
 
+> Update (2026-09-20, implementation pass): F10 now has a dedicated, indexed
+> `correction_of` ledger reference included in the hash payload; F21 exposes
+> task-category and workflow-session usage breakdowns plus a trust-bar-based
+> cheapest qualifying model recommendation; F38 records authenticated sign-in,
+> sign-out, and permission-change events; F48 has a first-run workspace guide,
+> help center, and support contact; F50 captures acquisition source and emits
+> Open Graph/Twitter metadata; F51 reports database/queue health and includes a
+> `pg_dump` backup command and restore runbook. F4 now supports up to five stack
+> candidates with structured trade-offs and comparison UI, F5 has a dependency
+> map, F6 accepts up to five algorithm options, and F8 thresholds are runtime
+> configurable through `VERYA_AUTO_FLOOR` and `VERYA_TIE_GAP`.
+
+> Update (2026-09-20, governance pass): F15 now automatically runs a
+> cross-provider counterfactual comparison for high-risk tasks; F16 checks human
+> edits with the rules verifier; F17 has durable, evidence-backed policy
+> suggestions with admin approval and version history; F18 compiles a readable
+> living constitution from active policies and live controls; F26 applies
+> configurable trust decay during inactivity; and F27 records pre-execution
+> failure forecasts using risk, injection signals, and observed model trust.
+>
+> Update (2026-09-20, Phase 4 delegated-authority pass): F23 is now LIVE —
+> delegated authority grants, privilege-escalation prevention, the fail-closed
+> central authorization evaluator, lazy expiry, lifecycle state machine,
+> admin-gated grant mutations, the dashboard Delegated Authority card, and a
+> 48-test delegation security suite (105 backend tests total, all passing;
+> backend + frontend `tsc --noEmit` clean, production build clean).
+
 ---
 
 ## PART A — Entry & Workflow Intake
@@ -159,8 +186,7 @@ re-aligns dependencies against surviving ids after edits.
   flagged in the UI before confirming.
 - ✅ Finalize/lock control — "Confirm tasks →" is the explicit lock.
 
-**Gaps:** a visual DAG (dependencies render as text lists; topological order is
-respected but not drawn).
+**Gaps:** the dependency map is staged columns rather than a node-and-edge DAG.
 
 ### F6 · Algorithm / Approach Selection Per Task — **LIVE**
 
@@ -178,7 +204,7 @@ never kill the gate.
 - ✅ Per-task reasoning log — every auto pick, human pick, and tie count is
   ledger-recorded (`algorithm_selected` / `algorithm_tiebreak` / `human_decision`).
 
-**Gaps:** 1–4 options (spec: 3–5); no explicit constraint capture UI.
+**Gaps:** no explicit constraint capture UI.
 
 ### F7 · AI Model Routing Per Task — **PARTIAL**
 
@@ -199,8 +225,8 @@ model; per-model retries with backoff).
   explicitly when no approved model qualifies.
 - ✅ Per-task-type strength profile — `specialties` per pool model; execution honors the
   routed model with cross-provider failover.
-- ⚠️ Routing policy — **3 of 4 implemented** (`lowest_cost`, `highest_accuracy`,
-  `balanced`). `org-approved-models-only` is NOT implemented.
+- ✅ Routing policy — all four policies are implemented, including
+  `org_approved` through `VERYA_APPROVED_MODELS`.
 - ✅ Auto-route vs tie-break UI — `GateModels.tsx`: clear winners render with reasons;
   ties render option cards (confidence %, cost, latency, why-it-qualifies) with pick buttons.
 - ✅ Manual override — the tie UI *is* the override surface; `model_choose` +
@@ -272,8 +298,8 @@ timestamps — indexed by (org,time), (org,model), (org,event), session.
 - ✅ Query/filter interface — `GET /api/ledger/records?sessionId&model&eventType&gate&from&to&limit`
   + the dashboard table.
 - ⚠️ Correction-by-reference — corrections are new rows with the original referenced in
-  `human_edit` JSONB; there is no dedicated `correction_of` column (the SQL comment
-  promises one).
+  `human_edit` JSONB; corrections now also carry a dedicated indexed `correction_of`
+  reference column.
 - ⚠️ Configurable retention — not implemented; rows are kept indefinitely.
 - ✅ Compliance export — one-click CSV (`/api/ledger/export`).
 - ✅ Integrity banner — the dashboard shows a red warning the moment `verifyLedger`
@@ -375,8 +401,14 @@ Accept / Reject per output. Each decision is `POST /api/pipeline/:id/action
 
 ## PART D — Self-Governance Layer
 
-### F17 · Autonomous Policy Suggestions — **NOT BUILT**
-### F18 · Living Constitution Document — **NOT BUILT**
+### F17 · Autonomous Policy Suggestions — **PARTIAL**
+Implemented: recurring flagged/failed/escalated model-category patterns produce
+versioned, evidence-backed suggestions; admins can approve or reject them and all
+states are durable. Remaining: approved policies are not yet enforced by routing.
+### F18 · Living Constitution Document — **PARTIAL**
+Implemented: `/api/policies/constitution` and the dashboard compile approved policies,
+verification depth, escalation thresholds, and reputation into readable text.
+Remaining: export formats and change-triggered snapshots are not yet implemented.
 ### F19 · Task DNA Fingerprinting — **LIVE**
 
 **Mechanics.** `backend/src/lib/pipeline/fingerprint.ts` computes a stable SHA-256
@@ -453,14 +485,31 @@ intake island on the home page.
 
 ## PART F — Advanced Governance Layer (Second Wave)
 
-### F23 · Agent Identity & Delegated Authority — **NOT BUILT**
+### F23 · Agent Identity & Delegated Authority — **LIVE (Agent Registry + Phase 4 Delegated Authority verified)**
+**Mechanics.** `005_agent_registry.sql` + `repositories/agents.ts` + `services/agents.ts` + `routes/agents.ts` + `components/dashboard/AgentRegistryCard.tsx`: Persistent, organization-scoped Agent Registry. Server-generated `agent_id`, owner, versioning (`v1`..`vN`), parent agent hierarchy & delegation chain calculation, controlled agent types (`planner`|`router`|`analyzer`|`executor`|`verifier`|`reviewer`|`auditor`|`researcher`|`custom`), autonomy levels (`LEVEL_0`..`LEVEL_4`), risk classification, declared model & tool metadata, data scope, and full lifecycle state machine (`draft`|`active`|`suspended`|`revoked`|`archived`). Every transition records append-only audit events to the Trust Ledger. Dashboard UI provides search, type/status filtering, creation modal, inspection drawer, and status action controls.
+
+**Phase 4 — Delegated Authority (verified).** `006_delegated_authority.sql` + `repositories/delegations.ts` (+ devstore) + `schemas/delegation.ts` + `services/delegations.ts` + `routes/delegations.ts` + `components/dashboard/DelegatedAuthorityCard.tsx`:
+- Capability grants per (agent, org): explicit `allowed_actions` / `allowed_tools` / resource constraints, data scope, risk ceiling, expiry, `can_delegate`, versioning; lifecycle `ACTIVE→SUSPENDED→ACTIVE`, `→REVOKED` (terminal), `→EXPIRED` (terminal, lazy tenant-safe repair on read/evaluate).
+- **Privilege-escalation prevention** at creation and update: child risk/data-scope/actions/tools/resource constraints can never exceed the parent (shared `resourceCoveredBy` logic); revoked/expired parents invalidate children at evaluation time (chain walk, cycle-safe); updates cannot widen authority and cannot change status (PATCH status changes rejected — dedicated endpoints only).
+- **Central authorization evaluator** `POST /api/authorization/evaluate`: fail-closed (no delegation, inactive agent, expired/revoked/suspended, missing action/tool, out-of-scope data, excessive risk, unmatched resource, invalid parent chain → DENY with reason codes); resource constraints are a closed allowlist when present (wildcard/prefix/tool/action/environment/amount semantics documented in the schema); every ALLOW/DENY is a ledger event.
+- **Security posture**: admin-only delegation create/update/suspend/revoke/reactivate via the existing F38 `requireAdmin` RBAC; broad root authority (wildcard actions/tools, sensitive/restricted scope, high/critical risk ceiling) additionally requires an admin role in the service; identity always from `req.auth` (never client body); tenant isolation proven across create/read/update/revoke/parent-reference.
+- **Dashboard card** lists delegations with explicit capabilities (agent, delegator, purpose, status, risk limit, actions, tools, resources, data scope, created, expires, version), agent/status/search filters, suspend/revoke/reactivate controls, a creation form with pre-grant authority review, and an authorization preflight evaluator.
+- Covered by the 48-test delegation suite (`lib/security/delegations.test.ts`): CRUD, lifecycle state machine, tenant isolation, escalation prevention (incl. multi-level), privileged broad-root rule, resource-constraint semantics, 14 authorization deny paths, lazy expiry, and audit events. Remaining: wiring evaluation into pipeline execution of agent-attributed work is deferred (authorization decisions are Phase 4 scope; connecting them to runtime actions is Phase 5).
 ### F24 · Runtime Action Firewall — **NOT BUILT**
 ### F25 · Causal Trust Graph — **NOT BUILT**
-### F26 · Trust Decay and Recovery — **NOT BUILT**
+### F26 · Trust Decay and Recovery — **PARTIAL**
+Inactivity decay is applied per model and task category with
+`VERYA_TRUST_DECAY_PER_30_DAYS`; supervised execution outcomes recover scores through
+the existing reputation update path. Remaining: a distinct severe-failure drop and
+supervised-recovery workflow UI.
 (reputation has continuous updates but no decay-over-disuse, failure-drop, or
 supervised-recovery mechanics)
-### F27 · Failure Forecasting — **NOT BUILT**
-### F28 · Trust Budget — **NOT BUILT**
+### F27 · Failure Forecasting — **PARTIAL**
+Before execution, Verya estimates failure probability from task risk, prompt-injection
+risk, and observed model/category trust, then records the score and reason for review.
+Remaining: forecast-triggered rerouting or pre-execution human escalation.
+### F28 · Trust Budget — **PARTIAL**
+Risk-weighted trust budget calculation (`lib/trust-budget.ts`), consumption tracking during task execution (`services/execution.ts` and `jobs/worker.ts`), execution pausing on exhaustion (`trust_budget_exhausted` ledger event), and human replenishment gate action (`trust_budget_approve` in `lib/pipeline/gates.ts`). Remaining: dedicated trust budget slider & allocation UI.
 ### F29 · Reversible Execution / Safe Simulation — **NOT BUILT**
 ### F30 · Data Consent & Purpose Enforcement — **NOT BUILT**
 ### F31 · Evidence-Weighted Answering — **NOT BUILT**
@@ -468,10 +517,11 @@ supervised-recovery mechanics)
 ### F33 · Synthetic Red-Team Factory — **NOT BUILT**
 ### F34 · Governance Digital Twin — **NOT BUILT**
 ### F35 · Adaptive Policy A/B Testing — **NOT BUILT**
-### F36 · Trust Certificates — **NOT BUILT**
+### F36 · Trust Certificates — **PARTIAL**
+Hash-bound execution trust certificates (`lib/certificates.ts`), certificate generation (`certificateFor`), signature integrity verification (`verifyCertificate`), verification REST endpoint (`GET /certificates/:sessionId/:taskId`), and automatic embedding in verified execution results (`services/execution.ts` & `jobs/worker.ts`). Remaining: evidence package expansion, model version metadata, external verification key registry.
 ### F37 · Incident Replay & Counterfactual Debugging — **NOT BUILT**
 
-All 15 second-wave features are unbuilt by design (Phase 7 in BUILD_PLAN.md). The
+All 13 remaining second-wave features are unbuilt by design (Phase 7 in BUILD_PLAN.md). The
 architecture leaves clean room for them: the ledger's canonical payload could carry
 graph edges (F25), the model pool/adapter layer is the natural hook for fingerprints and
 forecasting (F27/F32), and hash-chained rows are certificate-ready (F36).
@@ -502,7 +552,7 @@ silent fake.
   env-listed admin id set; development mode is clearly labeled and permissive.
 - ⚠️ Session management — Clerk-issued JWTs are short-lived; there is no custom refresh
   flow (Clerk handles it, not yet integrated).
-- ❌ Auth event logging — logins/permission changes are not ledger events yet.
+- ✅ Auth event logging — sign-in, sign-out, and permission change events are logged to the ledger (`routes/auth-events.ts`).
 
 ### F39 · Data Security — **PARTIAL**
 
@@ -638,7 +688,8 @@ English-pattern based; non-English or novel phrasings rely on the data envelope.
 - ✅ First-run guidance — three example projects, the How-It-Works deck page (which
   explains exactly the two unfamiliar patterns: workflow submission and tie-breaks),
   gate stepper labels, empty/error states everywhere.
-- ❌ Email verification flow, dedicated walkthrough, help center, support channel.
+- ✅ First-run walkthrough and help center; support contact link is available.
+- ❌ Email verification flow and staffed/ticketed support channel.
 
 ### F49 · Legal & Business Basics — **PARTIAL**
 
@@ -655,7 +706,7 @@ are set; the banner flow is still absent).
   real lead capture, final CTA) rebuilt from `index.html` on Next.js 15 + Tailwind.
 - ✅ SEO basics — per-route metadata (title/description), `sitemap.xml` (home,
   dashboard, all legal pages) and `robots.txt` (`/dashboard` disallowed).
-- ❌ OG tags, signup-source analytics.
+- ✅ Open Graph/Twitter metadata and signup-source capture (UTM/referrer).
 
 ### F51 · Monitoring, Backups & Maintenance — **PARTIAL**
 

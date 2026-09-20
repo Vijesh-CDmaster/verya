@@ -24,6 +24,10 @@ export type ExecutionView = {
   tokens: { input: number; output: number };
   verification: { method: string; passed: boolean; issues: string[]; checkedBy: string };
   selfAudit?: { riskScore: number; issues: string[]; checks: string[]; checkedBy: string };
+  editQuality?: { passed: boolean; improved: boolean; issues: string[]; checkedBy: string };
+  failureForecast?: { probability: number; reason: string; basedOnSamples: number };
+  rationale?: string;
+  alternatives?: string[];
   humanRating?: number;
   humanNote?: string;
   battleA?: { model: string; output: string; latencyMs: number; tokens: { input: number; output: number } };
@@ -128,6 +132,20 @@ export function GateReview({
                   ))}
                 </ul>
               )}
+              {(e.rationale || (e.alternatives && e.alternatives.length > 0)) && (
+                <div className="mt-3 rounded border border-line bg-card p-3 text-[12px]">
+                  {e.rationale && <p><span className="font-medium">Why this status: </span><span className="text-muted">{e.rationale}</span></p>}
+                  {e.alternatives && e.alternatives.length > 0 && <p className="mt-1 text-muted"><span className="font-medium text-fg">Considered alternatives: </span>{e.alternatives.join(", ")}</p>}
+                </div>
+              )}
+              {e.editQuality && (
+                <div className="mt-3 rounded border border-line bg-card p-3 text-[12px]">
+                  <p className={e.editQuality.improved ? "text-emerald-400" : "text-amber-400"}>
+                    Human edit check: {e.editQuality.improved ? "improved or preserved the rules check" : "did not improve the rules check"} · {e.editQuality.checkedBy}
+                  </p>
+                  {e.editQuality.issues.length > 0 && <p className="mt-1 text-muted">{e.editQuality.issues.join("; ")}</p>}
+                </div>
+              )}
               {e.selfAudit && (
                 <div className="mt-3 rounded border border-orange-500/30 bg-orange-500/5 p-2 text-[12px]">
                   <p className="font-medium text-orange-300">
@@ -139,6 +157,11 @@ export function GateReview({
                     </ul>
                   )}
                 </div>
+              )}
+              {e.failureForecast && (
+                <p className="mt-3 rounded border border-line bg-card p-2 text-[12px] text-muted">
+                  <span className="font-medium text-fg">Pre-execution failure forecast: </span>{(e.failureForecast.probability * 100).toFixed(0)}% · {e.failureForecast.reason}
+                </p>
               )}
 
               {/* F22 AI Battle Mode: alternative model side-by-side */}
@@ -346,14 +369,14 @@ function CodeWorkspace({
 
 /** Pick a plausible second-model opponent from a different provider family. */
 function alternateModel(current: string): string {
-  const pool: Record<string, string[]> = {
-    "gemini-2.0-flash": ["gpt-4o-mini", "claude-3-5-haiku"],
-    "gemini-1.5-pro": ["gpt-4o", "claude-3-5-sonnet"],
-    "gpt-4o": ["claude-3-5-sonnet", "gemini-1.5-pro"],
-    "gpt-4o-mini": ["gemini-2.0-flash", "claude-3-5-haiku"],
-    "claude-3-5-sonnet": ["gpt-4o", "gemini-1.5-pro"],
-    "claude-3-5-haiku": ["gpt-4o-mini", "gemini-2.0-flash"],
-  };
-  const alts = pool[current] ?? ["gpt-4o-mini"];
-  return alts[0];
+  const pool = [
+    "gemini-3.6-flash",
+    "gemini-3.1-pro-preview",
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b",
+    "codestral-latest",
+    "magistral-medium-latest",
+    "z-ai/glm-5.2:free",
+  ];
+  return pool.find((model) => model !== current) ?? pool[0];
 }

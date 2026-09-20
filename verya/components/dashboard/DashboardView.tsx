@@ -3,6 +3,10 @@
 import { useDashboard } from "@/hooks/use-session";
 import { MemorySearchCard } from "@/components/dashboard/MemorySearchCard";
 import { ExplainPanel } from "@/components/dashboard/ExplainPanel";
+import { PolicySuggestionsCard } from "@/components/dashboard/PolicySuggestionsCard";
+import { ConstitutionCard } from "@/components/dashboard/ConstitutionCard";
+import { AgentRegistryCard } from "@/components/dashboard/AgentRegistryCard";
+import { DelegatedAuthorityCard } from "@/components/dashboard/DelegatedAuthorityCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
@@ -47,6 +51,10 @@ export function DashboardView() {
 
   const analytics = (d.analytics ?? {}) as AnyRecord;
   const byModel = (analytics.byModel ?? []) as Array<{ model: string; tasks: number; avgLatencyMs: number; tokens: number }>;
+  const byCategory = (analytics.byTaskCategory ?? []) as Array<{ taskCategory: string; tasks: number; avgLatencyMs: number; tokens: number; costUnits: number }>;
+  const trustBar = (d.trustBar ?? {}) as { trustBar?: number; minSamples?: number; recommendations?: Array<{ taskCategory: string; model: string | null; costUnits: number | null; trustScore: number | null; samples: number; reason: string }> };
+  const policySuggestions = (d.policySuggestions ?? []) as Array<{ id: number; version: number; rule: string; rationale: string; status: string }>;
+  const constitution = (d.constitution ?? {}) as { generatedAt?: string; text?: string };
   const reputation = (d.reputation ?? []) as AnyRecord[];
   const heatmap = (d.heatmap ?? []) as AnyRecord[];
   const sessions = (d.sessions ?? []) as AnyRecord[];
@@ -84,6 +92,7 @@ export function DashboardView() {
           <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Stat label="Ledger events" value={String(analytics.totalEvents ?? 0)} />
             <Stat label="Executions" value={String(analytics.executions ?? 0)} />
+            <Stat label="Cost units" value={String(analytics.totalCostUnits ?? 0)} />
             <Stat label="Chain" value={chain.valid ? `valid (${chain.checked})` : "BROKEN"} />
             <Stat label="Queue" value={d.queue?.configured ? `waiting: ${d.queue.executionWaiting ?? 0}` : "inline mode"} />
           </div>
@@ -106,8 +115,55 @@ export function DashboardView() {
       {/* Org memory semantic search (pgvector) */}
       <MemorySearchCard />
 
+      <Card>
+        <CardHeader>
+          <CardTitle>Cheapest trusted model</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="mb-3 text-xs text-muted">
+            Trust bar: {trustBar.trustBar ?? 70} · minimum samples: {trustBar.minSamples ?? 1}
+          </p>
+          {!trustBar.recommendations?.length ? (
+            <p className="text-sm text-muted">No task-category reputation history yet.</p>
+          ) : (
+            <div className="space-y-2">
+              {trustBar.recommendations.map((recommendation) => (
+                <div key={recommendation.taskCategory} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-line px-3 py-2 text-xs">
+                  <span className="font-medium">{recommendation.taskCategory}</span>
+                  <span className="font-mono">{recommendation.model ?? "No qualifying model"}</span>
+                  <span className="text-muted">{recommendation.model ? `${recommendation.costUnits} units · trust ${recommendation.trustScore?.toFixed(1)}` : recommendation.reason}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Usage by task category</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0 pb-2">
+          {byCategory.length === 0 ? <p className="px-5 pb-3 text-sm text-muted">No execution data yet.</p> : (
+            <Table>
+              <TableHeader><TableRow><TableHead>Category</TableHead><TableHead>Tasks</TableHead><TableHead>Avg latency</TableHead><TableHead>Tokens</TableHead><TableHead>Cost units</TableHead></TableRow></TableHeader>
+              <TableBody>{byCategory.map((row) => <TableRow key={row.taskCategory}><TableCell className="text-xs">{row.taskCategory}</TableCell><TableCell className="text-xs">{row.tasks}</TableCell><TableCell className="text-xs">{row.avgLatencyMs} ms</TableCell><TableCell className="text-xs">{row.tokens}</TableCell><TableCell className="text-xs">{row.costUnits}</TableCell></TableRow>)}</TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+
       {/* F22 Explain My Decision — ledger-grounded Q&A */}
       <ExplainPanel />
+
+      <PolicySuggestionsCard suggestions={policySuggestions} />
+      <ConstitutionCard constitution={constitution} />
+
+      {/* F23 Agent Registry */}
+      <AgentRegistryCard />
+
+      {/* F23 Phase 4: Delegated Authority */}
+      <DelegatedAuthorityCard />
 
       {/* Reputation leaderboard */}
       <Card>

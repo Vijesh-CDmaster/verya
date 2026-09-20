@@ -3,7 +3,8 @@
 // Clerk-powered auth controls for the header: sign-in/sign-up actions when
 // signed out, user button (avatar + account menu) when signed in. Renders
 // nothing meaningful without a publishable key (Clerk stays unmounted).
-import { SignInButton, SignUpButton, Show, UserButton } from "@clerk/nextjs";
+import { SignInButton, SignUpButton, Show, UserButton, useClerk } from "@clerk/nextjs";
+import { api } from "@/services/api";
 
 export function AuthControls() {
   if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) return null;
@@ -35,7 +36,26 @@ export function UserMenu() {
 
   return (
     <Show when="signed-in">
-      <UserButton />
+      <SignedInMenu />
     </Show>
+  );
+}
+
+function SignedInMenu() {
+  const { signOut } = useClerk();
+  return (
+    <div className="flex items-center gap-2">
+      <UserButton />
+      <button
+        type="button"
+        className="text-xs text-muted transition-colors hover:text-fg"
+        onClick={async () => {
+          await api.recordAuthEvent({ eventType: "sign_out" }).catch(() => undefined);
+          await signOut();
+        }}
+      >
+        Sign out
+      </button>
+    </div>
   );
 }

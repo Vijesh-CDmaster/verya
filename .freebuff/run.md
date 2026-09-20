@@ -28,7 +28,8 @@ The frontend proxies `/api/*` and `/health` to the backend (`next.config.ts`,
    (`verya/backend/.devstore/{sessions,ledger,memory,reputation,leads}.json`, created
    lazily, nothing to reproduce). `.next/` build cache is lazy too. Check the first
    backend log line to see which one is live — a `DATABASE_URL`-only grep of `.env.local`
-   returns nothing and is misleading.
+   returns nothing and is misleading. **When Neon is configured, run migrations once**
+   before starting the backend: `cd verya/backend && node node_modules/tsx/dist/cli.mjs src/db/migrate.ts`.
 
 ## 2. Run the servers (detached, they must outlive the conversation)
 
@@ -44,7 +45,7 @@ configured `npm run dev` (and `npm run worker`) are fine and migrate first; runn
 entry point directly always works and skips the npm shim entirely:
 
 ```powershell
-powershell -NoProfile -Command "(Start-Process -FilePath 'C:\Program Files\nodejs\node.exe' -ArgumentList 'node_modules/tsx/dist/cli.mjs','src/server.ts' -WorkingDirectory 'C:\Users\Admin\Desktop\PROJECTS\verya\verya\backend' -RedirectStandardOutput 'C:\Users\Admin\Desktop\PROJECTS\verya\.freebuff\backend-preview.log' -RedirectStandardError 'C:\Users\Admin\Desktop\PROJECTS\verya\.freebuff\backend-preview.log.err' -WindowStyle Hidden -PassThru).Id"
+powershell -NoProfile -Command "(Start-Process -FilePath 'C:\Program Files\nodejs\node.exe' -ArgumentList 'node_modules/tsx/dist/cli.mjs','src/server.ts' -WorkingDirectory 'C:\Users\Admin\Desktop\verya\verya\backend' -RedirectStandardOutput 'C:\Users\Admin\Desktop\verya\.freebuff\backend-preview.log' -RedirectStandardError 'C:\Users\Admin\Desktop\verya\.freebuff\backend-preview.log.err' -WindowStyle Hidden -PassThru).Id"
 ```
 
 - `npm run typecheck` in `backend/` fails under the npm shim even with node on PATH
@@ -61,7 +62,7 @@ powershell -NoProfile -Command "(Start-Process -FilePath 'C:\Program Files\nodej
 it and Next silently falls back to an ephemeral port. 3100 is used and free.
 
 ```powershell
-powershell -NoProfile -Command "(Start-Process -FilePath 'C:\Program Files\nodejs\node.exe' -ArgumentList 'node_modules/next/dist/bin/next','dev','-p','3100' -WorkingDirectory 'C:\Users\Admin\Desktop\PROJECTS\verya\verya' -RedirectStandardOutput 'C:\Users\Admin\Desktop\PROJECTS\verya\.freebuff\preview.log' -RedirectStandardError 'C:\Users\Admin\Desktop\PROJECTS\verya\.freebuff\preview.log.err' -WindowStyle Hidden -PassThru).Id"
+powershell -NoProfile -Command "(Start-Process -FilePath 'C:\Program Files\nodejs\node.exe' -ArgumentList 'node_modules/next/dist/bin/next','dev','-p','3100' -WorkingDirectory 'C:\Users\Admin\Desktop\verya\verya' -RedirectStandardOutput 'C:\Users\Admin\Desktop\verya\.freebuff\preview.log' -RedirectStandardError 'C:\Users\Admin\Desktop\verya\.freebuff\preview.log.err' -WindowStyle Hidden -PassThru).Id"
 ```
 
 - URL: <http://localhost:3100> · dashboard: <http://localhost:3100/dashboard>

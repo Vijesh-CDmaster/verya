@@ -7,15 +7,15 @@ import { stackTextOf } from "../lib/pipeline/gates";
 import { recordToLedger } from "./ledger";
 import { updateFromOutcome } from "./reputation";
 
-const ORG_ID = process.env.VERYA_ORG_ID || "default-org";
-
 export async function runBattle(input: {
   session: PipelineSession;
   taskId: string;
   modelA: ModelId;
   modelB: ModelId;
+  orgId?: string;
 }): Promise<ExecutionResult | null> {
   const { session, taskId, modelA, modelB } = input;
+  const orgId = input.orgId || process.env.VERYA_ORG_ID || "default-org";
   const task = session.workflow?.tasks.find((t) => t.id === taskId);
   const algo = session.algorithms?.tasks.find((a) => a.taskId === taskId);
   if (!task || !session.workflow) return null;
@@ -38,6 +38,8 @@ export async function runBattle(input: {
     verification: { method: "rules", passed: true, issues: [], checkedBy: "battle" },
     status: "pending",
     confidence: 0.5,
+    rationale: "Battle comparison is pending a human verdict.",
+    alternatives: [modelB],
     latencyMs: 0,
     tokens: { input: 0, output: 0 },
   };
@@ -48,7 +50,7 @@ export async function runBattle(input: {
   if (!exec) session.executions.push(result);
 
   await recordToLedger({
-    orgId: ORG_ID,
+    orgId,
     sessionId: session.id,
     gate: "review",
     eventType: "battle_run",
@@ -71,8 +73,10 @@ export async function pickBattleWinner(input: {
   session: PipelineSession;
   taskId: string;
   winner: "a" | "b";
+  orgId?: string;
 }): Promise<void> {
   const { session, taskId, winner } = input;
+  const orgId = input.orgId || process.env.VERYA_ORG_ID || "default-org";
   const exec = session.executions.find((e) => e.taskId === taskId);
   const task: Task | undefined = session.workflow?.tasks.find((t) => t.id === taskId);
   if (!exec?.battleA || !exec.battleB) return;
@@ -84,12 +88,12 @@ export async function pickBattleWinner(input: {
 
   // Winner earns accepted, loser earns rejected — direct comparative signal.
   await Promise.all([
-    updateFromOutcome({ orgId: ORG_ID, model: winnerModel, taskCategory: category, outcome: "accepted" }).catch(() => undefined),
-    updateFromOutcome({ orgId: ORG_ID, model: loserModel, taskCategory: category, outcome: "rejected" }).catch(() => undefined),
+    updateFromOutcome({ orgId, model: winnerModel, taskCategory: category, outcome: "accepted" }).catch(() => undefined),
+    updateFromOutcome({ orgId, model: loserModel, taskCategory: category, outcome: "rejected" }).catch(() => undefined),
   ]);
 
   await recordToLedger({
-    orgId: ORG_ID,
+    orgId,
     sessionId: session.id,
     gate: "review",
     eventType: "battle_pick",

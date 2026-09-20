@@ -18,6 +18,18 @@ export const metadata: Metadata = {
   title: "Verya — Check the plan before the code",
   description:
     "Verya reads your whole project, flags what's wrong with it, picks the right stack, approach, and model for every piece — and shows its work.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  openGraph: {
+    title: "Verya — Check the plan before the code",
+    description: "AI-governed planning, model routing, verification, and audit-ready proof.",
+    type: "website",
+    siteName: "Verya",
+  },
+  twitter: {
+    card: "summary",
+    title: "Verya — Check the plan before the code",
+    description: "AI-governed planning, model routing, verification, and audit-ready proof.",
+  },
 };
 
 export default function RootLayout({

@@ -6,6 +6,7 @@ import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { useUiStore } from "@/stores/ui-store";
 import { setTokenGetter } from "@/lib/auth-bridge";
+import { api } from "@/services/api";
 
 const CLERK_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
@@ -18,11 +19,22 @@ function ThemeSync() {
 }
 
 function AuthBridge() {
-  const { getToken } = useAuth();
+  const { getToken, isLoaded, isSignedIn, userId } = useAuth();
   useEffect(() => {
     setTokenGetter(() => getToken());
     return () => setTokenGetter(null);
   }, [getToken]);
+
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn || !userId) return;
+    const key = `verya-auth-event:${userId}`;
+    if (sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key, "recording");
+    void api.recordAuthEvent({ eventType: "sign_in" }).then(
+      () => sessionStorage.setItem(key, "recorded"),
+      () => sessionStorage.removeItem(key)
+    );
+  }, [isLoaded, isSignedIn, userId]);
   return null;
 }
 

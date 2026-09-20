@@ -87,15 +87,26 @@ export async function getReputation(orgId: string): Promise<ReputationEntry[]> {
       ORDER BY trust_score DESC`,
     [orgId]
   );
-  return rows.map((r) => ({
+  const now = Date.now();
+  const decayPer30Days = Number(process.env.VERYA_TRUST_DECAY_PER_30_DAYS || 2.5);
+  return rows.map((r) => {
+    const lastUpdated = new Date(r.last_updated as string).toISOString();
+    const inactiveDays = Math.max(0, (now - Date.parse(lastUpdated)) / 86_400_000);
+    const decay = Number.isFinite(decayPer30Days) ? decayPer30Days * (inactiveDays / 30) : 0;
+    const trustScore = Math.max(0, Math.round((Number(r.trust_score) - decay) * 10) / 10);
+    if (trustScore !== Number(r.trust_score)) {
+      void query("UPDATE model_reputation SET trust_score = $4, trend = 'down' WHERE org_id = $1 AND model = $2 AND task_category = $3", [String(r.org_id), String(r.model), String(r.task_category), trustScore]);
+    }
+    return {
     orgId: String(r.org_id),
     model: String(r.model),
     taskCategory: String(r.task_category),
-    trustScore: Number(r.trust_score),
+    trustScore,
     samples: Number(r.samples),
-    trend: String(r.trend) as ReputationEntry["trend"],
-    lastUpdated: new Date(r.last_updated as string).toISOString(),
-  }));
+    trend: trustScore < Number(r.trust_score) ? "down" : String(r.trend) as ReputationEntry["trend"],
+    lastUpdated,
+    };
+  });
 }
 
 /** Lookup used for inline trust badges (F22). */

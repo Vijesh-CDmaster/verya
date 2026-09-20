@@ -52,6 +52,7 @@ const objArr = <T extends z.ZodTypeAny>(item: T, min = 0, max = 50) =>
 // ---------- Gate 1: Suitability ----------
 export const SuitabilitySchema = z.object({
   suitable: nullTo(false, z.boolean()),
+  verdict: z.enum(["suitable", "workable", "unsuitable"]).nullish(),
   confidence: nullTo(0.6, z.number().min(0).max(1)),
   reason: nullTo("", z.string().max(600)),
   suggestedWorkflow: z.string().max(3000).nullish(),
@@ -86,6 +87,7 @@ export const TaskSchema = z.object({
     "other",
   ] as const)),
   dependsOn: arr(z.string()),
+  agentId: z.string().optional(),
   complexity: nullTo("medium" as const, z.enum(["low", "medium", "high"])),
   risk: nullTo("medium" as const, z.enum(["low", "medium", "high"])),
   fingerprint: z.object({
@@ -189,6 +191,12 @@ export const StackProposalSchema = z.object({
   components: objArr(StackComponentSchema, 1, 9),
   summary: nullTo("", z.string().max(400)),
   confidence: z.number().min(0).max(1).default(0.7),
+  tradeoffs: z.object({
+    cost: nullTo("", z.string().max(120)),
+    learningCurve: nullTo("", z.string().max(120)),
+    scalingCeiling: nullTo("", z.string().max(120)),
+    ecosystem: nullTo("", z.string().max(120)),
+  }).default({ cost: "", learningCurve: "", scalingCeiling: "", ecosystem: "" }),
 });
 export type StackProposal = z.infer<typeof StackProposalSchema>;
 
@@ -219,7 +227,7 @@ export type StackCandidate = z.infer<typeof StackCandidateSchema>;
 export const StackGateSchema = z.object({
   provided: z.boolean(),
   validation: StackValidationSchema.nullable(),
-  candidates: objArr(StackCandidateSchema, 1, 3),
+  candidates: objArr(StackCandidateSchema, 1, 5),
   selected: z.string().nullable(), // proposal name of chosen candidate
   tieBreakRequired: z.boolean(),
 });
@@ -239,7 +247,7 @@ export const TaskAlgorithmSchema = z.object({
   // known workflow tasks, so a sloppy model response can never kill the gate.
   taskId: nullTo("", z.string().max(80)),
   taskTitle: nullTo("", z.string().max(120)),
-  options: objArr(AlgorithmOptionSchema, 1, 4),
+  options: objArr(AlgorithmOptionSchema, 1, 5),
   selected: nullTo("", z.string().max(80)),
   tieBreakRequired: nullTo(false, z.boolean()),
   tieBreakReason: nullTo("", z.string().max(300)),
@@ -314,6 +322,11 @@ export const CHEAP_MODEL_ID: ModelId = "openai/gpt-oss-20b"; // fastest + cheape
 
 export function modelCostOf(id: string): number {
   return poolModelOf(id)?.costPerTask ?? 1;
+}
+
+export function alternateModelOf(id: string): ModelId | undefined {
+  const provider = poolModelOf(id)?.provider;
+  return MODEL_POOL.find((model) => model.id !== id && model.provider !== provider)?.id;
 }
 
 export const TaskModelRouteSchema = z.object({
@@ -392,6 +405,7 @@ export function codeArtifactOf(output: string, taskTitle: string): CodeArtifact 
 
 export const ExecutionResultSchema = z.object({
   taskId: z.string().min(1),
+  agentId: z.string().optional(),
   model: z.enum(MODEL_IDS),
   output: z.string().max(60000),
   code: z
@@ -435,6 +449,30 @@ export const ExecutionResultSchema = z.object({
     checks: z.array(z.string().max(180)).max(6),
     checkedBy: z.string().max(80),
   }).optional(),
+  editQuality: z.object({
+    passed: z.boolean(),
+    improved: z.boolean(),
+    issues: z.array(z.string().max(300)).max(12),
+    checkedBy: z.string().max(60),
+  }).optional(),
+  failureForecast: z.object({
+    probability: z.number().min(0).max(1),
+    reason: z.string().max(500),
+    basedOnSamples: z.number().int().min(0),
+  }).optional(),
+  certificate: z.object({
+    version: z.literal(1),
+    sessionId: z.string(),
+    taskId: z.string(),
+    model: z.enum(MODEL_IDS),
+    outputHash: z.string().length(64),
+    verification: z.object({ method: z.enum(["rules", "second_model"]), passed: z.boolean(), issues: z.array(z.string()), checkedBy: z.string() }),
+    confidence: z.number().min(0).max(1),
+    status: z.enum(["pending", "running", "verified", "flagged", "failed", "escalated"]),
+    humanApproved: z.boolean(),
+    issuedAt: z.string(),
+    certificateHash: z.string().length(64),
+  }).optional(),
   status: z.enum([
     "pending",
     "running",
@@ -444,6 +482,8 @@ export const ExecutionResultSchema = z.object({
     "escalated",
   ]),
   confidence: z.number().min(0).max(1),
+  rationale: z.string().max(800).default(""),
+  alternatives: z.array(z.string().max(120)).max(4).default([]),
   latencyMs: z.number().min(0),
   tokens: z.object({ input: z.number(), output: z.number() }).default({ input: 0, output: 0 }),
 });
@@ -487,6 +527,7 @@ export type PipelineSession = {
   stackGate: StackGate | null;
   algorithms: AlgorithmPlan | null;
   routing: RoutingPlan | null;
+  trustBudget?: { initial: number; remaining: number; consumed: number; status: "active" | "exhausted" };
   /** Derived DNA, optional so sessions created before F19 remain valid. */
   taskFingerprints?: Record<string, TaskFingerprint>;
   /** F40 prompt-injection scan of the untrusted intake text (audit evidence). */
@@ -514,11 +555,24 @@ export type PipelineStageId =
 export const TIE_GAP = 0.12; // top-two confidence gap below which it's a "genuine tie"
 export const AUTO_FLOOR = 0.72; // below this, never auto-decide
 
+function configuredThreshold(name: string, fallback: number): number {
+  const value = Number(process.env[name]);
+  return Number.isFinite(value) && value >= 0 && value <= 1 ? value : fallback;
+}
+
+export function decisionThresholds(): { tieGap: number; autoFloor: number } {
+  return {
+    tieGap: configuredThreshold("VERYA_TIE_GAP", TIE_GAP),
+    autoFloor: configuredThreshold("VERYA_AUTO_FLOOR", AUTO_FLOOR),
+  };
+}
+
 export function needsTieBreak(options: { confidence: number }[]): boolean {
   if (options.length === 0) return true;
   const sorted = [...options].sort((a, b) => b.confidence - a.confidence);
-  if (sorted[0].confidence < AUTO_FLOOR) return true;
-  if (sorted.length > 1 && sorted[0].confidence - sorted[1].confidence < TIE_GAP) return true;
+  const { tieGap, autoFloor } = decisionThresholds();
+  if (sorted[0].confidence < autoFloor) return true;
+  if (sorted.length > 1 && sorted[0].confidence - sorted[1].confidence < tieGap) return true;
   return false;
 }
 
@@ -569,6 +623,10 @@ export const GateActionSchema = z.discriminatedUnion("action", [
   }),
   z.object({
     action: z.literal("run_execution"),
+  }),
+  z.object({
+    action: z.literal("trust_budget_approve"),
+    amount: z.number().min(1).max(1000),
   }),
   z.object({
     action: z.literal("feedback"),

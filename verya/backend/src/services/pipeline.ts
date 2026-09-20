@@ -12,13 +12,8 @@ import { updateFromOutcome } from "./reputation";
 import { enqueueExecution } from "../jobs/queues";
 import { describeScan, scanInjection } from "../lib/security/injection";
 
-const ORG_ID = process.env.VERYA_ORG_ID || "default-org";
-
-export function defaultOrg(): string {
-  return ORG_ID;
-}
-
 export async function startPipeline(input: {
+  orgId?: string;
   input: string;
   statedStack: string;
   policy: "lowest_cost" | "highest_accuracy" | "balanced" | "org_approved";
@@ -55,9 +50,10 @@ export async function startPipeline(input: {
     neutralized: scan.neutralized,
     scannedAt: new Date().toISOString(),
   };
-  await repoCreate(ORG_ID, session);
+  const orgId = input.orgId || process.env.VERYA_ORG_ID || "default-org";
+  await repoCreate(orgId, session);
   await recordToLedger({
-    orgId: ORG_ID,
+    orgId,
     sessionId: session.id,
     gate: "intake",
     eventType: scan.findings.length > 0 ? "injection_scan_flagged" : "injection_scan_clean",
@@ -68,8 +64,8 @@ export async function startPipeline(input: {
       findings: scan.findings.map((f) => ({ rule: f.rule, category: f.category, severity: f.severity })),
     },
   });
-  await repoSave(ORG_ID, session);
-  kickGateProcessing(session.id);
+  await repoSave(orgId, session);
+  kickGateProcessing(orgId, session.id);
   return session;
 }
 
@@ -82,25 +78,26 @@ const inFlight = new Set<string>();
  * failure the session is marked "failed" so the UI shows an error instead of
  * spinning forever. In-process guard prevents duplicate concurrent processing.
  */
-function kickGateProcessing(sessionId: string): void {
-  if (inFlight.has(sessionId)) return;
-  inFlight.add(sessionId);
+function kickGateProcessing(orgId: string, sessionId: string): void {
+  const key = `${orgId}:${sessionId}`;
+  if (inFlight.has(key)) return;
+  inFlight.add(key);
   void (async () => {
     try {
       // Gates can auto-advance (e.g. algorithms with no ties → models): keep
       // processing while the session lands on an AI gate marked "running".
       for (let hop = 0; hop < 5; hop++) {
-        const fresh = await repoGet(ORG_ID, sessionId);
+        const fresh = await repoGet(orgId, sessionId);
         if (!fresh) return;
-        const processed = await processGate(fresh, geminiAdapters as StageAdapters);
+        const processed = await processGate(fresh, geminiAdapters as StageAdapters, orgId);
         processed.updatedAt = new Date().toISOString();
-        await repoSave(ORG_ID, processed);
+        await repoSave(orgId, processed);
         if (!(processed.gateStatus === "running" && processed.gate !== "execution")) break;
       }
     } catch (err) {
       console.error(`[pipeline] gate processing failed for ${sessionId}:`, err);
       try {
-        const fresh = await repoGet(ORG_ID, sessionId);
+        const fresh = await repoGet(orgId, sessionId);
         if (fresh) {
           fresh.gateStatus = "failed";
           fresh.error =
@@ -108,36 +105,37 @@ function kickGateProcessing(sessionId: string): void {
               ? err.message
               : "The analysis could not be completed. Check the backend configuration and try again.";
           fresh.updatedAt = new Date().toISOString();
-          await repoSave(ORG_ID, fresh);
+          await repoSave(orgId, fresh);
         }
       } catch {
         /* best-effort failure marker */
       }
     } finally {
-      inFlight.delete(sessionId);
+      inFlight.delete(key);
     }
   })();
 }
 
-export async function getPipeline(id: string): Promise<PipelineSession | null> {
-  return repoGet(ORG_ID, id);
+export async function getPipeline(orgIdOrId: string, maybeId?: string): Promise<PipelineSession | null> {
+  const orgId = maybeId ? orgIdOrId : process.env.VERYA_ORG_ID || "default-org";
+  return repoGet(orgId, maybeId ?? orgIdOrId);
 }
 
-export async function listPipelines(limit = 50) {
-  return repoList(ORG_ID, limit);
+export async function listPipelines(orgId: string, limit = 50) {
+  return repoList(orgId, limit);
 }
 
-export async function actOnPipeline(id: string, action: GateAction): Promise<PipelineSession> {
-  const session = await repoGet(ORG_ID, id);
+export async function actOnPipeline(orgId: string, id: string, action: GateAction): Promise<PipelineSession> {
+  const session = await repoGet(orgId, id);
   if (!session) throw Object.assign(new Error("Session not found"), { statusCode: 404 });
 
-  const updated = await applyGateAction(session, action, geminiAdapters as StageAdapters);
+  const updated = await applyGateAction(session, action, geminiAdapters as StageAdapters, orgId);
   updated.updatedAt = new Date().toISOString();
-  await repoSave(ORG_ID, updated);
+  await repoSave(orgId, updated);
 
   // AI gates set gateStatus="running" and expect background processing (the UI
   // polls until the gate flips to awaiting_user/failed).
-  if (updated.gateStatus === "running") kickGateProcessing(updated.id);
+  if (updated.gateStatus === "running") kickGateProcessing(orgId, updated.id);
 
   // Feedback (F16): every accept/reject/rate/edit feeds memory + reputation + ledger.
   if (action.action === "feedback") {
@@ -151,18 +149,28 @@ export async function actOnPipeline(id: string, action: GateAction): Promise<Pip
           ? "edited"
           : "accepted";
 
+      const editCheck = edited && task
+        ? await geminiAdapters.verifyRulesOnly({ task, output: action.editedOutput! })
+        : null;
+
       if (edited) {
         exec.output = action.editedOutput!; // human edit becomes the canonical output
         exec.verification.issues = [
           ...exec.verification.issues,
           "Output edited by human after verification.",
         ].slice(0, 12);
+        exec.editQuality = {
+          passed: editCheck?.passed ?? false,
+          improved: Boolean(editCheck && editCheck.issues.length <= exec.verification.issues.length),
+          issues: editCheck?.issues ?? ["Edited output could not be checked."],
+          checkedBy: editCheck?.checkedBy ?? "unavailable",
+        };
       }
       if (action.rating != null) exec.humanRating = action.rating;
       if (action.note) exec.humanNote = action.note;
 
       await recordMemory({
-        orgId: ORG_ID,
+        orgId,
         sessionId: updated.id,
         taskCategory: task?.category ?? "other",
         model: exec.model,
@@ -172,7 +180,7 @@ export async function actOnPipeline(id: string, action: GateAction): Promise<Pip
         meta: { rating: action.rating ?? null, note: action.note ?? null, edited },
       });
       await updateFromOutcome({
-        orgId: ORG_ID,
+        orgId,
         model: exec.model,
         taskCategory: task?.category ?? "other",
         outcome,
@@ -180,7 +188,7 @@ export async function actOnPipeline(id: string, action: GateAction): Promise<Pip
         costUnits: modelCostOf(exec.model),
       });
       await recordToLedger({
-        orgId: ORG_ID,
+      orgId,
         sessionId: updated.id,
         gate: "review",
         eventType: "human_feedback",
@@ -192,6 +200,7 @@ export async function actOnPipeline(id: string, action: GateAction): Promise<Pip
           rating: action.rating ?? null,
           note: action.note ?? null,
           edited,
+          editQuality: exec.editQuality,
         },
         humanEdit: edited ? { editedOutputChars: action.editedOutput!.length } : undefined,
       });
@@ -201,9 +210,9 @@ export async function actOnPipeline(id: string, action: GateAction): Promise<Pip
   // Execution is long-running: dispatch to BullMQ when Redis is configured (F43).
   const needsExecution = updated.gate === "execution" && updated.gateStatus === "pending";
   if (needsExecution && process.env.REDIS_URL) {
-    await enqueueExecution({ sessionId: updated.id, orgId: ORG_ID });
+    await enqueueExecution({ sessionId: updated.id, orgId });
     await recordToLedger({
-      orgId: ORG_ID,
+      orgId,
       sessionId: updated.id,
       gate: "execution",
       eventType: "execution_queued",

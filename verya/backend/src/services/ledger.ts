@@ -19,6 +19,7 @@ export async function listLedger(q: {
   model?: string;
   eventType?: string;
   gate?: string;
+  correctionOf?: number;
   from?: string;
   to?: string;
   limit?: number;
@@ -37,25 +38,47 @@ export async function ledgerAnalytics(orgId: string) {
     repoList({ orgId, eventType: "stage_timing", limit: 500 }),
   ]);
   const execs = entries.filter((e) => e.gate === "execution" && e.detail?.latencyMs != null);
-  const byModel = new Map<string, { tasks: number; latencyMs: number; tokens: number }>();
+  const byModel = new Map<string, { tasks: number; latencyMs: number; tokens: number; costUnits: number }>();
+  const byCategory = new Map<string, { tasks: number; latencyMs: number; tokens: number; costUnits: number }>();
+  const bySession = new Map<string, { tasks: number; latencyMs: number; tokens: number; costUnits: number }>();
   for (const e of execs) {
     const model = e.model ?? "unknown";
-    const detail = e.detail as { latencyMs?: number; tokens?: { input: number; output: number } };
-    const agg = byModel.get(model) ?? { tasks: 0, latencyMs: 0, tokens: 0 };
-    agg.tasks += 1;
-    agg.latencyMs += detail.latencyMs ?? 0;
-    agg.tokens += (detail.tokens?.input ?? 0) + (detail.tokens?.output ?? 0);
-    byModel.set(model, agg);
+    const detail = e.detail as {
+      latencyMs?: number;
+      tokens?: { input: number; output: number };
+      costUnits?: number;
+      taskCategory?: string;
+    };
+    const category = detail.taskCategory ?? "unknown";
+    const session = e.sessionId ?? "unknown";
+    const tokens = (detail.tokens?.input ?? 0) + (detail.tokens?.output ?? 0);
+    const add = (map: typeof byModel, key: string) => {
+      const agg = map.get(key) ?? { tasks: 0, latencyMs: 0, tokens: 0, costUnits: 0 };
+      agg.tasks += 1;
+      agg.latencyMs += detail.latencyMs ?? 0;
+      agg.tokens += tokens;
+      agg.costUnits += detail.costUnits ?? 0;
+      map.set(key, agg);
+    };
+    add(byModel, model);
+    add(byCategory, category);
+    add(bySession, session);
   }
+  const shape = (rows: typeof byModel) =>
+    Array.from(rows.entries()).map(([key, value]) => ({
+      key,
+      tasks: value.tasks,
+      avgLatencyMs: value.tasks ? Math.round(value.latencyMs / value.tasks) : 0,
+      tokens: value.tokens,
+      costUnits: value.costUnits,
+    }));
   return {
     totalEvents: entries.length,
     executions: execs.length,
-    byModel: Array.from(byModel.entries()).map(([model, v]) => ({
-      model,
-      tasks: v.tasks,
-      avgLatencyMs: v.tasks ? Math.round(v.latencyMs / v.tasks) : 0,
-      tokens: v.tokens,
-    })),
+    byModel: shape(byModel).map(({ key, ...value }) => ({ model: key, ...value })),
+    byTaskCategory: shape(byCategory).map(({ key, ...value }) => ({ taskCategory: key, ...value })),
+    byWorkflow: shape(bySession).map(({ key, ...value }) => ({ sessionId: key, ...value })),
+    totalCostUnits: execs.reduce((sum, entry) => sum + Number((entry.detail as { costUnits?: number }).costUnits ?? 0), 0),
     routingOverhead: aggregateStageTimings(timings),
   };
 }

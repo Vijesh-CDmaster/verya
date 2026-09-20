@@ -9,8 +9,12 @@ import path from "path";
 import { createHash } from "crypto";
 import type { PipelineSession } from "../schemas/pipeline";
 import type { LedgerInput, LedgerEntry, LedgerQuery } from "../repositories/ledger";
+import { canonical } from "../repositories/ledger";
 import type { MemoryInput, MemoryRow } from "../repositories/memory";
 import type { ReputationEntry } from "../repositories/reputation";
+import type { PolicySuggestion } from "../repositories/policies";
+import type { Agent } from "../schemas/agent";
+import type { Delegation } from "../schemas/delegation";
 
 const DIR = path.join(process.cwd(), ".devstore");
 const FILES = {
@@ -19,9 +23,35 @@ const FILES = {
   memory: "memory.json",
   reputation: "reputation.json",
   leads: "leads.json",
+  policies: "policies.json",
+  agents: "agents.json",
+  delegations: "delegations.json",
 } as const;
 
 let warned = false;
+
+export async function devListPolicySuggestions(orgId: string): Promise<PolicySuggestion[]> {
+  return (await readJson<PolicySuggestion[]>(FILES.policies, [])).filter((item) => item.orgId === orgId).sort((a, b) => b.version - a.version);
+}
+
+export async function devCreatePolicySuggestion(input: Omit<PolicySuggestion, "id" | "createdAt" | "decidedAt">): Promise<PolicySuggestion> {
+  const rows = await readJson<PolicySuggestion[]>(FILES.policies, []);
+  const orgRows = rows.filter((item) => item.orgId === input.orgId);
+  const item: PolicySuggestion = { ...input, id: rows.reduce((max, row) => Math.max(max, row.id), 0) + 1, version: orgRows.reduce((max, row) => Math.max(max, row.version), 0) + 1, createdAt: new Date().toISOString() };
+  rows.push(item);
+  await writeJson(FILES.policies, rows);
+  return item;
+}
+
+export async function devDecidePolicySuggestion(orgId: string, id: number, status: "approved" | "rejected"): Promise<PolicySuggestion | null> {
+  const rows = await readJson<PolicySuggestion[]>(FILES.policies, []);
+  const item = rows.find((row) => row.orgId === orgId && row.id === id);
+  if (!item) return null;
+  item.status = status;
+  item.decidedAt = new Date().toISOString();
+  await writeJson(FILES.policies, rows);
+  return item;
+}
 function warnOnce(): void {
   if (!warned) {
     warned = true;
@@ -149,21 +179,11 @@ export async function devListSessions(
 }
 
 // ---------- ledger (append-only, hash-chained) ----------
+// Hash payload MUST match the Postgres path byte-for-byte: devstore.ts re-uses the
+// same canonical serializer (sorted-key JSON) from repositories/ledger.ts so a chain
+// written in dev mode stays verifiable after the Neon switch, and vice versa.
 function canonicalLedger(input: LedgerInput, prevHash: string, ts: string): string {
-  return JSON.stringify({
-    orgId: input.orgId,
-    sessionId: input.sessionId ?? null,
-    gate: input.gate,
-    eventType: input.eventType,
-    actor: input.actor ?? "ai",
-    model: input.model ?? null,
-    taskId: input.taskId ?? null,
-    detail: input.detail ?? {},
-    verification: input.verification ?? null,
-    humanEdit: input.humanEdit ?? null,
-    createdAt: ts,
-    prevHash,
-  });
+  return canonical(input, prevHash, ts);
 }
 
 export async function devRecordLedger(input: LedgerInput): Promise<LedgerEntry> {
@@ -191,6 +211,7 @@ export async function devListLedger(q: LedgerQuery): Promise<LedgerEntry[]> {
       (!q.model || r.model === q.model) &&
       (!q.eventType || r.eventType === q.eventType) &&
       (!q.gate || r.gate === q.gate) &&
+      (q.correctionOf == null || r.correctionOf === q.correctionOf) &&
       (!q.from || r.createdAt >= q.from) &&
       (!q.to || r.createdAt <= q.to)
   );
@@ -341,7 +362,17 @@ export async function devUpdateReputation(input: {
 
 export async function devGetReputation(orgId: string): Promise<ReputationEntry[]> {
   const rows = await readJson<ReputationEntry[]>(FILES.reputation, []);
-  return rows.filter((r) => r.orgId === orgId).sort((a, b) => b.trustScore - a.trustScore);
+  const decayPer30Days = Number(process.env.VERYA_TRUST_DECAY_PER_30_DAYS || 2.5);
+  const now = Date.now();
+  let changed = false;
+  const result = rows.filter((r) => r.orgId === orgId).map((r) => {
+    const inactiveDays = Math.max(0, (now - Date.parse(r.lastUpdated)) / 86_400_000);
+    const trustScore = Math.max(0, Math.round((r.trustScore - decayPer30Days * inactiveDays / 30) * 10) / 10);
+    if (trustScore !== r.trustScore) { r.trustScore = trustScore; r.trend = "down"; changed = true; }
+    return r;
+  }).sort((a, b) => b.trustScore - a.trustScore);
+  if (changed) await writeJson(FILES.reputation, rows);
+  return result;
 }
 
 // ---------- leads (marketing capture; same shape as the Postgres repo) ----------
@@ -386,4 +417,94 @@ export async function devListLeads(orgId: string, limit = 100): Promise<StoredLe
     .filter((r) => r.orgId === orgId)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     .slice(0, Math.min(limit, 500));
+}
+
+// ---------- agents (F23 Agent Registry) ----------
+export async function devCreateAgent(agent: Agent): Promise<void> {
+  warnOnce();
+  return withLock(FILES.agents, async () => {
+    const rows = await readJson<Agent[]>(FILES.agents, []);
+    rows.push(agent);
+    await writeJson(FILES.agents, rows);
+  });
+}
+
+export async function devGetAgent(orgId: string, agentId: string): Promise<Agent | null> {
+  const rows = await readJson<Agent[]>(FILES.agents, []);
+  const found = rows.find((r) => r.orgId === orgId && r.agentId === agentId);
+  return found ? { ...found } : null;
+}
+
+export async function devListAgents(
+  orgId: string,
+  filter?: { status?: Agent["status"]; type?: Agent["agentType"] }
+): Promise<Agent[]> {
+  const rows = await readJson<Agent[]>(FILES.agents, []);
+  return rows
+    .filter((r) => {
+      if (r.orgId !== orgId) return false;
+      if (filter?.status && r.status !== filter.status) return false;
+      if (filter?.type && r.agentType !== filter.type) return false;
+      return true;
+    })
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export async function devSaveAgent(orgId: string, agent: Agent): Promise<void> {
+  warnOnce();
+  return withLock(FILES.agents, async () => {
+    const rows = await readJson<Agent[]>(FILES.agents, []);
+    const idx = rows.findIndex((r) => r.orgId === orgId && r.agentId === agent.agentId);
+    if (idx >= 0) {
+      rows[idx] = agent;
+    } else {
+      rows.push(agent);
+    }
+    await writeJson(FILES.agents, rows);
+  });
+}
+
+// ---------- delegations (F23 Phase 4 Delegated Authority) ----------
+export async function devCreateDelegation(delegation: Delegation): Promise<void> {
+  warnOnce();
+  return withLock(FILES.delegations, async () => {
+    const rows = await readJson<Delegation[]>(FILES.delegations, []);
+    rows.push(delegation);
+    await writeJson(FILES.delegations, rows);
+  });
+}
+
+export async function devGetDelegation(orgId: string, delegationId: string): Promise<Delegation | null> {
+  const rows = await readJson<Delegation[]>(FILES.delegations, []);
+  const found = rows.find((r) => r.orgId === orgId && r.delegationId === delegationId);
+  return found ? { ...found } : null;
+}
+
+export async function devListDelegations(
+  orgId: string,
+  filter?: { agentId?: string; status?: Delegation["status"] }
+): Promise<Delegation[]> {
+  const rows = await readJson<Delegation[]>(FILES.delegations, []);
+  return rows
+    .filter((r) => {
+      if (r.orgId !== orgId) return false;
+      if (filter?.agentId && r.agentId !== filter.agentId) return false;
+      if (filter?.status && r.status !== filter.status) return false;
+      return true;
+    })
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export async function devSaveDelegation(orgId: string, delegation: Delegation): Promise<void> {
+  warnOnce();
+  return withLock(FILES.delegations, async () => {
+    const rows = await readJson<Delegation[]>(FILES.delegations, []);
+    const idx = rows.findIndex((r) => r.orgId === orgId && r.delegationId === delegation.delegationId);
+    if (idx >= 0) {
+      rows[idx] = delegation;
+    } else {
+      rows.push(delegation);
+    }
+    await writeJson(FILES.delegations, rows);
+  });
 }

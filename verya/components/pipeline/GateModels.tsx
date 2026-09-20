@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { Session } from "@/schemas/pipeline";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +26,7 @@ export function GateModels({
   busy: boolean;
   onExecute: () => void;
 }) {
+  const [overrides, setOverrides] = useState<Record<string, string>>({});
   const routing = (session.routing ?? null) as
     | { routes: Route[]; estimatedCostUsd: number; policy: string; notes: string }
     | null;
@@ -48,6 +50,28 @@ export function GateModels({
               </span>
               <TrustBadge model={r.selectedModel} />
               <p className="mt-1 text-[12px] text-muted">{r.reason}</p>
+              {r.options.length > 1 && (
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <label htmlFor={`override-${r.taskId}`} className="text-[11px] text-muted">Override model</label>
+                  <select
+                    id={`override-${r.taskId}`}
+                    value={overrides[r.taskId] ?? r.selectedModel}
+                    onChange={(event) => setOverrides((current) => ({ ...current, [r.taskId]: event.target.value }))}
+                    className="rounded border border-line bg-card px-2 py-1 font-mono text-[11px]"
+                    disabled={busy}
+                  >
+                    {r.options.map((option) => <option key={option.model} value={option.model}>{option.model}</option>)}
+                  </select>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={busy || !overrides[r.taskId] || overrides[r.taskId] === r.selectedModel}
+                    onClick={() => call({ action: "model_choose", taskId: r.taskId, choice: overrides[r.taskId] })}
+                  >
+                    Apply override
+                  </Button>
+                </div>
+              )}
             </li>
           ))}
         </ul>

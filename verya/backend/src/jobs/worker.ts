@@ -8,16 +8,18 @@ import { geminiAdapters } from "../lib/ai/provider";
 import { stackTextOf } from "../lib/pipeline/gates";
 import { recordToLedger } from "../services/ledger";
 import { checkExternalReferences } from "../lib/verification/external";
-import { escalationFloorFor } from "../lib/thresholds";
+import { escalationFloorFor, verificationDepthFor } from "../lib/thresholds";
 import { updateFromOutcome } from "../services/reputation";
-import { modelCostOf } from "../schemas/pipeline";
+import { alternateModelOf, modelCostOf } from "../schemas/pipeline";
+import { forecastTaskFailure } from "../services/forecast";
+import { initialTrustBudget, trustCostFor } from "../lib/trust-budget";
+import { certificateFor } from "../lib/certificates";
 import { codeArtifactOf, type ExecutionResult, type PipelineSession } from "../schemas/pipeline";
 
-const ORG_ID = process.env.VERYA_ORG_ID || "default-org";
-
-async function executeSession(sessionId: string): Promise<void> {
-  const session: PipelineSession | null = await getSession(ORG_ID, sessionId);
+async function executeSession(orgId: string, sessionId: string): Promise<void> {
+  const session: PipelineSession | null = await getSession(orgId, sessionId);
   if (!session || !session.routing || !session.workflow || !session.algorithms) return;
+  session.trustBudget ??= { initial: initialTrustBudget(), remaining: initialTrustBudget(), consumed: 0, status: "active" };
 
   const stackText = stackTextOf(session);
   const done = new Set(session.executions.map((e) => e.taskId));
@@ -36,18 +38,37 @@ async function executeSession(sessionId: string): Promise<void> {
 
   session.gate = "execution";
   session.gateStatus = "running";
-  await saveSession(ORG_ID, session);
+  await saveSession(orgId, session);
 
   for (const task of ordered) {
     if (session.executions.some((r) => r.taskId === task.id)) continue;
+    const budgetCost = trustCostFor(task.risk);
+    if (session.trustBudget.remaining < budgetCost) {
+      session.trustBudget.status = "exhausted";
+      session.gateStatus = "awaiting_user";
+      await recordToLedger({ orgId, sessionId, gate: "execution", eventType: "trust_budget_exhausted", actor: "system", detail: { summary: `Trust budget paused before ${task.title}`, required: budgetCost, budget: session.trustBudget } });
+      await saveSession(orgId, session);
+      return;
+    }
+    session.trustBudget.remaining -= budgetCost;
+    session.trustBudget.consumed += budgetCost;
+    await recordToLedger({ orgId, sessionId, gate: "execution", eventType: "trust_budget_consumed", actor: "system", taskId: task.id, detail: { summary: `${budgetCost} trust units consumed by ${task.title}`, risk: task.risk, remaining: session.trustBudget.remaining } });
     const route = session.routing.routes.find((r) => r.taskId === task.id);
     const algo = session.algorithms.tasks.find((a) => a.taskId === task.id);
     const model = route?.selectedModel ?? "openai/gpt-oss-20b";
     const algorithm = algo?.selected ?? "direct implementation";
     const started = Date.now();
     try {
-      const exec = await geminiAdapters.executeTask({ task, algorithm, stack: stackText, workflow: session.workflow, model });
-      const needsSecondModel = task.risk !== "low";
+      const challengerModel = task.risk === "high" ? alternateModelOf(model) : undefined;
+      const failureForecast = await forecastTaskFailure({ orgId, model, taskCategory: task.category, risk: task.risk });
+      const [exec, challenger] = await Promise.all([
+        geminiAdapters.executeTask({ task, algorithm, stack: stackText, workflow: session.workflow, model }),
+        challengerModel
+          ? geminiAdapters.executeTask({ task, algorithm, stack: stackText, workflow: session.workflow, model: challengerModel })
+          : Promise.resolve(undefined),
+      ]);
+      const verificationDepth = verificationDepthFor(task.risk);
+      const needsSecondModel = verificationDepth === "second_model";
       const verification = needsSecondModel
         ? await geminiAdapters.verifyOutput({ task, algorithm, output: exec.output, model })
         : await geminiAdapters.verifyRulesOnly({ task, output: exec.output });
@@ -80,17 +101,25 @@ async function executeSession(sessionId: string): Promise<void> {
         },
         status,
         confidence,
+        rationale: verification.passed
+          ? `Verification passed at the ${task.risk}-risk escalation floor (${floor}).`
+          : `Flagged because verification found ${verification.issues.length} issue(s).`,
+        alternatives: [],
+        battleA: challenger ? { model, output: exec.output, latencyMs: exec.latencyMs, tokens: exec.tokens } : undefined,
+        battleB: challenger && challengerModel ? { model: challengerModel, output: challenger.output, latencyMs: challenger.latencyMs, tokens: challenger.tokens } : undefined,
+        failureForecast,
         latencyMs: exec.latencyMs,
         tokens: exec.tokens,
       };
+      result.certificate = certificateFor(session, result);
       session.executions.push(result);
 
       const outcome: "verified" | "flagged" | "escalated" | "rejected" =
         status === "verified" ? "verified" : status === "flagged" ? "flagged" : status === "escalated" ? "escalated" : "rejected";
-      await updateFromOutcome({ orgId: ORG_ID, model, taskCategory: task.category, outcome }).catch(() => undefined);
+      await updateFromOutcome({ orgId, model, taskCategory: task.category, outcome }).catch(() => undefined);
 
       await recordToLedger({
-        orgId: ORG_ID,
+        orgId,
         sessionId,
         gate: "execution",
         eventType: "task_execution",
@@ -105,6 +134,9 @@ async function executeSession(sessionId: string): Promise<void> {
           externalChecked: external.checked.length,
           externalUnsupported: external.unsupported,
           escalationFloor: floor,
+          verificationDepth,
+          battleAuto: Boolean(challenger),
+          failureForecast,
         },
         verification: { passed: verification.passed, issues: verification.issues },
       });
@@ -117,13 +149,15 @@ async function executeSession(sessionId: string): Promise<void> {
         verification: { method: "rules", passed: false, issues: [message], checkedBy: "rules" },
         status: "failed",
         confidence: 0,
+        rationale: `Execution failed before verification: ${message}`,
+        alternatives: [],
         latencyMs: Date.now() - started,
         tokens: { input: 0, output: 0 },
       };
       session.executions.push(failed);
-      await updateFromOutcome({ orgId: ORG_ID, model, taskCategory: task.category, outcome: "rejected" }).catch(() => undefined);
+      await updateFromOutcome({ orgId, model, taskCategory: task.category, outcome: "rejected" }).catch(() => undefined);
       await recordToLedger({
-        orgId: ORG_ID,
+        orgId,
         sessionId,
         gate: "execution",
         eventType: "task_failed",
@@ -133,21 +167,21 @@ async function executeSession(sessionId: string): Promise<void> {
         verification: { passed: false, issues: [message] },
       });
     }
-    await saveSession(ORG_ID, session);
+    await saveSession(orgId, session);
   }
 
   session.gate = "review";
   session.gateStatus = "awaiting_user";
-  await saveSession(ORG_ID, session);
+  await saveSession(orgId, session);
 }
 
 export function startWorker(): Worker {
   const worker = new Worker(
     EXECUTION_QUEUE,
     async (job) => {
-      const { sessionId } = job.data as { sessionId: string; orgId: string };
+      const { sessionId, orgId } = job.data as { sessionId: string; orgId: string };
       console.log(`[worker] executing session ${sessionId}`);
-      await executeSession(sessionId);
+      await executeSession(orgId, sessionId);
       console.log(`[worker] finished session ${sessionId}`);
     },
     { connection: { url: process.env.REDIS_URL! }, concurrency: Number(process.env.WORKER_CONCURRENCY || 2) }

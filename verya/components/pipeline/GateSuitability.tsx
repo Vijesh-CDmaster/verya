@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 
 type Suitability = {
   suitable: boolean;
+  verdict?: "suitable" | "workable" | "unsuitable";
   confidence: number;
   reason: string;
   suggestedWorkflow?: string | null;
@@ -23,7 +24,12 @@ export function GateSuitability({
   const s = (session.suitability ?? null) as Suitability | null;
   if (!s) return <p className="text-sm text-muted">Checking…</p>;
 
-  if (s.suitable) {
+  const verdict = s.verdict ?? (s.suitable ? "suitable" : "unsuitable");
+  const verdictLabel = verdict === "suitable" ? "Suitable" : verdict === "workable" ? "Workable, but weaker" : "Not suitable";
+  const verdictClass = verdict === "suitable" ? "text-emerald-400" : verdict === "workable" ? "text-amber-400" : "text-red-400";
+  const baseline = (session.suggestedWorkflow ?? session.workflow) as { title?: string; summary?: string } | null;
+
+  if (verdict === "suitable") {
     return (
       <div>
         <p className="text-sm font-semibold text-emerald-400">
@@ -45,12 +51,19 @@ export function GateSuitability({
 
   return (
     <div>
-      <p className="text-sm font-semibold text-amber-400">⚠ This workflow may not fit the project</p>
+      <p className={`text-sm font-semibold ${verdictClass}`}>⚠ {verdictLabel} ({Math.round(s.confidence * 100)}% confidence)</p>
       <p className="mt-1 text-[13px] text-muted">{s.reason}</p>
-      {s.suggestedWorkflow && (
-        <div className="mt-4 whitespace-pre-wrap rounded-lg border border-amber-500/40 bg-amber-500/5 p-4 text-[13px]">
-          <p className="mb-2 font-semibold">Suggested workflow:</p>
-          {s.suggestedWorkflow}
+      {s.suggestedWorkflow && baseline && (
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          <div className="rounded-lg border border-line bg-elev p-4 text-[13px]">
+            <p className="mb-2 font-semibold">Your workflow</p>
+            <p className="font-medium">{baseline.title ?? "Submitted workflow"}</p>
+            <p className="mt-1 text-muted">{baseline.summary ?? "The workflow extracted from your description."}</p>
+          </div>
+          <div className="whitespace-pre-wrap rounded-lg border border-amber-500/40 bg-amber-500/5 p-4 text-[13px]">
+            <p className="mb-2 font-semibold">Suggested workflow</p>
+            {s.suggestedWorkflow}
+          </div>
         </div>
       )}
       <div className="mt-4 flex gap-2">

@@ -13,6 +13,7 @@ export type LedgerInput = {
   actor?: "ai" | "human" | "system";
   model?: string;
   taskId?: string;
+  correctionOf?: number;
   detail?: Record<string, unknown>;
   verification?: { passed: boolean; issues: string[] };
   humanEdit?: Record<string, unknown>;
@@ -25,8 +26,33 @@ export type LedgerEntry = LedgerInput & {
   createdAt: string;
 };
 
-function canonical(entry: LedgerInput, prevHash: string, ts: string): string {
-  return JSON.stringify({
+/**
+ * Deterministic JSON with RECURSIVELY SORTED object keys (RFC 8785-style JCS,
+ * simplified). Required because Postgres `jsonb` does NOT preserve object key
+ * order — it normalizes to sorted — so a plain JSON.stringify of `detail` hashes
+ * differently at write time (in-memory insertion order) than at verify time
+ * (jsonb-normalized order), silently breaking the chain (observed: verify failed
+ * at seq 1 the moment the Postgres path went live). Arrays keep their order —
+ * element order is semantic; only object key order is normalized.
+ */
+export function stableStringify(value: unknown): string {
+  if (value === null || typeof value === "number" || typeof value === "boolean") {
+    return JSON.stringify(value);
+  }
+  if (typeof value === "string") return JSON.stringify(value);
+  if (typeof value === "bigint") return String(value);
+  if (value === undefined) return "null"; // matches JSON.stringify inside arrays
+  if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
+  const obj = value as Record<string, unknown>;
+  const keys = Object.keys(obj)
+    .filter((k) => obj[k] !== undefined) // JSON.stringify drops undefined values
+    .sort();
+  return `{${keys.map((k) => `${JSON.stringify(k)}:${stableStringify(obj[k])}`).join(",")}}`;
+}
+
+/** The exact byte payload a ledger row's chain_hash commits to. */
+export function canonical(entry: LedgerInput, prevHash: string, ts: string): string {
+  return stableStringify({
     orgId: entry.orgId,
     sessionId: entry.sessionId ?? null,
     gate: entry.gate,
@@ -34,6 +60,7 @@ function canonical(entry: LedgerInput, prevHash: string, ts: string): string {
     actor: entry.actor ?? "ai",
     model: entry.model ?? null,
     taskId: entry.taskId ?? null,
+    correctionOf: entry.correctionOf ?? null,
     detail: entry.detail ?? {},
     verification: entry.verification ?? null,
     humanEdit: entry.humanEdit ?? null,
@@ -62,8 +89,8 @@ export async function recordToLedger(input: LedgerInput): Promise<LedgerEntry> {
     const res = await client.query<{ seq: number }>(
       `INSERT INTO ledger_entries
          (org_id, session_id, gate, event_type, actor, model, task_id,
-          detail, verification, human_edit, prev_hash, chain_hash, created_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+           correction_of, detail, verification, human_edit, prev_hash, chain_hash, created_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
        RETURNING seq`,
       [
         input.orgId,
@@ -73,6 +100,7 @@ export async function recordToLedger(input: LedgerInput): Promise<LedgerEntry> {
         input.actor ?? "ai",
         input.model ?? null,
         input.taskId ?? null,
+        input.correctionOf ?? null,
         JSON.stringify(input.detail ?? {}),
         input.verification ? JSON.stringify(input.verification) : null,
         input.humanEdit ? JSON.stringify(input.humanEdit) : null,
@@ -100,6 +128,7 @@ export type LedgerQuery = {
   eventType?: string;
   gate?: string;
   taskId?: string;
+  correctionOf?: number;
   from?: string;
   to?: string;
   limit?: number;
@@ -119,6 +148,7 @@ export async function listLedger(q: LedgerQuery): Promise<LedgerEntry[]> {
   if (q.eventType) add("event_type = $?", q.eventType);
   if (q.gate) add("gate = $?", q.gate);
   if (q.taskId) add("task_id = $?", q.taskId);
+  if (q.correctionOf != null) add("correction_of = $?", q.correctionOf);
   if (q.from) add("created_at >= $?", q.from);
   if (q.to) add("created_at <= $?", q.to);
 
@@ -139,6 +169,7 @@ function rowToEntry(r: Record<string, unknown>): LedgerEntry {
     actor: String(r.actor) as LedgerEntry["actor"],
     model: (r.model as string) ?? undefined,
     taskId: (r.task_id as string) ?? undefined,
+    correctionOf: r.correction_of == null ? undefined : Number(r.correction_of),
     detail: (r.detail as Record<string, unknown>) ?? {},
     verification: (r.verification as LedgerEntry["verification"]) ?? undefined,
     humanEdit: (r.human_edit as Record<string, unknown>) ?? undefined,

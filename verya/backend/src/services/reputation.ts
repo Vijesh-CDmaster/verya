@@ -6,6 +6,7 @@ import {
   type ReputationEntry,
 } from "../repositories/reputation";
 import { getSkillMap } from "./memory";
+import { MODEL_POOL } from "../schemas/pipeline";
 
 export async function updateFromOutcome(input: {
   orgId: string;
@@ -20,6 +21,35 @@ export async function updateFromOutcome(input: {
 
 export async function leaderboard(orgId: string): Promise<ReputationEntry[]> {
   return repoGet(orgId);
+}
+
+export async function cheapestTrustedModels(orgId: string) {
+  const threshold = Number(process.env.VERYA_TRUST_BAR || 70);
+  const minSamples = Number(process.env.VERYA_TRUST_BAR_MIN_SAMPLES || 1);
+  const entries = await repoGet(orgId);
+  const categories = [...new Set(entries.map((entry) => entry.taskCategory))];
+  return {
+    trustBar: threshold,
+    minSamples,
+    recommendations: categories.map((taskCategory) => {
+      const eligible = entries
+        .filter((entry) => entry.taskCategory === taskCategory && entry.trustScore >= threshold && entry.samples >= minSamples)
+        .map((entry) => ({ entry, pool: MODEL_POOL.find((model) => model.id === entry.model) }))
+        .filter((candidate): candidate is { entry: ReputationEntry; pool: (typeof MODEL_POOL)[number] } => Boolean(candidate.pool))
+        .sort((a, b) => a.pool.costPerTask - b.pool.costPerTask || b.entry.trustScore - a.entry.trustScore);
+      const winner = eligible[0];
+      return {
+        taskCategory,
+        model: winner?.entry.model ?? null,
+        costUnits: winner?.pool.costPerTask ?? null,
+        trustScore: winner?.entry.trustScore ?? null,
+        samples: winner?.entry.samples ?? 0,
+        reason: winner
+          ? `Lowest-cost model at or above the ${threshold} trust bar.`
+          : `No model has reached the ${threshold} trust bar with ${minSamples} sample(s).`,
+      };
+    }),
+  };
 }
 
 /** Inline badge lookup: trust for one model × category (F22). */

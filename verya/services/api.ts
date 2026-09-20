@@ -94,7 +94,7 @@ export const api = {
       `/api/ledger/records${sessionId ? `?sessionId=${encodeURIComponent(sessionId)}` : ""}`
     ),
 
-  createLead: (lead: { name: string; email: string; phone?: string }) =>
+  createLead: (lead: { name: string; email: string; phone?: string; acceptTerms: true; source?: string }) =>
     request<{ ok: boolean; message: string }>("/api/leads", {
       method: "POST",
       body: JSON.stringify(lead),
@@ -118,6 +118,77 @@ export const api = {
 
   explain: (payload: { question: string; sessionId?: string }) =>
     request<{ answer: string; recordsUsed: number }>("/api/explain", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  recordAuthEvent: (payload: {
+    eventType: "sign_in" | "sign_out" | "permission_changed";
+    previousRole?: string;
+    nextRole?: string;
+    detail?: Record<string, unknown>;
+  }) =>
+    request<{ ok: boolean; seq: number }>("/api/auth/events", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  policySuggestions: () => request<{ suggestions: Array<Record<string, unknown>> }>("/api/policies/suggestions"),
+
+  detectPolicySuggestions: () => request<{ suggestions: Array<Record<string, unknown>> }>("/api/policies/suggestions/detect", { method: "POST" }),
+
+  decidePolicySuggestion: (id: number, decision: "approved" | "rejected") =>
+    request<{ suggestion: Record<string, unknown> }>(`/api/policies/suggestions/${id}/${decision}`, { method: "POST" }),
+
+  constitution: () => request<{ generatedAt: string; text: string }>("/api/policies/constitution"),
+
+  certificate: (sessionId: string, taskId: string) => request<{ certificate: Record<string, unknown>; valid: boolean }>(`/api/certificates/${encodeURIComponent(sessionId)}/${encodeURIComponent(taskId)}`),
+
+  // F23 Phase 4: Delegated Authority
+  listDelegations: (agentId?: string, status?: string) => {
+    const params = new URLSearchParams();
+    if (agentId) params.set("agentId", agentId);
+    if (status) params.set("status", status);
+    const qs = params.toString();
+    return request<{ delegations: Array<Record<string, unknown>> }>(`/api/delegations${qs ? `?${qs}` : ""}`);
+  },
+
+  createDelegation: (payload: {
+    agentId: string;
+    purpose: string;
+    allowedActions: string[];
+    allowedTools: string[];
+    maximumRisk: string;
+    dataScope: string;
+    canDelegate: boolean;
+    expiresAt: string;
+    parentDelegationId?: string;
+  }) =>
+    request<{ delegation: Record<string, unknown> }>("/api/delegations", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  suspendDelegation: (id: string) =>
+    request<{ delegation: Record<string, unknown> }>(`/api/delegations/${encodeURIComponent(id)}/suspend`, { method: "POST" }),
+
+  revokeDelegation: (id: string) =>
+    request<{ delegation: Record<string, unknown> }>(`/api/delegations/${encodeURIComponent(id)}/revoke`, { method: "POST" }),
+
+  reactivateDelegation: (id: string) =>
+    request<{ delegation: Record<string, unknown> }>(`/api/delegations/${encodeURIComponent(id)}/reactivate`, { method: "POST" }),
+
+  evaluateAuthorization: (payload: {
+    agentId: string;
+    action: string;
+    tool: string;
+    resource: string;
+    risk?: string;
+    dataScope?: string;
+    environment?: string;
+    amount?: number;
+  }) =>
+    request<{ evaluation: Record<string, unknown> }>("/api/authorization/evaluate", {
       method: "POST",
       body: JSON.stringify(payload),
     }),

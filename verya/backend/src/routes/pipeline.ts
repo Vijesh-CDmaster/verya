@@ -1,5 +1,6 @@
 // Pipeline REST routes — the gated pipeline over the Fastify API.
 import type { FastifyInstance } from "fastify";
+import type { VeryaRequest } from "../app";
 import { StartRequestSchema, GateActionSchema } from "../schemas/pipeline";
 import { startPipeline, getPipeline, listPipelines, actOnPipeline } from "../services/pipeline";
 import { recordToLedger } from "../services/ledger";
@@ -18,6 +19,7 @@ export default async function pipelineRoutes(app: FastifyInstance): Promise<void
       });
     }
     const session = await startPipeline({
+      orgId: req.auth.orgId,
       input: sanitizeInput(parsed.data.input),
       statedStack: sanitizeInput(parsed.data.statedStack ?? ""),
       policy: parsed.data.policy,
@@ -28,14 +30,14 @@ export default async function pipelineRoutes(app: FastifyInstance): Promise<void
   // Fetch one session.
   app.get("/pipeline/:id", async (req, reply) => {
     const { id } = req.params as { id: string };
-    const session = await getPipeline(id);
+    const session = await getPipeline(req.auth.orgId, id);
     if (!session) return reply.status(404).send({ error: "Session not found" });
     return { session };
   });
 
   // List sessions (workflow history, F22).
-  app.get("/pipeline", async () => {
-    return { sessions: await listPipelines(50) };
+  app.get("/pipeline", async (req: VeryaRequest) => {
+    return { sessions: await listPipelines(req.auth.orgId, 50) };
   });
 
   // Apply a gate action (accept workflow, resolve flaws, pick stack/algorithm/model...).
@@ -48,7 +50,7 @@ export default async function pipelineRoutes(app: FastifyInstance): Promise<void
         issues: parsed.error.issues.map((i) => i.message),
       });
     }
-    const session = await actOnPipeline(id, parsed.data);
+    const session = await actOnPipeline(req.auth.orgId, id, parsed.data);
     return { session };
   });
 
@@ -57,7 +59,7 @@ export default async function pipelineRoutes(app: FastifyInstance): Promise<void
   // Redis is configured) and the UI polls until review is ready.
   app.post("/pipeline/:id/execute", async (req) => {
     const { id } = req.params as { id: string };
-    return startExecution(id);
+    return startExecution(req.auth.orgId, id);
   });
 
   // File upload intake (F1.3): text-like files appended into the project input.
@@ -106,6 +108,7 @@ export default async function pipelineRoutes(app: FastifyInstance): Promise<void
     // they are passed to any model, and record the verdict in the ledger.
     const externalScan = scanInjection(trimmed);
     const session = await startPipeline({
+      orgId: req.auth.orgId,
       input: combined.slice(0, 20000),
       statedStack: sanitizeInput((data.fields?.statedStack as string) ?? ""),
       policy: "balanced",

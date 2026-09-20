@@ -18,15 +18,18 @@ import { findSimilar } from "../../services/memory";
 import { analyzeFlawsByConsensus } from "../../services/consensus";
 import { refreshTaskFingerprints } from "./fingerprint";
 import { timeStage } from "../metrics";
+import { AsyncLocalStorage } from "node:async_hooks";
 
 const ORG_ID = process.env.VERYA_ORG_ID || "default-org";
+const orgContext = new AsyncLocalStorage<string>();
+function currentOrg(): string { return orgContext.getStore() ?? ORG_ID; }
 
 // ---------- F9: org memory → decision prompts ----------
 /** Retrieve similar past tasks for a task title and format them as prompt context. */
 async function memoryContextOf(taskTitle: string, category: string): Promise<string | undefined> {
   try {
     const similar = await findSimilar({
-      orgId: ORG_ID,
+      orgId: currentOrg(),
       taskCategory: category || "other",
       query: taskTitle,
       limit: 4,
@@ -63,7 +66,7 @@ async function queryOrgOutcomeHistory(): Promise<
   Array<{ model: string; taskCategory: string; samples: number; avgQuality: number; outcome: string }>
 > {
   const { getSkillMap } = await import("../../services/memory.js");
-  const skill = await getSkillMap(ORG_ID);
+  const skill = await getSkillMap(currentOrg());
   return skill.slice(0, 20).map((s) => ({
     model: s.model,
     taskCategory: s.taskCategory,
@@ -80,13 +83,14 @@ async function queryOrgOutcomeHistory(): Promise<
  */
 export async function processGate(
   session: PipelineSession,
-  adapters: StageAdapters
+  adapters: StageAdapters,
+  orgId = ORG_ID
 ): Promise<PipelineSession> {
   // F19 is deterministic and backfills old sessions without changing their gate semantics.
   refreshTaskFingerprints(session);
   // F44: time the stage and record provider-vs-overhead split to the ledger.
   const gate = session.gate;
-  return timeStage(gate, { orgId: ORG_ID, sessionId: session.id }, () => runGate(gate, session, adapters));
+  return orgContext.run(orgId, () => timeStage(gate, { orgId, sessionId: session.id }, () => runGate(gate, session, adapters)));
 }
 
 async function runGate(
@@ -100,7 +104,7 @@ async function runGate(
     case "platform":
       return session;
     case "flaws":
-      return runFlaws(session, adapters);
+      return runFlaws(session);
     case "stack":
       return runStack(session, adapters);
     case "algorithms":
@@ -118,8 +122,7 @@ async function runGate(
 
 // ---------- Gate 2: Flaw detection (runs after the suitability decision) ----------
 async function runFlaws(
-  session: PipelineSession,
-  adapters: StageAdapters
+  session: PipelineSession
 ): Promise<PipelineSession> {
   session.gateStatus = "running";
   const finalWorkflow = session.workflow;
@@ -154,7 +157,7 @@ async function runFlaws(
   session.flawReport = flawReport;
   session.gateStatus = "awaiting_user";
   await recordToLedger({
-    orgId: ORG_ID,
+    orgId: currentOrg(),
     sessionId: session.id,
     gate: "flaws",
     eventType: "flaw_report",
@@ -216,7 +219,7 @@ async function runSuitability(
     if (!wf.title) wf.title = "Untitled project";
     session.workflow = wf;
     await recordToLedger({
-      orgId: ORG_ID,
+      orgId: currentOrg(),
       sessionId: session.id,
       gate: "suitability",
       eventType: "suggested_workflow_adopted",
@@ -231,13 +234,19 @@ async function runSuitability(
   if (!workflow.title) workflow.title = "Untitled project";
   const suitability = await adapters.checkSuitability({ raw: session.input, workflow });
 
+  suitability.verdict ??= suitability.suitable
+    ? "suitable"
+    : suitability.confidence >= 0.55
+      ? "workable"
+      : "unsuitable";
+
   session.suitability = suitability;
 
   if (suitability.suitable) {
     session.workflow = workflow;
     session.gateStatus = "awaiting_user";
     await recordToLedger({
-      orgId: ORG_ID,
+      orgId: currentOrg(),
       sessionId: session.id,
       gate: "suitability",
       eventType: "suitability_passed",
@@ -247,7 +256,7 @@ async function runSuitability(
       },
     });
     await recordToLedger({
-      orgId: ORG_ID,
+      orgId: currentOrg(),
       sessionId: session.id,
       gate: "platform",
       eventType: "platform_selection_required",
@@ -258,7 +267,7 @@ async function runSuitability(
     session.suggestedWorkflow = workflow;
     session.gateStatus = "awaiting_user";
     await recordToLedger({
-      orgId: ORG_ID,
+      orgId: currentOrg(),
       sessionId: session.id,
       gate: "suitability",
       eventType: "suitability_flagged",
@@ -311,6 +320,7 @@ async function runStack(
           ? "Validated as provided."
           : "See validation notes and suggested changes.",
       confidence: validation.verdict === "fit" ? 0.9 : 0.55,
+      tradeoffs: { cost: "Not assessed", learningCurve: "Not assessed", scalingCeiling: "Not assessed", ecosystem: "Not assessed" },
     };
     session.stackGate = {
       provided: true,
@@ -322,7 +332,7 @@ async function runStack(
       tieBreakRequired: false,
     };
     await recordToLedger({
-      orgId: ORG_ID,
+      orgId: currentOrg(),
       sessionId: session.id,
       gate: "stack",
       eventType: "stack_validated",
@@ -356,6 +366,7 @@ async function runStack(
         ],
         summary: "Boring, proven full-stack default sized for small teams.",
         confidence: 0.6,
+        tradeoffs: { cost: "low", learningCurve: "moderate", scalingCeiling: "high", ecosystem: "large" },
       },
     ];
   }
@@ -379,7 +390,7 @@ async function runStack(
   };
   session.gateStatus = "awaiting_user";
   await recordToLedger({
-    orgId: ORG_ID,
+    orgId: currentOrg(),
     sessionId: session.id,
     gate: "stack",
     eventType: tie ? "stack_tiebreak" : "stack_selected",
@@ -416,7 +427,7 @@ async function runAlgorithms(
   session.algorithms = plan;
   const ties = plan.tasks.filter((t) => t.tieBreakRequired).length;
   await recordToLedger({
-    orgId: ORG_ID,
+    orgId: currentOrg(),
     sessionId: session.id,
     gate: "algorithms",
     eventType: ties > 0 ? "algorithm_tiebreak" : "algorithm_selected",
@@ -435,7 +446,7 @@ async function runAlgorithms(
     session.gate = "models";
     session.gateStatus = "running";
     await recordToLedger({
-      orgId: ORG_ID,
+      orgId: currentOrg(),
       sessionId: session.id,
       gate: "models",
       eventType: "routing_queued",
@@ -518,7 +529,7 @@ async function runRouting(
   session.gateStatus = "awaiting_user";
   const ties = plan.routes.filter((r) => r.tieBreakRequired).length;
   await recordToLedger({
-    orgId: ORG_ID,
+    orgId: currentOrg(),
     sessionId: session.id,
     gate: "models",
     eventType: ties > 0 ? "model_tiebreak" : "model_selected",
@@ -624,8 +635,10 @@ export function stackTextOf(session: PipelineSession): string {
 export async function applyGateAction(
   session: PipelineSession,
   action: GateAction,
-  adapters: StageAdapters
+  adapters: StageAdapters,
+  orgId = ORG_ID
 ): Promise<PipelineSession> {
+  return orgContext.run(orgId, async () => {
   switch (action.action) {
     case "suitability_choose": {
       if (session.gate !== "suitability") break;
@@ -638,7 +651,7 @@ export async function applyGateAction(
         session.workflow = session.suggestedWorkflow ?? session.workflow;
       }
       await recordToLedger({
-        orgId: ORG_ID,
+        orgId: currentOrg(),
         sessionId: session.id,
         gate: "suitability",
         eventType: "human_decision",
@@ -665,7 +678,7 @@ export async function applyGateAction(
       session.gate = "flaws";
       session.gateStatus = "running";
       await recordToLedger({
-        orgId: ORG_ID,
+        orgId: currentOrg(),
         sessionId: session.id,
         gate: "platform",
         eventType: "platform_selected",
@@ -689,7 +702,7 @@ export async function applyGateAction(
           )
       );
       await recordToLedger({
-        orgId: ORG_ID,
+        orgId: currentOrg(),
         sessionId: session.id,
         gate: "flaws",
         eventType: "human_decision",
@@ -719,7 +732,7 @@ export async function applyGateAction(
       session.gate = "tasks";
       session.gateStatus = "awaiting_user";
       await recordToLedger({
-        orgId: ORG_ID,
+        orgId: currentOrg(),
         sessionId: session.id,
         gate: "stack",
         eventType: "human_decision",
@@ -742,12 +755,29 @@ export async function applyGateAction(
       session.gate = "algorithms";
       session.gateStatus = "running";
       await recordToLedger({
-        orgId: ORG_ID,
+        orgId: currentOrg(),
         sessionId: session.id,
         gate: "tasks",
         eventType: "human_decision",
         actor: "human",
         detail: { summary: `Task list confirmed with ${action.tasks.length} tasks` },
+      });
+      break;
+    }
+
+    case "trust_budget_approve": {
+      if (session.gate !== "execution" || session.trustBudget?.status !== "exhausted") break;
+      session.trustBudget.remaining += action.amount;
+      session.trustBudget.initial += action.amount;
+      session.trustBudget.status = "active";
+      session.gateStatus = "awaiting_user";
+      await recordToLedger({
+        orgId: currentOrg(),
+        sessionId: session.id,
+        gate: "execution",
+        eventType: "trust_budget_approved",
+        actor: "human",
+        detail: { summary: `Human approved ${action.amount} additional trust units`, amount: action.amount },
       });
       break;
     }
@@ -766,7 +796,7 @@ export async function applyGateAction(
         session.gateStatus = "running";
       }
       await recordToLedger({
-        orgId: ORG_ID,
+        orgId: currentOrg(),
         sessionId: session.id,
         gate: "algorithms",
         eventType: "human_decision",
@@ -781,6 +811,10 @@ export async function applyGateAction(
       if (session.gate !== "models" || !session.routing) break;
       const route = session.routing.routes.find((r) => r.taskId === action.taskId);
       if (!route) break;
+      if (!route.options.some((option) => option.model === action.choice)) {
+        throw Object.assign(new Error("Selected model is not an available option for this task"), { statusCode: 422 });
+      }
+      const wasTieBreak = route.tieBreakRequired;
       route.humanChoice = action.choice;
       route.selectedModel = action.choice;
       route.tieBreakRequired = false;
@@ -790,14 +824,14 @@ export async function applyGateAction(
         session.gateStatus = "pending";
       }
       await recordToLedger({
-        orgId: ORG_ID,
+        orgId: currentOrg(),
         sessionId: session.id,
         gate: "models",
         eventType: "human_decision",
         actor: "human",
         taskId: action.taskId,
         model: action.choice,
-        detail: { summary: `User routed ${route.taskTitle} to ${action.choice}` },
+        detail: { summary: `User routed ${route.taskTitle} to ${action.choice}`, override: !wasTieBreak },
       });
       break;
     }
@@ -815,7 +849,7 @@ export async function applyGateAction(
       execution.code.version += 1;
       execution.code.updatedAt = new Date().toISOString();
       await recordToLedger({
-        orgId: ORG_ID,
+        orgId: currentOrg(),
         sessionId: session.id,
         gate: "review",
         eventType: "code_edited",
@@ -831,14 +865,15 @@ export async function applyGateAction(
     // feeds reputation (winner accepted, loser rejected) so routing learns from it.
     case "battle_run": {
       const { runBattle } = await import("../../services/battle.js");
-      await runBattle({ session, taskId: action.taskId, modelA: action.modelA, modelB: action.modelB });
+      await runBattle({ session, taskId: action.taskId, modelA: action.modelA, modelB: action.modelB, orgId: currentOrg() });
       break;
     }
     case "battle_pick": {
       const { pickBattleWinner } = await import("../../services/battle.js");
-      await pickBattleWinner({ session, taskId: action.taskId, winner: action.winner });
+      await pickBattleWinner({ session, taskId: action.taskId, winner: action.winner, orgId: currentOrg() });
       break;
     }
-  }
-  return session;
+    }
+    return session;
+  });
 }

@@ -8,6 +8,7 @@ const COLUMNS: Array<{ title: string; links: Array<{ label: string; href: string
       { label: "Audit Ledger", href: "/#trust" },
       { label: "Pricing", href: "/#pricing" },
       { label: "Dashboard", href: "/dashboard" },
+      { label: "Help center", href: "/help" },
     ],
   },
   {
@@ -17,6 +18,7 @@ const COLUMNS: Array<{ title: string; links: Array<{ label: string; href: string
       { label: "Decision process", href: "/#how-it-works" },
       { label: "FAQ", href: "/#faq" },
       { label: "New analysis", href: "/workspace" },
+      { label: "Help center", href: "/help" },
     ],
   },
   {

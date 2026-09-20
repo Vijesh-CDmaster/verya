@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS ledger_entries (
   actor         TEXT NOT NULL DEFAULT 'ai',   -- ai|human|system
   model         TEXT,
   task_id       TEXT,
+  correction_of BIGINT REFERENCES ledger_entries(seq),
   detail        JSONB NOT NULL DEFAULT '{}'::jsonb,
   verification  JSONB,
   human_edit    JSONB,
@@ -65,6 +66,8 @@ CREATE INDEX IF NOT EXISTS ledger_org_time_idx ON ledger_entries(org_id, created
 CREATE INDEX IF NOT EXISTS ledger_session_idx ON ledger_entries(session_id);
 CREATE INDEX IF NOT EXISTS ledger_model_idx ON ledger_entries(org_id, model) WHERE model IS NOT NULL;
 CREATE INDEX IF NOT EXISTS ledger_event_idx ON ledger_entries(org_id, event_type);
+CREATE INDEX IF NOT EXISTS ledger_correction_idx ON ledger_entries(org_id, correction_of)
+  WHERE correction_of IS NOT NULL;
 
 -- ---------- Organization memory (F9) with pgvector similarity ----------
 CREATE TABLE IF NOT EXISTS org_memory (
