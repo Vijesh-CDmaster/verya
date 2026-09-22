@@ -1,21 +1,309 @@
-(node:11060) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
-In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
-
-To prepare for this change:
-- If you want the current behavior, explicitly use 'sslmode=verify-full'
-- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
-
-See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
-(Use `node --trace-warnings ...` to show where the warning was created)
-[ai] understanding: gemini/gemini-3.6-flash attempt 0 failed: {"error":{"code":503,"message":"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.","status":"UNAVAILABLE"}}
-[ai] understanding: gemini/gemini-3.6-flash attempt 1 failed: {"error":{"code":429,"message":"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\nPlease retry in 53.519918545s.","status":"RESOURCE_EXHAUSTED","details":[{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-3.6-flash"},"quotaValue":"20"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"53s"}]}}
-[ai] understanding: gemini/gemini-3.5-flash attempt 0 failed: {"error":{"code":503,"message":"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.","status":"UNAVAILABLE"}}
-[ai] understanding: gemini/gemini-3.5-flash attempt 1 failed: {"error":{"code":503,"message":"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.","status":"UNAVAILABLE"}}
+[ai] understanding: gemini/gemini-3.6-flash attempt 0 failed: This operation was aborted
+[ai] understanding: gemini/gemini-3.6-flash attempt 1 failed: {"error":{"code":429,"message":"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\nPlease retry in 31.163302709s.","status":"RESOURCE_EXHAUSTED","details":[{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-3.6-flash","location":"global"},"quotaValue":"20"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"31s"}]}}
+[ai] suitability: gemini/gemini-3.5-flash attempt 0 failed: {"error":{"code":429,"message":"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\nPlease retry in 16.265589845s.","status":"RESOURCE_EXHAUSTED","details":[{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-3.5-flash"},"quotaValue":"20"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"16s"}]}}
 [ai] schema coercion repaired 2 model field(s) — validation passed
-[ai] schema coercion repaired 2 model field(s) — validation passed
-[ai] stack: gemini/gemini-3.5-flash attempt 0 failed: {"error":{"code":503,"message":"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.","status":"UNAVAILABLE"}}
-[ai] stack: gemini/gemini-3.5-flash attempt 1 failed: Schema validation failed: candidates.0.components.4.layer: Invalid option: expected one of "frontend"|"backend"|"database"|"cache"|"auth"|"hosting"|"jobs"|"storage"; candidates.1.components.4.layer: Invalid option: expected one of "frontend"|"backend"|"database"|"cache"|"auth"|"hosting"|"jobs"|"storage"; candidates.2.components.4.layer: Invalid option: expected one of "frontend"|"backend"|"database"|"cache"|"auth"|"hosting"|"jobs"|"storage"
-[ai] algorithms: gemini/gemini-3.5-flash attempt 0 failed: Schema validation failed: tasks.0.options: Too small: expected array to have >=1 items; tasks.1.options: Too small: expected array to have >=1 items; tasks.2.options: Too small: expected array to have >=1 items
-[ai] algorithms: gemini/gemini-3.5-flash re-ask failed: {"error":{"code":429,"message":"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\nPlease retry in 6.854760776s.","status":"RESOURCE_EXHAUSTED","details":[{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-3.5-flash"},"quotaValue":"20"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"6s"}]}}
-[ai] routing: gemini/gemini-3.5-flash attempt 0 failed: {"error":{"code":429,"message":"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\nPlease retry in 55.438231592s.","status":"RESOURCE_EXHAUSTED","details":[{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-3.5-flash"},"quotaValue":"20"}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"55s"}]}}
+[ai] understanding: gemini/gemini-3.1-flash-lite attempt 0 failed: Schema validation failed: tasks.0.id: Invalid input: expected string, received number; tasks.1.id: Invalid input: expected string, received number; tasks.1.dependsOn.0: Invalid input: expected string, received number
+[ai] flaws/mistral: mistral-medium-latest attempt 0 failed: mistral returned HTTP 429: {"object":"error","message":"Rate limit exceeded","type":"rate_limited","param":null,"code":"1300","raw_status_code":429}
+[ai] schema coercion repaired 1 model field(s) — validation passed
+[ai] flaws/groq: openai/gpt-oss-120b attempt 0 failed: Schema validation failed: flaws.9.category: Invalid option: expected one of "security"|"architecture"|"logic"|"scale"|"cost"|"nonfunctional"
+[ai] schema coercion repaired 1 field(s) but 1 issue(s) remain
+[ai] algorithms: gemini/gemini-3.1-flash-lite attempt 0 failed: Schema validation failed: tasks: Invalid input: expected array, received string
 [ai] routing: gemini/gemini-3.1-flash-lite attempt 0 failed: Schema validation failed: routes.0.options: Invalid input: expected array, received undefined; routes.1.options: Invalid input: expected array, received undefined; routes.2.options: Invalid input: expected array, received undefined
+[ai] routing: gemini/gemini-3.1-flash-lite re-ask failed: Schema validation failed: routes.0.options: Invalid input: expected array, received undefined; routes.1.options: Invalid input: expected array, received undefined; routes.2.options: Invalid input: expected array, received undefined
+[ai] routing: gemini/gemini-flash-latest attempt 0 failed: {"error":{"code":503,"message":"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.","status":"UNAVAILABLE"}}
+[ai] routing: gemini/gemini-flash-latest attempt 1 failed: Schema validation failed: routes.0.options.0.model: Invalid option: expected one of "gemini-3.6-flash"|"gemini-3.1-pro-preview"|"openai/gpt-oss-120b"|"openai/gpt-oss-20b"|"qwen/qwen3.8-27b"|"codestral-latest"|"magistral-medium-latest"|"mistral-medium-latest"|"ministral-8b-latest"|"z-ai/glm-5.2:free"|"google/gemma-4-31b-it:free"|"nvidia/nemotron-3-super-120b-a12b:free"; routes.0.options.1.model: Invalid option: expected one of "gemini-3.6-flash"|"gemini-3.1-pro-preview"|"openai/gpt-oss-120b"|"openai/gpt-oss-20b"|"qwen/qwen3.8-27b"|"codestral-latest"|"magistral-medium-latest"|"mistral-medium-latest"|"ministral-8b-latest"|"z-ai/glm-5.2:free"|"google/gemma-4-31b-it:free"|"nvidia/nemotron-3-super-120b-a12b:free"; routes.1.options.0.model: Invalid option: expected one of "gemini-3.6-flash"|"gemini-3.1-pro-preview"|"openai/gpt-oss-120b"|"openai/gpt-oss-20b"|"qwen/qwen3.8-27b"|"codestral-latest"|"magistral-medium-latest"|"mistral-medium-latest"|"ministral-8b-latest"|"z-ai/glm-5.2:free"|"google/gemma-4-31b-it:free"|"nvidia/nemotron-3-super-120b-a12b:free"
+[ai] routing: groq/openai/gpt-oss-120b attempt 0 failed: Schema validation failed: routes: Invalid input: expected array, received object
+[ai] understanding: gemini/gemini-3.1-flash-lite attempt 0 failed: Schema validation failed: tasks.0.id: Invalid input: expected string, received number; tasks.1.id: Invalid input: expected string, received number; tasks.1.dependsOn.0: Invalid input: expected string, received number
+[ai] schema coercion repaired 2 model field(s) — validation passed
+[ai] understanding: gemini/gemini-3.1-flash-lite attempt 0 failed: Schema validation failed: tasks.0.id: Invalid input: expected string, received number; tasks.1.id: Invalid input: expected string, received number; tasks.2.id: Invalid input: expected string, received number
+[ai] flaws/mistral: mistral-medium-latest attempt 0 failed: mistral returned HTTP 429: {"object":"error","message":"Rate limit exceeded","type":"rate_limited","param":null,"code":"1300","raw_status_code":429}
+[ai] schema coercion repaired 1 model field(s) — validation passed
+[ai] schema coercion repaired 1 field(s) but 3 issue(s) remain
+[ai] flaws/groq: openai/gpt-oss-120b attempt 0 failed: Schema validation failed: flaws.0.category: Invalid option: expected one of "security"|"architecture"|"logic"|"scale"|"cost"|"nonfunctional"; flaws.5.category: Invalid option: expected one of "security"|"architecture"|"logic"|"scale"|"cost"|"nonfunctional"; flaws.11.category: Invalid option: expected one of "security"|"architecture"|"logic"|"scale"|"cost"|"nonfunctional"
+[ai] routing: gemini/gemini-3.1-flash-lite attempt 0 failed: Schema validation failed: routes.0.options: Invalid input: expected array, received undefined; routes.1.options: Invalid input: expected array, received undefined; routes.2.options: Invalid input: expected array, received undefined
+[ai] routing: gemini/gemini-3.1-flash-lite re-ask failed: Schema validation failed: routes.0.options.0.model: Invalid option: expected one of "gemini-3.6-flash"|"gemini-3.1-pro-preview"|"openai/gpt-oss-120b"|"openai/gpt-oss-20b"|"qwen/qwen3.8-27b"|"codestral-latest"|"magistral-medium-latest"|"mistral-medium-latest"|"ministral-8b-latest"|"z-ai/glm-5.2:free"|"google/gemma-4-31b-it:free"|"nvidia/nemotron-3-super-120b-a12b:free"; routes.1.options.0.model: Invalid option: expected one of "gemini-3.6-flash"|"gemini-3.1-pro-preview"|"openai/gpt-oss-120b"|"openai/gpt-oss-20b"|"qwen/qwen3.8-27b"|"codestral-latest"|"magistral-medium-latest"|"mistral-medium-latest"|"ministral-8b-latest"|"z-ai/glm-5.2:free"|"google/gemma-4-31b-it:free"|"nvidia/nemotron-3-super-120b-a12b:free"; routes.2.options.0.model: Invalid option: expected one of "gemini-3.6-flash"|"gemini-3.1-pro-preview"|"openai/gpt-oss-120b"|"openai/gpt-oss-20b"|"qwen/qwen3.8-27b"|"codestral-latest"|"magistral-medium-latest"|"mistral-medium-latest"|"ministral-8b-latest"|"z-ai/glm-5.2:free"|"google/gemma-4-31b-it:free"|"nvidia/nemotron-3-super-120b-a12b:free"
+[ai] routing: gemini/gemini-flash-latest attempt 0 failed: {"error":{"code":503,"message":"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.","status":"UNAVAILABLE"}}
+[ai] routing: gemini/gemini-flash-latest attempt 1 failed: {"error":{"code":503,"message":"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.","status":"UNAVAILABLE"}}
+[ai] routing: gemini/gemini-flash-latest attempt 2 failed: {"error":{"code":503,"message":"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.","status":"UNAVAILABLE"}}
+[ai] routing: gemini/gemini-flash-latest attempt 3 failed: {"error":{"code":503,"message":"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.","status":"UNAVAILABLE"}}
+[ai] routing: gemini/gemini-flash-latest attempt 4 failed: {"error":{"code":503,"message":"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.","status":"UNAVAILABLE"}}
+[ai] routing: gemini/gemini-flash-latest attempt 5 failed: {"error":{"code":503,"message":"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.","status":"UNAVAILABLE"}}
+node:internal/event_target:1118
+  process.nextTick(() => { throw err; });
+                           ^
+
+Error: Unhandled error. ()
+    at Dn.emit (C:\Users\Admin\Desktop\verya\verya\backend\node_modules\@neondatabase\serverless\index.js:315:46)
+    at Un.idleListener (C:\Users\Admin\Desktop\verya\verya\backend\node_modules\@neondatabase\serverless\index.js:1088:80)
+    at Un.emit (C:\Users\Admin\Desktop\verya\verya\backend\node_modules\@neondatabase\serverless\index.js:316:79)
+    at Un._handleErrorEvent (C:\Users\Admin\Desktop\verya\verya\backend\node_modules\@neondatabase\serverless\index.js:1043:1)
+    at An.emit (C:\Users\Admin\Desktop\verya\verya\backend\node_modules\@neondatabase\serverless\index.js:316:79)
+    at S.reportStreamError (C:\Users\Admin\Desktop\verya\verya\backend\node_modules\@neondatabase\serverless\index.js:969:57)
+    at S.emit (C:\Users\Admin\Desktop\verya\verya\backend\node_modules\@neondatabase\serverless\index.js:316:79)
+    at WebSocket.<anonymous> (C:\Users\Admin\Desktop\verya\verya\backend\node_modules\@neondatabase\serverless\index.js:401:1)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+    at WebSocket.dispatchEvent (node:internal/event_target:776:26) {
+  context: ErrorEvent {
+    client: NeonClient {
+      _events: [Object: null prototype] { error: [Function (anonymous)] },
+      _eventsCount: 1,
+      _maxListeners: undefined,
+      connectionParameters: ConnectionParameters {
+        user: 'neondb_owner',
+        database: 'neondb',
+        port: 5432,
+        host: 'ep-soft-leaf-b5c51snj-pooler.c-7.us-east-2.aws.neon.tech',
+        binary: false,
+        options: undefined,
+        ssl: {},
+        client_encoding: '',
+        replication: undefined,
+        isDomainSocket: false,
+        application_name: undefined,
+        fallback_application_name: undefined,
+        statement_timeout: false,
+        lock_timeout: false,
+        idle_in_transaction_session_timeout: false,
+        query_timeout: false,
+        connect_timeout: 15
+      },
+      user: 'neondb_owner',
+      database: 'neondb',
+      port: 5432,
+      host: 'ep-soft-leaf-b5c51snj-pooler.c-7.us-east-2.aws.neon.tech',
+      replication: undefined,
+      _Promise: [Function: Promise],
+      _types: TypeOverrides {
+        _types: {
+          getTypeParser: [Function: getTypeParser],
+          setTypeParser: [Function: setTypeParser],
+          arrayParser: { create: [Function: create] },
+          builtins: {
+            BOOL: 16,
+            BYTEA: 17,
+            CHAR: 18,
+            INT8: 20,
+            INT2: 21,
+            INT4: 23,
+            REGPROC: 24,
+            TEXT: 25,
+            OID: 26,
+            TID: 27,
+            XID: 28,
+            CID: 29,
+            JSON: 114,
+            XML: 142,
+            PG_NODE_TREE: 194,
+            SMGR: 210,
+            PATH: 602,
+            POLYGON: 604,
+            CIDR: 650,
+            FLOAT4: 700,
+            FLOAT8: 701,
+            ABSTIME: 702,
+            RELTIME: 703,
+            TINTERVAL: 704,
+            CIRCLE: 718,
+            MACADDR8: 774,
+            MONEY: 790,
+            MACADDR: 829,
+            INET: 869,
+            ACLITEM: 1033,
+            BPCHAR: 1042,
+            VARCHAR: 1043,
+            DATE: 1082,
+            TIME: 1083,
+            TIMESTAMP: 1114,
+            TIMESTAMPTZ: 1184,
+            INTERVAL: 1186,
+            TIMETZ: 1266,
+            BIT: 1560,
+            VARBIT: 1562,
+            NUMERIC: 1700,
+            REFCURSOR: 1790,
+            REGPROCEDURE: 2202,
+            REGOPER: 2203,
+            REGOPERATOR: 2204,
+            REGCLASS: 2205,
+            REGTYPE: 2206,
+            UUID: 2950,
+            TXID_SNAPSHOT: 2970,
+            PG_LSN: 3220,
+            PG_NDISTINCT: 3361,
+            PG_DEPENDENCIES: 3402,
+            TSVECTOR: 3614,
+            TSQUERY: 3615,
+            GTSVECTOR: 3642,
+            REGCONFIG: 3734,
+            REGDICTIONARY: 3769,
+            JSONB: 3802,
+            REGNAMESPACE: 4089,
+            REGROLE: 4096
+          }
+        },
+        text: {},
+        binary: {}
+      },
+      _ending: true,
+      _connecting: false,
+      _connected: true,
+      _connectionError: false,
+      _queryable: false,
+      connection: Connection {
+        _events: [Object: null prototype] {
+          newListener: [Function (anonymous)],
+          connect: [ [Function (anonymous)], [Function (anonymous)] ],
+          sslconnect: [Function (anonymous)],
+          authenticationMD5Password: [Function: bound _handleAuthMD5Password],
+          authenticationSASL: [Function: bound _handleAuthSASL],
+          authenticationSASLContinue: [Function: bound _handleAuthSASLContinue] AsyncFunction,
+          authenticationSASLFinal: [Function: bound _handleAuthSASLFinal],
+          backendKeyData: [Function: bound _handleBackendKeyData],
+          error: [Function: bound _handleErrorEvent],
+          errorMessage: [Function: bound _handleErrorMessage],
+          notice: [Function: bound _handleNotice],
+          rowDescription: [Function: bound _handleRowDescription],
+          dataRow: [Function: bound _handleDataRow],
+          portalSuspended: [Function: bound _handlePortalSuspended],
+          emptyQuery: [Function: bound _handleEmptyQuery],
+          commandComplete: [Function: bound _handleCommandComplete],
+          parseComplete: [Function: bound _handleParseComplete],
+          copyInResponse: [Function: bound _handleCopyInResponse],
+          copyData: [Function: bound _handleCopyData],
+          notification: [Function: bound _handleNotification],
+          readyForQuery: [Function: bound _handleReadyForQuery]
+        },
+        _eventsCount: 21,
+        _maxListeners: undefined,
+        stream: Socket {
+          _events: [Object: null prototype] {
+            error: [Function: reportStreamError],
+            close: [Function (anonymous)],
+            end: [Array],
+            data: [Function (anonymous)]
+          },
+          _eventsCount: 4,
+          _maxListeners: undefined,
+          opts: {},
+          connecting: false,
+          pending: false,
+          writable: true,
+          encrypted: false,
+          authorized: false,
+          destroyed: true,
+          ws: WebSocket {
+            Symbol(kEvents): [SafeMap],
+            Symbol(events.maxEventTargetListeners): 10,
+            Symbol(events.maxEventTargetListenersWarned): false,
+            Symbol(kHandlers): SafeMap(0) {}
+          },
+          writeBuffer: undefined,
+          tlsState: 0,
+          tlsRead: undefined,
+          tlsWrite: undefined
+        },
+        _keepAlive: false,
+        _keepAliveInitialDelayMillis: 0,
+        lastBuffer: false,
+        parsedStatements: {},
+        ssl: false,
+        _ending: true,
+        _emitMessage: false,
+        _connecting: true
+      },
+      queryQueue: [],
+      binary: false,
+      processID: 1276561898,
+      secretKey: 1902926867,
+      ssl: false,
+      _connectionTimeoutMillis: 15000,
+      config: {
+        connectionString: 'postgresql://neondb_owner:npg_rLFk6Rq5dvmn@ep-soft-leaf-b5c51snj-pooler.c-7.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require',
+        max: 10,
+        connectionTimeoutMillis: 15000,
+        min: 0,
+        maxUses: Infinity,
+        allowExitOnIdle: false,
+        maxLifetimeSeconds: 0,
+        idleTimeoutMillis: 10000
+      },
+      _connectionCallback: null,
+      connectionTimeoutHandle: Timeout {
+        _idleTimeout: -1,
+        _idlePrev: null,
+        _idleNext: null,
+        _idleStart: 3773577,
+        _onTimeout: null,
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: true,
+        Symbol(refed): true,
+        Symbol(kHasPrimitive): false,
+        Symbol(asyncId): 23831,
+        Symbol(triggerId): 23803,
+        Symbol(kAsyncContextFrame): undefined
+      },
+      release: [Function (anonymous)],
+      activeQuery: null,
+      readyForQuery: true,
+      hasExecuted: true,
+      _poolUseCount: 2
+    },
+    Symbol(type): 'error',
+    Symbol(kTarget): WebSocket {
+      Symbol(kEvents): SafeMap(4) {
+        'error' => <ref *1> {
+          size: 1,
+          next: Listener {
+            next: undefined,
+            previous: [Circular *1],
+            listener: [Function (anonymous)],
+            flags: 0,
+            callback: [Function (anonymous)]
+          },
+          resistStopPropagation: false
+        },
+        'message' => <ref *2> {
+          size: 1,
+          next: Listener {
+            next: undefined,
+            previous: [Circular *2],
+            listener: [Function (anonymous)],
+            flags: 0,
+            callback: [Function (anonymous)]
+          },
+          resistStopPropagation: false
+        },
+        'close' => <ref *3> {
+          size: 1,
+          next: Listener {
+            next: undefined,
+            previous: [Circular *3],
+            listener: [Function (anonymous)],
+            flags: 0,
+            callback: [Function (anonymous)]
+          },
+          resistStopPropagation: false
+        },
+        'open' => <ref *4> {
+          size: 1,
+          next: Listener {
+            next: undefined,
+            previous: [Circular *4],
+            listener: [Function: handleWebSocketOpen],
+            flags: 0,
+            callback: [Function: handleWebSocketOpen]
+          },
+          resistStopPropagation: false
+        }
+      },
+      Symbol(events.maxEventTargetListeners): 10,
+      Symbol(events.maxEventTargetListenersWarned): false,
+      Symbol(kHandlers): SafeMap(0) {}
+    },
+    Symbol(kIsBeingDispatched): false,
+    Symbol(kInPassiveListener): false
+  }
+}
+
+Node.js v24.18.0

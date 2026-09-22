@@ -1,21 +1,40 @@
-   ▲ Next.js 15.5.25
+
+> verya-app@0.1.0 dev
+> next dev --turbopack -p 3100
+
+   ▲ Next.js 15.5.25 (Turbopack)
    - Local:        http://localhost:3100
-   - Network:      http://192.168.0.197:3100
+   - Network:      http://172.16.205.235:3100
    - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 3.8s
- ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1305ms (211 modules)
+ ○ Compiling middleware ...
+ ✓ Compiled middleware in 1310ms
+ ✓ Ready in 3.9s
  ○ Compiling / ...
- ✓ Compiled / in 8.6s (1225 modules)
+ ✓ Compiled / in 7.6s
+ GET / 200 in 7887ms
 Attention: Clerk collects telemetry data from its SDKs when connected to development instances.
 The data collected is used to inform Clerk's product roadmap.
 To learn more, including how to opt-out from the telemetry program, visit: https://clerk.com/docs/telemetry.
 
- GET / 200 in 9704ms
- GET / 200 in 269ms
- GET / 200 in 226ms
- GET / 200 in 283ms
- ✓ Compiled in 728ms (435 modules)
- GET / 200 in 217ms
+ GET / 200 in 1177ms
+ ○ Compiling /workspace ...
+ ✓ Compiled /workspace in 4.9s
+ GET /workspace 200 in 969ms
+ GET / 200 in 1263ms
+ GET /workspace 200 in 1155ms
+ GET /workspace 200 in 1193ms
+ GET /workspace 200 in 1016ms
+ GET /workspace 200 in 1249ms
+ GET /workspace 200 in 780ms
+ GET /workspace 200 in 1063ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1050ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 1949ms
+ ✓ Compiled in 577ms
+ GET /workspace 200 in 3253ms
+ GET /workspace 200 in 1125ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 716ms
+ ✓ Compiled in 547ms
+[?25h

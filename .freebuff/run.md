@@ -30,6 +30,15 @@ The frontend proxies `/api/*` and `/health` to the backend (`next.config.ts`,
    backend log line to see which one is live — a `DATABASE_URL`-only grep of `.env.local`
    returns nothing and is misleading. **When Neon is configured, run migrations once**
    before starting the backend: `cd verya/backend && node node_modules/tsx/dist/cli.mjs src/db/migrate.ts`.
+5. **Postgres transport** — `src/db/pool.ts` talks to Neon through
+   `@neondatabase/serverless` (WebSocket to port **443**), because this machine
+   intermittently blocks outbound TCP **5432** (plain `pg` connections then hang and every
+   DB-backed route times out while `/health` still answers — diagnose with
+   `node -e "require('net').connect(5432,'<neon-host>').on('error',console.log)"`).
+   Requires `@neondatabase/serverless` in `verya/backend/package.json` (install with deps).
+   Set `VERYA_PG_FORCE_TCP=1` to force the classic raw-TCP `pg` transport on networks
+   with direct 5432 egress. If DB routes hang with the Neon driver too, Neon itself may
+   be down/suspended — check the Neon console.
 
 ## 2. Run the servers (detached, they must outlive the conversation)
 
