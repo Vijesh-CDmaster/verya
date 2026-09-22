@@ -4,6 +4,7 @@
 import type { Session, GateId } from "@/schemas/pipeline";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { useGateAction, useExecute } from "@/hooks/use-session";
 import { GateSuitability } from "./GateSuitability";
 import { GatePlatform } from "./GatePlatform";
@@ -27,7 +28,17 @@ const GATES: { id: GateId; label: string }[] = [
   { id: "review", label: "Review" },
 ];
 
-export function SessionView({ session, onReset }: { session: Session; onReset: () => void }) {
+export function SessionView({
+  session,
+  onReset,
+  onOpenWorkspace,
+  canOpenWorkspace,
+}: {
+  session: Session;
+  onReset: () => void;
+  onOpenWorkspace?: () => void;
+  canOpenWorkspace?: boolean;
+}) {
   const act = useGateAction(session.id);
   const execute = useExecute(session.id);
 
@@ -48,6 +59,25 @@ export function SessionView({ session, onReset }: { session: Session; onReset: (
 
   return (
     <div className="fade-up">
+      {/* Active Workspace Banner (When returning from IDE) */}
+      {canOpenWorkspace && onOpenWorkspace && (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[#007acc]/40 bg-[#007acc]/10 px-4 py-2.5 text-[13px]">
+          <div className="flex items-center gap-2">
+            <span className="flex h-2 w-2 rounded-full bg-[#007acc] animate-pulse" />
+            <span className="font-semibold text-white">Coding workspace is active</span>
+            <span className="text-muted text-[12px] hidden sm:inline">— Code editor, file tree & tasks are running in the IDE</span>
+          </div>
+          <Button
+            size="sm"
+            onClick={onOpenWorkspace}
+            className="flex items-center gap-1.5 bg-[#007acc] hover:bg-[#0062a3] text-white text-[12px] h-7 px-3 font-medium shadow-sm cursor-pointer"
+          >
+            <span>Return to Coding Workspace</span>
+            <span>→</span>
+          </Button>
+        </div>
+      )}
+
       {/* Gate stepper */}
       <div className="mb-4 flex flex-wrap items-center gap-1.5">
         {GATES.map((g, i) => (
@@ -83,6 +113,15 @@ export function SessionView({ session, onReset }: { session: Session; onReset: (
           <AlertDescription>
             {session.error ??
               "The analysis failed before the first review step. Check your backend configuration and try again."}
+            <Button
+              size="sm"
+              variant="outline"
+              className="mt-3"
+              disabled={busy}
+              onClick={() => void call({ action: "retry_gate" })}
+            >
+              {busy ? "Retrying…" : "Retry analysis →"}
+            </Button>
           </AlertDescription>
         </Alert>
       )}
@@ -94,7 +133,7 @@ export function SessionView({ session, onReset }: { session: Session; onReset: (
         {session.gate === "stack" && <GateStack session={session} call={call} busy={busy} />}
         {session.gate === "tasks" && <GateTasks session={session} call={call} busy={busy} />}
         {session.gate === "algorithms" && <GateAlgorithms session={session} call={call} busy={busy} />}
-        {session.gate === "models" && <GateModels session={session} call={call} busy={busy} onExecute={async () => { try { await execute.mutateAsync(); } catch { /* surfaced below */ } }} />}
+        {session.gate === "models" && <GateModels session={session} call={call} busy={busy} />}
         {session.gate === "execution" && <GateExecution session={session} call={call} busy={busy} execute={async () => { try { await execute.mutateAsync(); } catch { /* surfaced below */ } }} />}
         {session.gate === "review" && <GateReview session={session} call={call} busy={busy} />}
         {session.gate === "intake" && <p className="text-sm text-muted">Preparing…</p>}

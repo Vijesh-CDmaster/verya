@@ -53,10 +53,9 @@ const GEMINI_FAILOVER_MODELS = (process.env.GEMINI_FAILOVER_MODELS ||
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);
-// Per-model retries for transient 503/429 demand spikes. Free tiers rate-limit
-// per minute per model, so the total retry window must span a full cooldown
-// (~60s) — otherwise the chain gives up just before quota resets.
-const RETRY_DELAYS_MS = [3000, 8000, 15000, 25000, 40000];
+// Per-model retries for transient 503/429 demand spikes.
+// Fast failover/backoff window prevents blocking long pipeline stalls.
+const RETRY_DELAYS_MS = [1000, 2500, 5000];
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -531,7 +530,13 @@ async function runStructuredStage<S extends z.ZodType>(
   throw new ProviderError(`All providers failed for ${stage}: ${detail}`, stage, lastErr);
 }
 
-/** Run one structured stage against exactly one provider for independent consensus. */
+/** Run one structured stage against exactly one provider for independent consensus.
+ * Unlike the main chain, this call MUST NOT silently fall over to another provider —
+ * independence is the point of the consensus. But it must also not die to a transient
+ * error or an exhausted model: retries with backoff run on the provider's own stage
+ * model first, then (for Gemini only — same provider, different daily quota bucket)
+ * its sibling models. A daily-exhausted model is benched in the shared ledger so the
+ * main chain skips it too. Cross-provider fallback is deliberately never done. */
 export async function runStructuredStageForProvider<S extends z.ZodType>(
   stage: PipelineStageId,
   system: string,
@@ -543,13 +548,65 @@ export async function runStructuredStageForProvider<S extends z.ZodType>(
   if (!provider) {
     throw new ProviderError(`Provider "${providerName}" is not configured`, stage);
   }
-  const model = providerName === "gemini" ? process.env.GEMINI_MODEL || "gemini-3.6-flash" : provider.stageModel;
   const hint = JSON.stringify(zodToGeminiSchema(zodSchema)).slice(0, 4000);
-  if (providerName === "gemini") {
-    return geminiStructured(stage, system, user, zodSchema, model);
+  // Own model first, then (Gemini only) same-provider siblings with fresh quota buckets.
+  const models =
+    providerName === "gemini"
+      ? [process.env.GEMINI_MODEL || "gemini-3.6-flash", ...GEMINI_FAILOVER_MODELS]
+      : [provider.stageModel];
+  let lastErr: unknown = null;
+  for (const model of models) {
+    if (isExhausted(providerName, model)) continue;
+    for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+      try {
+        if (providerName === "gemini") {
+          return await geminiStructured(stage, system, user, zodSchema, model);
+        }
+        const res = await chatCompatible(provider, model, system, user, { json: true, jsonHint: hint });
+        return validateCoerced(zodSchema, extractJson(res.text));
+      } catch (err) {
+        lastErr = err;
+        console.warn(
+          `[ai] ${stage}/${providerName}: ${model} attempt ${attempt} failed: ${err instanceof Error ? err.message : String(err)}`
+        );
+        if (isDailyQuotaExhaustion(err)) {
+          markExhausted(providerName, model);
+          break; // next sibling model (same provider only)
+        }
+        if (isRateLimit(err)) {
+          markExhausted(providerName, model, RATE_LIMIT_BENCH_MS);
+          break;
+        }
+        // One same-model re-ask on schema-validation failure, mirroring the main chain.
+        if (/Schema validation failed/i.test(String(err)) && attempt === 0) {
+          try {
+            const reaskUser = `${user}\n\nYour previous JSON response failed schema validation:\n${String(err).slice(0, 500)}\nReturn the complete corrected JSON object that satisfies the schema: ids/tokens as strings, enum values exactly lowercase as listed, arrays non-empty where required.`;
+            if (providerName === "gemini") {
+              return await geminiStructured(stage, system, reaskUser, zodSchema, model);
+            }
+            const res2 = await chatCompatible(provider, model, system, reaskUser, {
+              json: true,
+              jsonHint: hint,
+              timeoutMs: PROVIDER_TIMEOUT_MS,
+            });
+            return validateCoerced(zodSchema, extractJson(res2.text));
+          } catch (err2) {
+            lastErr = err2;
+            console.warn(`[ai] ${stage}/${providerName}: ${model} re-ask failed: ${err2 instanceof Error ? err2.message : String(err2)}`);
+          }
+          break;
+        }
+        if (!isRetryableModelError(err)) break; // non-transient — give up on this model
+        if (attempt < RETRY_DELAYS_MS.length) {
+          await sleep(RETRY_DELAYS_MS[attempt]);
+          continue;
+        }
+        break;
+      }
+    }
   }
-  const res = await chatCompatible(provider, model, system, user, { json: true, jsonHint: hint });
-  return validateCoerced(zodSchema, extractJson(res.text));
+  const detail = lastErr instanceof Error ? lastErr.message : String(lastErr);
+  throw new ProviderError(`Provider "${providerName}" failed for ${stage}: ${detail}`, stage, lastErr);
 }
 
 // ---------- Free-text execution with cross-provider failover ----------

@@ -12,7 +12,7 @@ export function useSession(sessionId: string | null) {
     enabled: Boolean(sessionId),
     refetchInterval: (query) => {
       const session = (query.state.data as { session?: { gateStatus?: string } } | undefined)?.session;
-      return session?.gateStatus === "running" ? 2500 : false;
+      return session?.gateStatus === "running" ? 800 : false;
     },
     retry: (count, err) => (err instanceof ApiError && err.status < 500 ? false : count < 2),
   });

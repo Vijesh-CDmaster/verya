@@ -527,6 +527,9 @@ async function runRouting(
 
   session.routing = plan;
   session.gateStatus = "awaiting_user";
+  // Explicit finalization state (Part 1): Models are SELECTED, not yet FINALIZED.
+  // Execution is gated on modelsFinalized — see assertModelsFinalized in services/execution.ts.
+  session.modelsFinalized = false;
   const ties = plan.routes.filter((r) => r.tieBreakRequired).length;
   await recordToLedger({
     orgId: currentOrg(),
@@ -640,6 +643,26 @@ export async function applyGateAction(
 ): Promise<PipelineSession> {
   return orgContext.run(orgId, async () => {
   switch (action.action) {
+    // Human recovery for a failed gate: clear the error, mark running, and let the
+    // background processor re-run the same gate (providers are re-attempted; models
+    // benched for quota errors stay benched, so the chain moves past dry models).
+    case "retry_gate": {
+      if (session.gateStatus !== "failed") {
+        throw Object.assign(new Error("This gate is not in a failed state."), { statusCode: 409 });
+      }
+      session.gateStatus = "running";
+      session.error = undefined;
+      await recordToLedger({
+        orgId: currentOrg(),
+        sessionId: session.id,
+        gate: session.gate,
+        eventType: "gate_retry",
+        actor: "human",
+        detail: { summary: `Human requested a retry of the ${session.gate} gate` },
+      });
+      break;
+    }
+
     case "suitability_choose": {
       if (session.gate !== "suitability") break;
       if (action.choice === "suggested") {
@@ -765,6 +788,20 @@ export async function applyGateAction(
       break;
     }
 
+    case "retry_task": {
+      if (session.gate !== "review" && session.gate !== "execution") {
+        throw Object.assign(new Error("retry_task is only available during execution or review"), { statusCode: 409 });
+      }
+      const { retryTask } = await import("../../services/execution.js");
+      const { session: restarted } = await retryTask(currentOrg(), session.id, action.taskId);
+      // restartExecution saved + restarted the loop; adopt its state.
+      session.gate = restarted.gate;
+      session.gateStatus = restarted.gateStatus;
+      session.executions = restarted.executions;
+      session.workspaceFiles = restarted.workspaceFiles;
+      break;
+    }
+
     case "trust_budget_approve": {
       if (session.gate !== "execution" || session.trustBudget?.status !== "exhausted") break;
       session.trustBudget.remaining += action.amount;
@@ -822,6 +859,15 @@ export async function applyGateAction(
       if (stillWaiting.length === 0) {
         session.gate = "execution";
         session.gateStatus = "pending";
+        session.modelsFinalized = true;
+        await recordToLedger({
+          orgId: currentOrg(),
+          sessionId: session.id,
+          gate: "models",
+          eventType: "models_finalized",
+          actor: "human",
+          detail: { summary: `Model routing finalized after the last human decision — Run unlocked`, routes: session.routing.routes.length },
+        });
       }
       await recordToLedger({
         orgId: currentOrg(),
@@ -832,6 +878,36 @@ export async function applyGateAction(
         taskId: action.taskId,
         model: action.choice,
         detail: { summary: `User routed ${route.taskTitle} to ${action.choice}`, override: !wasTieBreak },
+      });
+      break;
+    }
+
+    case "finalize_models": {
+      // Part 1/2: the explicit human handoff from planning into the coding workspace.
+      // Refuses silently-resolvable states loudly instead of half-passing.
+      if (!session.routing || !session.workflow || !session.algorithms) {
+        throw Object.assign(new Error("Models cannot be finalized before model routing exists"), { statusCode: 409 });
+      }
+      if (session.gate !== "models" && session.gate !== "execution") {
+        throw Object.assign(new Error("Models can only be finalized at the Models stage"), { statusCode: 409 });
+      }
+      const unresolvedTies = session.routing.routes.filter((r) => r.tieBreakRequired);
+      if (unresolvedTies.length > 0) {
+        throw Object.assign(
+          new Error(`Cannot finalize: ${unresolvedTies.length} model tie-break(s) still require a human decision`),
+          { statusCode: 409 }
+        );
+      }
+      session.modelsFinalized = true;
+      session.gate = "execution";
+      session.gateStatus = "pending";
+      await recordToLedger({
+        orgId: currentOrg(),
+        sessionId: session.id,
+        gate: "models",
+        eventType: "models_finalized",
+        actor: "human",
+        detail: { summary: "Human finalized model routing — coding workspace Run unlocked", routes: session.routing.routes.length },
       });
       break;
     }

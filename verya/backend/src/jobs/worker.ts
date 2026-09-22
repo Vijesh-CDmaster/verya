@@ -15,10 +15,15 @@ import { forecastTaskFailure } from "../services/forecast";
 import { initialTrustBudget, trustCostFor } from "../lib/trust-budget";
 import { certificateFor } from "../lib/certificates";
 import { codeArtifactOf, type ExecutionResult, type PipelineSession } from "../schemas/pipeline";
+import { applyFileOpToSession } from "../services/workspace";
+import { extractFileOps } from "../services/fileops";
+import { assertModelsFinalized } from "../services/execution";
 
 async function executeSession(orgId: string, sessionId: string): Promise<void> {
   const session: PipelineSession | null = await getSession(orgId, sessionId);
   if (!session || !session.routing || !session.workflow || !session.algorithms) return;
+  // Same explicit Models-finalized gate as the inline HTTP path — no bypass via the queue.
+  assertModelsFinalized(session);
   session.trustBudget ??= { initial: initialTrustBudget(), remaining: initialTrustBudget(), consumed: 0, status: "active" };
 
   const stackText = stackTextOf(session);
@@ -67,6 +72,19 @@ async function executeSession(orgId: string, sessionId: string): Promise<void> {
           ? geminiAdapters.executeTask({ task, algorithm, stack: stackText, workflow: session.workflow, model: challengerModel })
           : Promise.resolve(undefined),
       ]);
+
+      // Real file operations (same pipeline as the inline executor).
+      const ops = extractFileOps(exec.output);
+      const appliedFileOps: ExecutionResult["fileOps"] = [];
+      for (const op of ops) {
+        const res = applyFileOpToSession(session, op, { taskId: task.id, model });
+        appliedFileOps.push(
+          res.ok
+            ? { path: res.op.path, operation: res.op.operation, rejected: false }
+            : { path: op.path, operation: op.operation, rejected: true, reason: res.reason.slice(0, 300) }
+        );
+      }
+
       const verificationDepth = verificationDepthFor(task.risk);
       const needsSecondModel = verificationDepth === "second_model";
       const verification = needsSecondModel
@@ -93,6 +111,8 @@ async function executeSession(orgId: string, sessionId: string): Promise<void> {
         model,
         output: exec.output,
         code: codeArtifactOf(exec.output, task.title),
+        fileOps: appliedFileOps,
+        servedBy: exec.servedBy,
         verification: {
           method: needsSecondModel ? "second_model" : "rules",
           passed: verification.passed,

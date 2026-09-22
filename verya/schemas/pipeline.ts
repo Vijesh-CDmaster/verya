@@ -159,6 +159,8 @@ export const SessionSchema = z.object({
   stackGate: z.unknown().nullish(),
   algorithms: z.unknown().nullish(),
   routing: z.unknown().nullish(),
+  /** Explicit Models-stage finalization (backend Part 1). Run is gated on this. */
+  modelsFinalized: z.boolean().optional(),
   trustBudget: z.object({
     initial: z.number(),
     remaining: z.number(),
@@ -216,9 +218,37 @@ export const SessionSchema = z.object({
         confidence: z.number(),
         latencyMs: z.number(),
         tokens: z.object({ input: z.number(), output: z.number() }),
+        /** Structured file operations applied to the generated workspace (Part 5/18). */
+        fileOps: z
+          .array(
+            z.object({
+              path: z.string(),
+              operation: z.enum(["create", "update", "delete"]),
+              rejected: z.boolean().default(false),
+              reason: z.string().optional(),
+            })
+          )
+          .optional(),
+        /** The model that ACTUALLY served the task (differs from `model` on failover). */
+        servedBy: z.string().optional(),
       })
     )
     .default([]),
+  /** Generated-project source files (real code execution wrote). Optional for
+   *  backward compatibility with pre-workspace sessions. */
+  workspaceFiles: z
+    .array(
+      z.object({
+        path: z.string(),
+        content: z.string(),
+        original: z.string(),
+        taskId: z.string(),
+        model: z.string(),
+        updatedAt: z.string(),
+        version: z.number(),
+      })
+    )
+    .optional(),
   targetPlatform: TargetPlatformSchema.optional(),
   humanFeedback: z.object({ ratings: z.record(z.string(), z.unknown()) }).default({ ratings: {} }),
 });

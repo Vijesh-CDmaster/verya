@@ -57,9 +57,9 @@
   "orgId": "test-tenant-11a",
   "model": "openai/gpt-oss-120b",
   "taskCategory": "database",
-  "trustScore": 98.1,
-  "samples": 20,
-  "trend": "up",
-  "lastUpdated": "2026-09-20T16:11:47.482Z"
+  "trustScore": 99.7,
+  "samples": 33,
+  "trend": "flat",
+  "lastUpdated": "2026-09-21T16:33:32.389Z"
  }
 ]

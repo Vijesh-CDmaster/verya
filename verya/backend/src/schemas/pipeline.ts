@@ -486,6 +486,22 @@ export const ExecutionResultSchema = z.object({
   alternatives: z.array(z.string().max(120)).max(4).default([]),
   latencyMs: z.number().min(0),
   tokens: z.object({ input: z.number(), output: z.number() }).default({ input: 0, output: 0 }),
+  // Real file operations applied to the generated-project workspace (may be empty
+  // for design-only outputs). Distinguishes SOURCE changes from the legacy design
+  // artifact in `code`.
+  fileOps: z
+    .array(
+      z.object({
+        path: z.string().max(200),
+        operation: z.enum(["create", "update", "delete"]),
+        rejected: z.boolean().default(false),
+        reason: z.string().max(300).optional(),
+      })
+    )
+    .max(20)
+    .optional(),
+  /** The model actually served by failover (differs from `model` when fallback fired). */
+  servedBy: z.string().max(120).optional(),
 });
 export type ExecutionResult = z.infer<typeof ExecutionResultSchema>;
 
@@ -527,6 +543,10 @@ export type PipelineSession = {
   stackGate: StackGate | null;
   algorithms: AlgorithmPlan | null;
   routing: RoutingPlan | null;
+  /** Explicit Models-stage state (Part 1): execution is gated on this, not on routing
+   *  merely existing. False until the last tie-break resolves or the human finalizes.
+   *  Optional so sessions created before this field remain valid. */
+  modelsFinalized?: boolean;
   trustBudget?: { initial: number; remaining: number; consumed: number; status: "active" | "exhausted" };
   /** Derived DNA, optional so sessions created before F19 remain valid. */
   taskFingerprints?: Record<string, TaskFingerprint>;
@@ -538,9 +558,24 @@ export type PipelineSession = {
     scannedAt: string;
   };
   executions: ExecutionResult[];
+  /** Generated-project source files (real code artifacts written by execution).
+   *  Optional for backward compatibility with sessions created before this field. */
+  workspaceFiles?: WorkspaceFile_[];
   humanFeedback: {
     ratings: Record<string, { accepted: boolean; rating?: number; note?: string }>;
   };
+};
+
+/** Mirror of services/workspace.ts WorkspaceFile — defined here so the session type
+ *  stays self-contained for the repositories. */
+export type WorkspaceFile_ = {
+  path: string;
+  content: string;
+  original: string;
+  taskId: string;
+  model: string;
+  updatedAt: string;
+  version: number;
 };
 
 // ---------- Universal decision rule (F8) ----------
@@ -583,6 +618,11 @@ export const StartRequestSchema = z.object({
   policy: z.enum(["lowest_cost", "highest_accuracy", "balanced", "org_approved"]).default("balanced"),
 });
 export const GateActionSchema = z.discriminatedUnion("action", [
+  // Human recovery for a failed AI gate (e.g. all providers errored): clears the
+  // error and re-enters processing. Available on any failed gate.
+  z.object({
+    action: z.literal("retry_gate"),
+  }),
   z.object({
     action: z.literal("suitability_choose"),
     choice: z.enum(["original", "suggested"]),
@@ -624,9 +664,19 @@ export const GateActionSchema = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("run_execution"),
   }),
+  // Part 1/2: explicit human finalization of the Models stage — the handoff into
+  // the coding workspace. Refuses when tie-breaks remain (409 with the count).
+  z.object({
+    action: z.literal("finalize_models"),
+  }),
   z.object({
     action: z.literal("trust_budget_approve"),
     amount: z.number().min(1).max(1000),
+  }),
+  // Re-run one failed task through the existing execution architecture.
+  z.object({
+    action: z.literal("retry_task"),
+    taskId: z.string().min(1),
   }),
   z.object({
     action: z.literal("feedback"),

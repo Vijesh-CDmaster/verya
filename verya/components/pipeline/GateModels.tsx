@@ -19,12 +19,10 @@ export function GateModels({
   session,
   call,
   busy,
-  onExecute,
 }: {
   session: Session;
   call: (body: unknown) => void;
   busy: boolean;
-  onExecute: () => void;
 }) {
   const [overrides, setOverrides] = useState<Record<string, string>>({});
   const routing = (session.routing ?? null) as
@@ -75,9 +73,18 @@ export function GateModels({
             </li>
           ))}
         </ul>
-        <Button className="mt-4" disabled={busy} onClick={onExecute}>
-          {busy ? "Executing…" : "Execute all tasks →"}
-        </Button>
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <Button
+            disabled={busy}
+            onClick={() => call({ action: "finalize_models" })}
+            title="Lock in the model routing and open the coding workspace"
+          >
+            Finalize models →
+          </Button>
+          <span className="text-[11px] text-muted">
+            Finalizing locks the routing and unlocks Run in the coding workspace.
+          </span>
+        </div>
       </div>
     );
   }

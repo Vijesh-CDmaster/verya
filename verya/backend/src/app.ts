@@ -10,6 +10,7 @@ import dashboardRoutes from "./routes/dashboard";
 import leadRoutes from "./routes/leads";
 import reputationRoutes from "./routes/reputation";
 import explainRoutes from "./routes/explain";
+import workspaceRoutes from "./routes/workspace";
 import authEventRoutes from "./routes/auth-events";
 import policyRoutes from "./routes/policies";
 import certificateRoutes from "./routes/certificates";
@@ -77,6 +78,7 @@ export async function buildApp(): Promise<FastifyInstance> {
   await app.register(leadRoutes, { prefix: "/api" });
   await app.register(reputationRoutes, { prefix: "/api" });
   await app.register(explainRoutes, { prefix: "/api" });
+  await app.register(workspaceRoutes, { prefix: "/api" });
   await app.register(authEventRoutes, { prefix: "/api" });
   await app.register(policyRoutes, { prefix: "/api" });
   await app.register(certificateRoutes, { prefix: "/api" });

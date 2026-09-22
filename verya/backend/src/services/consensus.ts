@@ -85,6 +85,9 @@ export async function analyzeFlawsByConsensus(input: {
   if (completed.length === 0) {
     throw new Error("All independent flaw-analysis providers failed.");
   }
+  // Graceful degradation: with a single respondent there is no real consensus, so the
+  // report is labeled as provisional (not silent). The UI surfaces the failed
+  // providers and the Flaws gate offers a re-run to restore full independence.
 
   const grouped = new Map<string, ConsensusIssue>();
   for (const opinion of completed) {
@@ -123,10 +126,16 @@ export async function analyzeFlawsByConsensus(input: {
   const issues = Array.from(grouped.values())
     .filter((issue) => issue.agreement >= 0.34)
     .sort((a, b) => severityRank[b.severity] - severityRank[a.severity]);
+  const degradedNote =
+    completed.length < PROVIDERS.length
+      ? " Provisional: only " + completed.length + " of " + PROVIDERS.length + " independent analyses succeeded (" +
+        opinions.filter((o) => o.status === "failed").map((o) => o.provider).join(", ") +
+        " failed) — re-run the gate to restore full consensus."
+      : "";
   return {
     opinions,
     issues,
     completedProviders: completed.length,
-    consensusSummary: `${issues.length} issue(s) identified by ${completed.length}/${PROVIDERS.length} independent provider analyses. User approval remains required.`,
+    consensusSummary: `${issues.length} issue(s) identified by ${completed.length}/${PROVIDERS.length} independent provider analyses. User approval remains required.${degradedNote}`,
   };
 }

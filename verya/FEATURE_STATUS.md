@@ -716,6 +716,43 @@ are set; the banner flow is still absent).
 - ❌ Error tracking (Sentry), uptime monitoring/alerts, public status page.
 - ⚠️ Backups — Neon provides PITR, but a tested restore procedure isn't documented/run.
 
+
+### F53 · Real AI Coding Execution (workspace files) — **LIVE**
+
+> Added 2026-09-21. The coding workspace writes REAL project files.
+
+**Mechanics.** Execution parses each routed model output into structured file operations
+(`services/fileops.ts`: `{files:[{path,operation,content}]}` JSON or path-declared code
+fences), validates every path against the workspace jail and applies it to the session
+workspace (`services/workspace.ts`: create/update/delete, per-file version + provenance).
+Design artifacts (`ExecutionResult.code`) remain for design-only outputs and are labeled
+`.txt`; source files live in `session.workspaceFiles` and render in the Explorer/Editor
+via `routes/workspace.ts`. Verification marks code tasks with zero file ops as issues;
+failed tasks block dependents; `servedBy` records failover transparently; every file op
+and rejection is a Trust Ledger event. Models → Run is an explicit finalization gate:
+`session.modelsFinalized` + `assertModelsFinalized` in both the HTTP and queue paths,
+`finalize_models` action, and the frontend Run states (waiting/ready/running/paused/
+completed/failed) derived only from session truth. Covered by the 24-test workspace suite
+(`lib/security/workspace.test.ts`): path traversal/absolute/UNC/reserved-name rejection,
+create/update/delete semantics, the finalization gate (ties block, unfinalized blocks,
+finalize unlocks), dependency blocking, retry authorization, and tenant isolation.
+
+### F54 · Professional VS Code-Style IDE Environment — **LIVE**
+
+> Added 2026-09-21. Coding workspace transformed into a professional IDE.
+
+- ✅ VS Code-style Activity Bar (`ActivityBar.tsx`) with 5 views: Explorer, Search, Source Control, Run, Governance.
+- ✅ Left Sidebar with active view switching: Explorer (nested tree + task list with file icons), Search (real file search), Changes (grouped by Added/Modified/Deleted from real FileOps), Run (task execution progress bar and statuses), Governance (trust budget progress, risk level, verification summary, agent status).
+- ✅ Editor Tab strip with file-type badges, dirty state tracking, close buttons, and active tab indicator.
+- ✅ Breadcrumbs bar (`Breadcrumbs.tsx`) displaying clickable hierarchical path segments.
+- ✅ Enhanced Code Editor (`CodeEditor.tsx`) with real-time active line highlight, synced line numbers gutter, smooth scrolling, in-editor search (Ctrl+F), CAS save (Ctrl+S), line/col status line, and dirty indicators.
+- ✅ Command Palette (`CommandPalette.tsx`, Ctrl+Shift+P) and Quick Open (Ctrl+P) backed by real functionality and real files.
+- ✅ Dedicated Agent Status Header above the interactive AgentChat: live agent status dot, current task, assigned model, recent actions trail (✓/✗/●).
+- ✅ Collapsible Bottom Panel (`BottomPanel.tsx`) with 7 tabs: Execution Monitor, Problems (aggregated verification issues), Output, Changes, Tests (honestly disclaimed), Verification, Events.
+- ✅ Status Bar (`StatusBar.tsx`) displaying cursor position, language, UTF-8, Trust budget, and Risk level.
+- ✅ Global IDE keyboard shortcuts: Ctrl+P, Ctrl+Shift+P, Ctrl+B, Ctrl+`, Ctrl+W, Ctrl+Shift+F, Ctrl+S, Ctrl+F.
+- ✅ Full preservation of existing execution engine, Trust Ledger, tenant isolation, CAS saves, and backend contracts.
+
 ### F52 · Launch Checklist — **NOT BUILT**
 
 Process artifact, not code. The checklist items (load test, pentest sign-off, legal

@@ -64,7 +64,6 @@ export async function startPipeline(input: {
       findings: scan.findings.map((f) => ({ rule: f.rule, category: f.category, severity: f.severity })),
     },
   });
-  await repoSave(orgId, session);
   kickGateProcessing(orgId, session.id);
   return session;
 }

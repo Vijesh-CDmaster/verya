@@ -1,11 +1,18 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useUiStore } from "@/stores/ui-store";
 import { useSession } from "@/hooks/use-session";
 import { IntakeForm } from "./IntakeForm";
 import { SessionView } from "@/components/pipeline/SessionView";
+import { WorkspaceShell } from "@/components/workspace/WorkspaceShell";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import type { Session } from "@/schemas/pipeline";
+
+// Gates that belong to the coding workspace rather than the planning stepper.
+// Execution + Review are repositioned there (agent activity / changes + verification);
+// the backend concepts are unchanged.
+const IN_WORKSPACE = new Set(["execution", "review"]);
 
 export function IntakeIsland() {
   const sessionId = useUiStore((s) => s.sessionId);
@@ -14,6 +21,62 @@ export function IntakeIsland() {
   const { data, isLoading, isError, error } = useSession(sessionId);
 
   const session = (data?.session ?? null) as Session | null;
+  const [viewMode, setViewMode] = useState<"ide" | "project">("ide");
+
+  // Support ?session=<id> and ?view=project direct linking & browser back/forward
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const p = new URLSearchParams(window.location.search).get("session");
+      if (p && p !== sessionId) {
+        setSessionId(p);
+      }
+      const v = new URLSearchParams(window.location.search).get("view");
+      if (v === "project") {
+        setViewMode("project");
+      } else if (v === "ide") {
+        setViewMode("ide");
+      }
+    }
+  }, [sessionId, setSessionId]);
+
+  useEffect(() => {
+    const onPopState = () => {
+      const v = new URLSearchParams(window.location.search).get("view");
+      setViewMode(v === "project" ? "project" : "ide");
+      const sid = new URLSearchParams(window.location.search).get("session");
+      if (sid && sid !== sessionId) {
+        setSessionId(sid);
+      }
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [sessionId, setSessionId]);
+
+  const canBeInWorkspace = Boolean(
+    sessionId &&
+    session &&
+    (IN_WORKSPACE.has(session.gate) || (session.gate === "models" && session.modelsFinalized === true))
+  );
+
+  const handleBackToProject = () => {
+    setViewMode("project");
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("view", "project");
+      if (sessionId) url.searchParams.set("session", sessionId);
+      window.history.pushState(null, "", url.toString());
+    }
+  };
+
+  const handleReturnToWorkspace = () => {
+    setViewMode("ide");
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("view");
+      if (sessionId) url.searchParams.set("session", sessionId);
+      window.history.pushState(null, "", url.toString());
+    }
+  };
 
   return (
     <div className="rounded-xl border border-line bg-card shadow-sm">
@@ -40,15 +103,29 @@ export function IntakeIsland() {
             </AlertDescription>
           </Alert>
         )}
-        {sessionId && session && (
+        {canBeInWorkspace && viewMode !== "project" ? (
+          // Planning is complete (through Models): the same page transforms into the
+          // full-screen coding workspace — no separate navigation. A finalized Models
+          // stage also lands here (execution is armed, Run unlocks in the shell).
+          <WorkspaceShell
+            session={session!}
+            onReset={() => {
+              setSessionId(null);
+              reset();
+            }}
+            onBack={handleBackToProject}
+          />
+        ) : sessionId && session ? (
           <SessionView
             session={session}
             onReset={() => {
               setSessionId(null);
               reset();
             }}
+            onOpenWorkspace={handleReturnToWorkspace}
+            canOpenWorkspace={canBeInWorkspace}
           />
-        )}
+        ) : null}
       </div>
     </div>
   );

@@ -164,3 +164,110 @@ body {
     animation: none;
   }
 }
+
+/* ---------- IDE workspace styles (VS Code Dark Theme) ---------- */
+
+.ide-workspace {
+  --vscode-editor-bg: #1e1e1e;
+  --vscode-sidebar-bg: #252526;
+  --vscode-activity-bg: #181818;
+  --vscode-titlebar-bg: #181818;
+  --vscode-panel-bg: #1e1e1e;
+  --vscode-statusbar-bg: #181818;
+  --vscode-tab-active-bg: #1e1e1e;
+  --vscode-tab-inactive-bg: #2d2d2d;
+  --vscode-border: #2d2d2d;
+  --vscode-fg: #cccccc;
+  --vscode-fg-bright: #ffffff;
+  --vscode-fg-muted: #858585;
+  --vscode-accent: #007acc;
+  --vscode-active-line: #282828;
+  --vscode-hover: rgba(255, 255, 255, 0.05);
+
+  /* Layout dimensions */
+  --activity-bar-width: 48px;
+  --sidebar-width: 270px;
+  --secondary-sidebar-width: 320px;
+  --bottom-panel-height: 200px;
+  --status-bar-height: 22px;
+  --title-bar-height: 35px;
+}
+
+/* ============================================================
+   VS Code Dark Scrollbar System (Universal)
+   ============================================================ */
+
+/* Global narrow dark scrollbar for all scrollable containers */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(121, 121, 121, 0.35) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(121, 121, 121, 0.3);
+  border-radius: 3px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(160, 160, 160, 0.5);
+}
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Main window / root scrollbar */
+html, body {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(121, 121, 121, 0.3) #181818;
+}
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+html::-webkit-scrollbar-track, body::-webkit-scrollbar-track {
+  background: #181818;
+}
+html::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb {
+  background: rgba(121, 121, 121, 0.3);
+  border-radius: 3px;
+}
+
+/* Editor textarea & pre scrollbars (6-8px, subtle, dark) */
+.ide-workspace textarea,
+.ide-workspace pre {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(121, 121, 121, 0.35) transparent;
+}
+.ide-workspace textarea::-webkit-scrollbar,
+.ide-workspace pre::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.ide-workspace textarea::-webkit-scrollbar-thumb,
+.ide-workspace pre::-webkit-scrollbar-thumb {
+  background: rgba(121, 121, 121, 0.32);
+  border-radius: 4px;
+}
+.ide-workspace textarea::-webkit-scrollbar-thumb:hover,
+.ide-workspace pre::-webkit-scrollbar-thumb:hover {
+  background: rgba(160, 160, 160, 0.55);
+}
+
+/* Active line highlight in editor */
+.editor-active-line {
+  background: #282828;
+}
+
+/* Tab close button visibility */
+.ide-tab:hover .ide-tab-close {
+  opacity: 1;
+}
+.ide-tab .ide-tab-close {
+  opacity: 0;
+}

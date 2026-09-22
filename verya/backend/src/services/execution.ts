@@ -1,4 +1,10 @@
 // Execution service — runs a session's tasks inline (HTTP path when Redis is absent).
+// REAL FILE EXECUTION: the routed model's output is parsed into structured file
+// operations (create/update/delete), every path is validated against the workspace
+// jail, accepted operations are written to the session's generated-project file
+// store, and verification + status reflect what actually happened. Dependent tasks
+// of a FAILED task are BLOCKED, not run. `servedBy` records the model that actually
+// responded when provider failover substituted one.
 import { getSession, saveSession } from "../repositories/sessions";
 import { geminiAdapters } from "../lib/ai/provider";
 import { stackTextOf } from "../lib/pipeline/gates";
@@ -7,11 +13,12 @@ import { checkExternalReferences } from "../lib/verification/external";
 import { escalationFloorFor, selfAuditThreshold, verificationDepthFor } from "../lib/thresholds";
 import { updateFromOutcome } from "./reputation";
 import { alternateModelOf, modelCostOf } from "../schemas/pipeline";
-import { codeArtifactOf, type ExecutionResult, type PipelineSession } from "../schemas/pipeline";
+import { codeArtifactOf, type ExecutionResult, type PipelineSession, type Task } from "../schemas/pipeline";
 import { forecastTaskFailure } from "./forecast";
 import { initialTrustBudget, trustCostFor } from "../lib/trust-budget";
 import { certificateFor } from "../lib/certificates";
-
+import { applyFileOpToSession, type FileOp } from "./workspace";
+import { extractFileOps } from "./fileops";
 
 /** Sessions whose execution loop is currently running in this process. */
 const executing = new Set<string>();
@@ -28,6 +35,7 @@ export async function startExecution(orgId: string, sessionId: string): Promise<
   if (!session.routing || !session.workflow || !session.algorithms) {
     throw Object.assign(new Error("Pipeline not ready for execution"), { statusCode: 409 });
   }
+  assertModelsFinalized(session);
   session.gate = "execution";
   session.gateStatus = "running";
   session.trustBudget ??= { initial: initialTrustBudget(), remaining: initialTrustBudget(), consumed: 0, status: "active" };
@@ -59,24 +67,86 @@ export async function startExecution(orgId: string, sessionId: string): Promise<
   return { session };
 }
 
+/** Re-run exactly one failed task (Part 16): clears its result, restarts the loop. */
+export async function retryTask(orgId: string, sessionId: string, taskId: string): Promise<{ session: PipelineSession }> {
+  const session = await getSession(orgId, sessionId);
+  if (!session) throw Object.assign(new Error("Session not found"), { statusCode: 404 });
+  const exec = session.executions.find((e) => e.taskId === taskId);
+  if (!exec) throw Object.assign(new Error("Task has not executed yet"), { statusCode: 404 });
+  if (exec.status !== "failed" && exec.status !== "flagged") {
+    throw Object.assign(new Error("Only failed or flagged tasks can be retried"), { statusCode: 409 });
+  }
+  session.executions = session.executions.filter((e) => e.taskId !== taskId);
+  // Dependent results of a retried task are stale — drop them so they re-run too.
+  const stale = new Set<string>([taskId]);
+  let grew = true;
+  while (grew) {
+    grew = false;
+    for (const t of session.workflow?.tasks ?? []) {
+      if (stale.has(t.id)) continue;
+      if ((t.dependsOn ?? []).some((d) => stale.has(d))) {
+        stale.add(t.id);
+        grew = true;
+      }
+    }
+  }
+  session.executions = session.executions.filter((e) => !stale.has(e.taskId));
+  await recordToLedger({
+    orgId,
+    sessionId,
+    gate: "execution",
+    eventType: "task_retry",
+    actor: "human",
+    taskId,
+    detail: { summary: `Human requested a retry of ${taskId} (${stale.size} task(s) re-queued)` },
+  });
+  return startExecution(orgId, sessionId);
+}
+
 export async function runExecution(orgId: string, sessionId: string): Promise<{ session: PipelineSession }> {
   const session = await getSession(orgId, sessionId);
   if (!session) throw Object.assign(new Error("Session not found"), { statusCode: 404 });
   if (!session.routing || !session.workflow || !session.algorithms) {
     throw Object.assign(new Error("Pipeline not ready for execution"), { statusCode: 409 });
   }
+  assertModelsFinalized(session);
 
   const stackText = stackTextOf(session);
-  const done = new Set(session.executions.map((e) => e.taskId));
-  const ordered: typeof session.workflow.tasks = [];
-  const all = [...session.workflow.tasks];
-  let guard = 0;
-  while (ordered.length < all.length && guard++ < all.length * 2) {
-    for (const t of all) {
-      if (done.has(t.id)) continue;
-      if ((t.dependsOn ?? []).every((d) => done.has(d))) {
-        ordered.push(t);
-        done.add(t.id);
+  // Dependency-respecting order. FAILED tasks BLOCK their dependents (Part 17):
+  // only tasks whose dependencies all finished successfully are eligible.
+  const statusOf = new Map(session.executions.map((e) => [e.taskId, e.status]));
+  const succeeded = new Set([...statusOf.entries()].filter(([, s]) => s === "verified" || s === "escalated" || s === "flagged").map(([id]) => id));
+  const failed = new Set([...statusOf.entries()].filter(([, s]) => s === "failed").map(([id]) => id));
+  const blocked = new Set<string>();
+  {
+    let grew = true;
+    while (grew) {
+      grew = false;
+      for (const t of session.workflow.tasks) {
+        if (blocked.has(t.id) || failed.has(t.id) || succeeded.has(t.id)) continue;
+        const failingDeps = (t.dependsOn ?? []).filter((d) => failed.has(d) || blocked.has(d));
+        if (failingDeps.length > 0) {
+          blocked.add(t.id);
+          grew = true;
+        }
+      }
+    }
+  }
+  const pending = session.workflow.tasks.filter((t) => !succeeded.has(t.id) && !failed.has(t.id) && !blocked.has(t.id));
+  const ordered: Task[] = [];
+  {
+    const done = new Set([...session.executions.map((e) => e.taskId), ...blocked]);
+    const all = [...pending];
+    const remaining = new Set(all.map((t) => t.id));
+    let guard = 0;
+    while (ordered.length < all.length && guard++ < all.length * 2) {
+      for (const t of all) {
+        if (!remaining.has(t.id)) continue;
+        if ((t.dependsOn ?? []).every((d) => done.has(d) || !remaining.has(d))) {
+          ordered.push(t);
+          remaining.delete(t.id);
+          done.add(t.id);
+        }
       }
     }
   }
@@ -84,6 +154,17 @@ export async function runExecution(orgId: string, sessionId: string): Promise<{ 
   session.gate = "execution";
   session.gateStatus = "running";
   await saveSession(orgId, session);
+
+  if (ordered.length > 0 && session.executions.length === 0) {
+    await recordToLedger({
+      orgId,
+      sessionId,
+      gate: "execution",
+      eventType: "execution_started",
+      actor: "system",
+      detail: { summary: `Execution started: ${ordered.length} task(s) queued, ${blocked.size} blocked` },
+    });
+  }
 
   for (const task of ordered) {
     if (session.executions.some((r) => r.taskId === task.id)) continue;
@@ -98,6 +179,7 @@ export async function runExecution(orgId: string, sessionId: string): Promise<{ 
     session.trustBudget.remaining -= budgetCost;
     session.trustBudget.consumed += budgetCost;
     await recordToLedger({ orgId, sessionId, gate: "execution", eventType: "trust_budget_consumed", actor: "system", taskId: task.id, detail: { summary: `${budgetCost} trust units consumed by ${task.title}`, risk: task.risk, remaining: session.trustBudget.remaining } });
+    await recordToLedger({ orgId, sessionId, gate: "execution", eventType: "task_started", actor: "system", taskId: task.id, detail: { summary: `Starting ${task.title}` } });
     const route = session.routing.routes.find((r) => r.taskId === task.id);
     const algo = session.algorithms.tasks.find((a) => a.taskId === task.id);
     const model = route?.selectedModel ?? "openai/gpt-oss-20b";
@@ -112,14 +194,57 @@ export async function runExecution(orgId: string, sessionId: string): Promise<{ 
           ? geminiAdapters.executeTask({ task, algorithm, stack: stackText, workflow: session.workflow, model: challengerModel })
           : Promise.resolve(undefined),
       ]);
+
+      // ---------- REAL FILE OPERATIONS (the heart of the coding agent) ----------
+      const ops: FileOp[] = extractFileOps(exec.output);
+      const appliedFileOps: ExecutionResult["fileOps"] = [];
+      for (const op of ops) {
+        const result = applyFileOpToSession(session, op, { taskId: task.id, model });
+        if (result.ok) {
+          appliedFileOps.push({ path: result.op.path, operation: result.op.operation, rejected: false });
+          await recordToLedger({
+            orgId,
+            sessionId,
+            gate: "execution",
+            eventType: result.op.operation === "delete" ? "file_deleted" : result.op.operation === "update" ? "file_modified" : "file_created",
+            actor: "ai",
+            taskId: task.id,
+            model,
+            detail: { summary: `${result.op.operation === "delete" ? "Deleted" : result.op.operation === "update" ? "Modified" : "Created"} ${result.op.path} (${op.content.length} chars)`, path: result.op.path },
+          });
+        } else {
+          // Path-security rejections are AUDIT EVENTS, not silent drops (Part 6).
+          appliedFileOps.push({ path: op.path, operation: op.operation, rejected: true, reason: result.reason.slice(0, 300) });
+          await recordToLedger({
+            orgId,
+            sessionId,
+            gate: "execution",
+            eventType: "file_op_rejected",
+            actor: "system",
+            taskId: task.id,
+            model,
+            detail: { summary: `Rejected file operation for ${task.title}: ${result.reason}`, path: op.path, reason: result.reason },
+          });
+        }
+      }
+      const filesChanged = appliedFileOps.filter((f) => !f.rejected).length;
+
+      // ---------- VERIFICATION (unchanged pipeline + file-aware rules) ----------
       const verificationDepth = verificationDepthFor(task.risk);
       const needsSecondModel = verificationDepth === "second_model";
       const verification = needsSecondModel
         ? await geminiAdapters.verifyOutput({ task, algorithm, output: exec.output, model })
         : await geminiAdapters.verifyRulesOnly({ task, output: exec.output });
+      // File-aware check: a task that produced NO usable file operations while its
+      // approach expects deliverables cannot be "verified" as a coding task.
+      if (filesChanged === 0 && ops.length === 0 && task.category !== "documentation") {
+        verification.issues = [
+          ...verification.issues,
+          "No structured file operations found in model output (expected {files:[...]} JSON or path-declared code blocks).",
+        ].slice(0, 12);
+        verification.checkedBy = `${verification.checkedBy} + fileops`;
+      }
       // F14: high-risk outputs get a bounded, provider-independent adversarial pass.
-      // This is additive to verification: an audit can escalate, but never silently
-      // changes the existing verification verdict.
       const selfAudit = task.risk === "high"
         ? await geminiAdapters.selfAudit({ task, output: exec.output, executorModel: model })
         : undefined;
@@ -130,7 +255,7 @@ export async function runExecution(orgId: string, sessionId: string): Promise<{ 
         verification.passed = false;
         verification.issues = [
           ...verification.issues,
-          ...external.unsupported.map((p) => `References non-existent npm package "${p}" (registry check).`),
+          ...external.unsupported.map((p) => `References non-existent npm package \"${p}\" (registry check).`),
         ].slice(0, 12);
         verification.checkedBy = `${verification.checkedBy} + npm_registry`;
       }
@@ -149,6 +274,8 @@ export async function runExecution(orgId: string, sessionId: string): Promise<{ 
         model,
         output: exec.output,
         code: codeArtifactOf(exec.output, task.title),
+        fileOps: appliedFileOps,
+        servedBy: exec.servedBy,
         verification: {
           method: needsSecondModel ? "second_model" : "rules",
           passed: verification.passed,
@@ -179,18 +306,23 @@ export async function runExecution(orgId: string, sessionId: string): Promise<{ 
       await updateFromOutcome({ orgId, model, taskCategory: task.category, outcome }).catch(() => undefined);
 
       const costUnits = modelCostOf(model);
+      const fallbackUsed = exec.servedBy !== undefined && exec.servedBy !== model;
       await recordToLedger({
         orgId,
         sessionId,
         gate: "execution",
-        eventType: "task_execution",
+        eventType: fallbackUsed ? "model_fallback" : "task_execution",
         taskId: task.id,
-        model,
+        model: fallbackUsed ? exec.servedBy! : model,
         detail: {
-          summary: `${task.title} executed by ${exec.servedBy ?? model} — ${status}`,
+          summary: fallbackUsed
+            ? `${task.title}: requested ${model} but failover served ${exec.servedBy} — ${status}`
+            : `${task.title} executed by ${model} — ${status} · ${filesChanged} file op(s)`,
           latencyMs: exec.latencyMs,
           tokens: exec.tokens,
           servedBy: exec.servedBy ?? model,
+          requestedModel: model,
+          fileOps: appliedFileOps,
           costUnits,
           taskCategory: task.category,
           verificationDepth,
@@ -204,6 +336,15 @@ export async function runExecution(orgId: string, sessionId: string): Promise<{ 
             : undefined,
         },
         verification: { passed: verification.passed, issues: verification.issues },
+      });
+      await recordToLedger({
+        orgId,
+        sessionId,
+        gate: "execution",
+        eventType: "task_completed",
+        actor: "system",
+        taskId: task.id,
+        detail: { summary: `${task.title} → ${status}`, status, filesChanged },
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Task failed";
@@ -235,8 +376,76 @@ export async function runExecution(orgId: string, sessionId: string): Promise<{ 
     await saveSession(orgId, session);
   }
 
+  // Blocked tasks are recorded so the UI can show WHY they never ran (Part 17).
+  for (const task of session.workflow.tasks.filter((t) => blocked.has(t.id))) {
+    if (session.executions.some((e) => e.taskId === task.id)) continue;
+    const failingDep = (task.dependsOn ?? []).find((d) => failed.has(d) || blocked.has(d));
+    session.executions.push({
+      taskId: task.id,
+      model: session.routing.routes.find((r) => r.taskId === task.id)?.selectedModel ?? "openai/gpt-oss-20b",
+      output: "",
+      verification: { method: "rules", passed: false, issues: [`Blocked by failed dependency: ${failingDep ?? "unknown"}`], checkedBy: "dependency" },
+      status: "failed",
+      confidence: 0,
+      rationale: `Blocked: dependency ${failingDep} did not succeed.`,
+      alternatives: [],
+      latencyMs: 0,
+      tokens: { input: 0, output: 0 },
+    });
+    await recordToLedger({
+      orgId,
+      sessionId,
+      gate: "execution",
+      eventType: "task_blocked",
+      actor: "system",
+      taskId: task.id,
+      detail: { summary: `${task.title} blocked by failed dependency ${failingDep}` },
+    });
+  }
+
+  const anyFailed = session.executions.some((e) => e.status === "failed");
   session.gate = "review";
   session.gateStatus = "awaiting_user";
+  await recordToLedger({
+    orgId,
+    sessionId,
+    gate: "review",
+    eventType: "execution_completed",
+    actor: "system",
+    detail: {
+      summary: anyFailed
+        ? `Execution finished with failures: ${session.executions.filter((e) => e.status === "failed").length} failed task(s)`
+        : `Execution completed: ${session.executions.length} task(s), ${listWorkspaceFilesCount(session)} workspace file(s)`,
+      outcome: anyFailed ? "failed" : "completed",
+    },
+  });
   await saveSession(orgId, session);
   return { session };
+}
+
+function listWorkspaceFilesCount(session: PipelineSession): number {
+  return session.workspaceFiles?.length ?? 0;
+}
+
+/**
+ * Part 1 — the Models → execution gate, as an explicit state check.
+ * Run requires: planning complete (routing + tasks + approaches) AND models FINALIZED
+ * (last tie-break resolved or the human called finalize_models). Routing merely existing
+ * is NOT sufficient — tie-breaks must be resolved. Legacy sessions without the
+ * modelsFinalized flag are accepted only when no unresolved tie-break remains.
+ */
+export function assertModelsFinalized(session: PipelineSession): void {
+  if (!session.routing || !session.workflow || !session.algorithms) {
+    throw Object.assign(new Error("Pipeline not ready for execution"), { statusCode: 409 });
+  }
+  const pendingTieBreaks = session.routing.routes.filter((r) => r.tieBreakRequired).length;
+  if (pendingTieBreaks > 0) {
+    throw Object.assign(
+      new Error(`Cannot run: ${pendingTieBreaks} model tie-break(s) still require a human decision`),
+      { statusCode: 409 }
+    );
+  }
+  if (session.modelsFinalized === false) {
+    throw Object.assign(new Error("Models are not finalized yet — finalize model routing to unlock Run"), { statusCode: 409 });
+  }
 }
